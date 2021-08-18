@@ -170,10 +170,12 @@ am__uninstall_files_from_dir = { \
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libats2_spookyhash_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = spookyhash/SATS/spookyhash_sats.lo
-am__objects_2 = spookyhash/DATS/spookyhash_dats.lo
+am__objects_1 = spookyhash/SATS/array_prf_sats.lo
+am__objects_2 = spookyhash/DATS/array_prf_dats.lo
+am__objects_3 = spookyhash/SATS/spookyhash_sats.lo
+am__objects_4 = spookyhash/DATS/spookyhash_dats.lo
 nodist_libats2_spookyhash_la_OBJECTS = $(am__objects_1) \
-	$(am__objects_2)
+	$(am__objects_2) $(am__objects_3) $(am__objects_4)
 libats2_spookyhash_la_OBJECTS =  \
 	$(nodist_libats2_spookyhash_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -195,7 +197,9 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo \
+am__depfiles_remade = spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo \
+	spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo \
+	spookyhash/SATS/$(DEPDIR)/array_prf_sats.Plo \
 	spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -733,12 +737,13 @@ AUTOMAKE_OPTIONS = foreign subdir-objects -Wno-portability
 #--------------------------------------------------------------------------
 EXTRA_DIST = $(srcdir)/silent-rules.mk COPYING INSTALL README AUTHORS \
 	$(SPOOKYHASH_PARAMETERS_HATS) $(SPOOKYHASH_CATS) \
-	$(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS) \
-	reference-implementation/SpookyV2.cpp \
+	$(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS) $(SPOOKYHASH_SATS) \
+	$(SPOOKYHASH_DATS) reference-implementation/SpookyV2.cpp \
 	reference-implementation/SpookyV2.h \
 	reference-implementation/TestSpookyV2.cpp
 MOSTLYCLEANFILES = 
-CLEANFILES = $(SPOOKYHASH_SATS_C) $(SPOOKYHASH_DATS_C)
+CLEANFILES = $(ARRAY_PRF_SATS_C) $(ARRAY_PRF_DATS_C) \
+	$(SPOOKYHASH_SATS_C) $(SPOOKYHASH_DATS_C)
 DISTCLEANFILES = Makefile GNUmakefile
 BUILT_SOURCES = 
 #DISTCLEANFILES += lib/Makefile
@@ -758,7 +763,8 @@ LDADD = $(CODE_COVERAGE_LIBS)
 #
 lib_LTLIBRARIES = libats2-spookyhash.la
 nobase_nodist_pkginclude_HEADERS = $(SPOOKYHASH_PARAMETERS_HATS) \
-	$(SPOOKYHASH_CATS) $(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS)
+	$(SPOOKYHASH_CATS) $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS) \
+	$(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS)
 pkgconfigdir = ${libdir}/pkgconfig
 nodist_pkgconfig_DATA = 
 CODE_COVERAGE_IGNORE_PATTERN = /usr/include/* /usr/include/*/* \
@@ -787,12 +793,16 @@ TOTAL_PATSOPTFLAGS = $(AM_PATSOPTFLAGS) $(PATSOPTFLAGS) \
 	$(XPATSOPTFLAGS)
 SPOOKYHASH_PARAMETERS_HATS = spookyhash/HATS/spookyhash-parameters.hats
 SPOOKYHASH_CATS = spookyhash/CATS/spookyhash.cats
+ARRAY_PRF_SATS = spookyhash/SATS/array_prf.sats
+ARRAY_PRF_SATS_C = spookyhash/SATS/array_prf_sats.c
+ARRAY_PRF_DATS = spookyhash/DATS/array_prf.dats
+ARRAY_PRF_DATS_C = spookyhash/DATS/array_prf_dats.c
 SPOOKYHASH_SATS = spookyhash/SATS/spookyhash.sats
 SPOOKYHASH_SATS_C = spookyhash/SATS/spookyhash_sats.c
 SPOOKYHASH_DATS = spookyhash/DATS/spookyhash.dats
 SPOOKYHASH_DATS_C = spookyhash/DATS/spookyhash_dats.c
-nodist_libats2_spookyhash_la_SOURCES = $(SPOOKYHASH_SATS_C) \
-	$(SPOOKYHASH_DATS_C)
+nodist_libats2_spookyhash_la_SOURCES = $(ARRAY_PRF_SATS_C) \
+	$(ARRAY_PRF_DATS_C) $(SPOOKYHASH_SATS_C) $(SPOOKYHASH_DATS_C)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -922,7 +932,7 @@ spookyhash/SATS/$(am__dirstamp):
 spookyhash/SATS/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) spookyhash/SATS/$(DEPDIR)
 	@: > spookyhash/SATS/$(DEPDIR)/$(am__dirstamp)
-spookyhash/SATS/spookyhash_sats.lo: spookyhash/SATS/$(am__dirstamp) \
+spookyhash/SATS/array_prf_sats.lo: spookyhash/SATS/$(am__dirstamp) \
 	spookyhash/SATS/$(DEPDIR)/$(am__dirstamp)
 spookyhash/DATS/$(am__dirstamp):
 	@$(MKDIR_P) spookyhash/DATS
@@ -930,6 +940,10 @@ spookyhash/DATS/$(am__dirstamp):
 spookyhash/DATS/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) spookyhash/DATS/$(DEPDIR)
 	@: > spookyhash/DATS/$(DEPDIR)/$(am__dirstamp)
+spookyhash/DATS/array_prf_dats.lo: spookyhash/DATS/$(am__dirstamp) \
+	spookyhash/DATS/$(DEPDIR)/$(am__dirstamp)
+spookyhash/SATS/spookyhash_sats.lo: spookyhash/SATS/$(am__dirstamp) \
+	spookyhash/SATS/$(DEPDIR)/$(am__dirstamp)
 spookyhash/DATS/spookyhash_dats.lo: spookyhash/DATS/$(am__dirstamp) \
 	spookyhash/DATS/$(DEPDIR)/$(am__dirstamp)
 
@@ -946,7 +960,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@spookyhash/SATS/$(DEPDIR)/array_prf_sats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -1322,7 +1338,9 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-		-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo
+		-rm -f spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo
+	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo
+	-rm -f spookyhash/SATS/$(DEPDIR)/array_prf_sats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo
 	-rm -f GNUmakefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -1372,7 +1390,9 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-		-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo
+		-rm -f spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo
+	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo
+	-rm -f spookyhash/SATS/$(DEPDIR)/array_prf_sats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo
 	-rm -f GNUmakefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
@@ -1546,11 +1566,14 @@ distclean-local: code-coverage-dist-clean
 	@$(MKDIR_P) $(@D)
 	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -d $(<)
 
+$(ARRAY_PRF_SATS_C): $(ARRAY_PRF_SATS)
+$(ARRAY_PRF_DATS_C): $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS)
 $(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
 						$(SPOOKYHASH_PARAMETERS_HATS)
 $(SPOOKYHASH_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS) \
 						$(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_PARAMETERS_HATS)
+						$(SPOOKYHASH_PARAMETERS_HATS) \
+						$(ARRAY_PRF_SATS)
 
 #--------------------------------------------------------------------------
 # local variables:

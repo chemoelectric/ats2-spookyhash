@@ -142,6 +142,16 @@ EXTRA_DIST += $(SPOOKYHASH_PARAMETERS_HATS)
 SPOOKYHASH_CATS = spookyhash/CATS/spookyhash.cats
 EXTRA_DIST += $(SPOOKYHASH_CATS)
 
+ARRAY_PRF_SATS = spookyhash/SATS/array_prf.sats
+ARRAY_PRF_SATS_C = spookyhash/SATS/array_prf_sats.c
+EXTRA_DIST += $(ARRAY_PRF_SATS)
+CLEANFILES += $(ARRAY_PRF_SATS_C)
+
+ARRAY_PRF_DATS = spookyhash/DATS/array_prf.dats
+ARRAY_PRF_DATS_C = spookyhash/DATS/array_prf_dats.c
+EXTRA_DIST += $(ARRAY_PRF_DATS)
+CLEANFILES += $(ARRAY_PRF_DATS_C)
+
 SPOOKYHASH_SATS = spookyhash/SATS/spookyhash.sats
 SPOOKYHASH_SATS_C = spookyhash/SATS/spookyhash_sats.c
 EXTRA_DIST += $(SPOOKYHASH_SATS)
@@ -153,17 +163,24 @@ EXTRA_DIST += $(SPOOKYHASH_DATS)
 CLEANFILES += $(SPOOKYHASH_DATS_C)
 
 nodist_libats2_spookyhash_la_SOURCES =
+nodist_libats2_spookyhash_la_SOURCES += $(ARRAY_PRF_SATS_C)
+nodist_libats2_spookyhash_la_SOURCES += $(ARRAY_PRF_DATS_C)
 nodist_libats2_spookyhash_la_SOURCES += $(SPOOKYHASH_SATS_C)
 nodist_libats2_spookyhash_la_SOURCES += $(SPOOKYHASH_DATS_C)
 
+$(ARRAY_PRF_SATS_C): $(ARRAY_PRF_SATS)
+$(ARRAY_PRF_DATS_C): $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS)
 $(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
 						$(SPOOKYHASH_PARAMETERS_HATS)
 $(SPOOKYHASH_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS) \
 						$(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_PARAMETERS_HATS)
+						$(SPOOKYHASH_PARAMETERS_HATS) \
+						$(ARRAY_PRF_SATS)
 
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_PARAMETERS_HATS)
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_CATS)
+nobase_nodist_pkginclude_HEADERS += $(ARRAY_PRF_SATS)
+nobase_nodist_pkginclude_HEADERS += $(ARRAY_PRF_DATS)
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_SATS)
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_DATS)
 

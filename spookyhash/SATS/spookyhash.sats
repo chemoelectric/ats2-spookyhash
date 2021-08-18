@@ -41,3 +41,13 @@ fun
 spookyhash_init (context : &spookyhash_context_t,
                  seed1   : uint64,
                  seed2   : uint64) :<!refwrt> void
+
+(*
+  spookyhash_update:
+  Add a message fragment to the state.
+*)
+fun
+spookyhash_update {length  : int}
+                  (context : &spookyhash_context_t,
+                   message : &(@[byte][length]),
+                   length  : size_t length) :<!refwrt> void
