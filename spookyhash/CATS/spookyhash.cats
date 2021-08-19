@@ -184,16 +184,6 @@ ats2_spookyhash_fix_byte_order_uint32 (atstype_uint32 x)
 #endif
 }
 
-ats2_spookyhash_always_inline atstype_uint64
-ats2_spookyhash_fix_byte_order_uint64 (atstype_uint64 x)
-{
-#if ATS2_SPOOKYHASH_BIG_ENDIAN
-  return ats2_spookyhash_bswap64 (x);
-#else
-  return x;
-#endif
-}
-
 /* Get a little endian atstype_uint32 from memory, where perhaps the
    data is misaligned. */
 ats2_spookyhash_always_inline atstype_uint32
@@ -296,93 +286,22 @@ ats2_spookyhash_bitwise_lrotate_uint64_uint (atstype_uint64 x,
   return (x << i) | (x >> ((-i) & 63));
 }
 
-ats2_spookyhash_inline atstype_void
-ats2_spookyhash_spookyhash_mix (const atstype_uint64 *data,
-                                atstype_uint64 *s0,
-                                atstype_uint64 *s1,
-                                atstype_uint64 *s2,
-                                atstype_uint64 *s3,
-                                atstype_uint64 *s4,
-                                atstype_uint64 *s5,
-                                atstype_uint64 *s6,
-                                atstype_uint64 *s7,
-                                atstype_uint64 *s8,
-                                atstype_uint64 *s9,
-                                atstype_uint64 *s10,
-                                atstype_uint64 *s11)
+/* Bitwise exclusive or. */
+ats2_spookyhash_always_inline atstype_uint64
+ats2_spookyhash_bitwise_xor_uint64 (atstype_uint64 x,
+                                    atstype_uint64 y)
 {
-  *s0 += data[0];
-  *s2 ^= *s10;
-  *s11 ^= *s0;
-  *s0 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s0, 11);
-  *s11 += *s1;
-
-  *s1 += data[1];
-  *s3 ^= *s11;
-  *s0 ^= *s1;
-  *s1 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s1, 32);
-  *s0 += *s2;
-
-  *s2 += data[2];
-  *s4 ^= *s0;
-  *s1 ^= *s2;
-  *s2 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s2, 43);
-  *s1 += *s3;
-
-  *s3 += data[3];
-  *s5 ^= *s1;
-  *s2 ^= *s3;
-  *s3 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s3, 31);
-  *s2 += *s4;
-
-  *s4 += data[4];
-  *s6 ^= *s2;
-  *s3 ^= *s4;
-  *s4 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s4, 17);
-  *s3 += *s5;
-
-  *s5 += data[5];
-  *s7 ^= *s3;
-  *s4 ^= *s5;
-  *s5 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s5, 28);
-  *s4 += *s6;
-
-  *s6 += data[6];
-  *s8 ^= *s4;
-  *s5 ^= *s6;
-  *s6 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s6, 39);
-  *s5 += *s7;
-
-  *s7 += data[7];
-  *s9 ^= *s5;
-  *s6 ^= *s7;
-  *s7 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s7, 57);
-  *s6 += *s8;
-
-  *s8 += data[8];
-  *s10 ^= *s6;
-  *s7 ^= *s8;
-  *s8 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s8, 55);
-  *s7 += *s9;
-
-  *s9 += data[9];
-  *s11 ^= *s7;
-  *s8 ^= *s9;
-  *s9 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s9, 54);
-  *s8 += *s10;
-
-  *s10 += data[10];
-  *s0 ^= *s8;
-  *s9 ^= *s10;
-  *s10 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s10, 22);
-  *s9 += *s11;
-
-  *s11 += data[11];
-  *s1 ^= *s9;
-  *s10 ^= *s11;
-  *s11 = ats2_spookyhash_bitwise_lrotate_uint64_uint (*s11, 46);
-  *s10 += *s0;
+  return (x ^ y);
 }
 
+ats2_spookyhash_always_inline atstype_uint64
+ats2_spookyhash_fix_byte_order_uint64 (atstype_uint64 x)
+{
+#if ATS2_SPOOKYHASH_BIG_ENDIAN
+  return ats2_spookyhash_bswap64 (x);
+#else
+  return x;
+#endif
+}
 
 #endif /* ATS2_SPOOKYHASH_CATS_HEADER_GUARD__ */

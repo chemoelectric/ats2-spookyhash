@@ -37,8 +37,10 @@ staload "spookyhash/SATS/spookyhash.sats"
 typedef remainder_t (i : int) = [i < BUFSIZE] g1uint (uint8knd, i)
 typedef remainder_t = [i : int] remainder_t i
 
+(*
 typedef u64_t (i : int) = g1uint (uint64knd, i)
 typedef u64_t = [i : int] g1uint (uint64knd, i)
+*)
 
 (********************************************************************)
 
@@ -87,34 +89,44 @@ memcpy {n   : int}
         n   : size_t n) :<!refwrt> void = "mac#%"
 
 extern fun
-spookyhash_mix (data : &RD(@[u64_t][NUMVARS]),
-                s0   : &u64_t,
-                s1   : &u64_t,
-                s2   : &u64_t,
-                s3   : &u64_t,
-                s4   : &u64_t,
-                s5   : &u64_t,
-                s6   : &u64_t,
-                s7   : &u64_t,
-                s8   : &u64_t,
-                s9   : &u64_t,
-                s10  : &u64_t,
-                s11  : &u64_t) :<!refwrt> void = "mac#%"
+bitwise_xor_uint64 (x : uint64, y : uint64) :<> uint64 = "mac#%"
+
+overload bitwise_xor with bitwise_xor_uint64
+
+infixl ( + ) ^
+overload ^ with bitwise_xor
+
+extern fun
+bitwise_lrotate_uint64_uint {i : int | i < 64}
+                            (x : uint64,
+                             i : uint i) :<> uint64 = "mac#%"
+
+overload bitwise_lrotate with bitwise_lrotate_uint64_uint
+
+infix ( * ) <<@
+overload <<@ with bitwise_lrotate
+
+(* On big-endian platforms, swap the byte order.
+   On little-endian platforms, make no changes. *)
+extern fun
+fix_byte_order_uint64 (x : uint64) :<> uint64 = "mac#%"
+
+overload fix_byte_order with fix_byte_order_uint64
 
 (********************************************************************)
 
 extern fun
 m_data (context : &spookyhash_context_t) :<!ref>
     [p : addr]
-    (@[u64_t][2 * NUMVARS] @ p,
-     @[u64_t][2 * NUMVARS] @ p -<lin,prf> void |
+    (@[uint64][2 * NUMVARS] @ p,
+     @[uint64][2 * NUMVARS] @ p -<lin,prf> void |
      ptr p) = "mac#%"
 
 extern fun
 m_state (context : &spookyhash_context_t) :<!ref>
     [p : addr]
-    (@[u64_t][NUMVARS] @ p,
-     @[u64_t][NUMVARS] @ p -<lin,prf> void |
+    (@[uint64][NUMVARS] @ p,
+     @[uint64][NUMVARS] @ p -<lin,prf> void |
      ptr p) = "mac#%"
 
 extern fun
@@ -130,6 +142,96 @@ m_remainder (context : &spookyhash_context_t) :<!ref>
     (remainder_t @ p,
      remainder_t @ p -<lin,prf> void |
      ptr p) = "mac#%"
+
+(********************************************************************)
+
+fn {}
+spookyhash_mix (data : &RD(@[uint64][NUMVARS]),
+                s0   : &uint64,
+                s1   : &uint64,
+                s2   : &uint64,
+                s3   : &uint64,
+                s4   : &uint64,
+                s5   : &uint64,
+                s6   : &uint64,
+                s7   : &uint64,
+                s8   : &uint64,
+                s9   : &uint64,
+                s10  : &uint64,
+                s11  : &uint64) :<!refwrt> void =
+  begin
+    s0 := s0 + fix_byte_order data[0];
+    s2 := s2 ^ s10;
+    s11 := s11 ^ s0;
+    s0 := s0 <<@ 11U;
+    s11 := s11 + s1;
+
+    s1 := s1 + fix_byte_order data[1];
+    s3 := s3 ^ s11;
+    s0 := s0 ^ s1;
+    s1 := s1 <<@ 32U;
+    s0 := s0 + s2;
+
+    s2 := s2 + fix_byte_order data[2];
+    s4 := s4 ^ s0;
+    s1 := s1 ^ s2;
+    s2 := s2 <<@ 43U;
+    s1 := s1 + s3;
+
+    s3 := s3 + fix_byte_order data[3];
+    s5 := s5 ^ s1;
+    s2 := s2 ^ s3;
+    s3 := s3 <<@ 31U;
+    s2 := s2 + s4;
+
+    s4 := s4 + fix_byte_order data[4];
+    s6 := s6 ^ s2;
+    s3 := s3 ^ s4;
+    s4 := s4 <<@ 17U;
+    s3 := s3 + s5;
+
+    s5 := s5 + fix_byte_order data[5];
+    s7 := s7 ^ s3;
+    s4 := s4 ^ s5;
+    s5 := s5 <<@ 28U;
+    s4 := s4 + s6;
+
+    s6 := s6 + fix_byte_order data[6];
+    s8 := s8 ^ s4;
+    s5 := s5 ^ s6;
+    s6 := s6 <<@ 39U;
+    s5 := s5 + s7;
+
+    s7 := s7 + fix_byte_order data[7];
+    s9 := s9 ^ s5;
+    s6 := s6 ^ s7;
+    s7 := s7 <<@ 57U;
+    s6 := s6 + s8;
+
+    s8 := s8 + fix_byte_order data[8];
+    s10 := s10 ^ s6;
+    s7 := s7 ^ s8;
+    s8 := s8 <<@ 55U;
+    s7 := s7 + s9;
+
+    s9 := s9 + fix_byte_order data[9];
+    s11 := s11 ^ s7;
+    s8 := s8 ^ s9;
+    s9 := s9 <<@ 54U;
+    s8 := s8 + s10;
+
+    s10 := s10 + fix_byte_order data[10];
+    s0 := s0 ^ s8;
+    s9 := s9 ^ s10;
+    s10 := s10 <<@ 22U;
+    s9 := s9 + s11;
+
+    s11 := s11 + fix_byte_order data[11];
+    s1 := s1 ^ s9;
+    s10 := s10 ^ s11;
+    s11 := s11 <<@ 46U;
+    s10 := s10 + s0
+  end
 
 (********************************************************************)
 
@@ -153,19 +255,19 @@ spookyhash_init (context, seed1, seed2) =
 
 fn {}
 initialize_variables (len   : Size_t,
-                      h0    : &u64_t? >> u64_t,
-                      h1    : &u64_t? >> u64_t,
-                      h2    : &u64_t? >> u64_t,
-                      h3    : &u64_t? >> u64_t,
-                      h4    : &u64_t? >> u64_t,
-                      h5    : &u64_t? >> u64_t,
-                      h6    : &u64_t? >> u64_t,
-                      h7    : &u64_t? >> u64_t,
-                      h8    : &u64_t? >> u64_t,
-                      h9    : &u64_t? >> u64_t,
-                      h10   : &u64_t? >> u64_t,
-                      h11   : &u64_t? >> u64_t,
-                      state : &RD(@[u64_t][NUMVARS])) :<!refwrt>
+                      h0    : &uint64? >> uint64,
+                      h1    : &uint64? >> uint64,
+                      h2    : &uint64? >> uint64,
+                      h3    : &uint64? >> uint64,
+                      h4    : &uint64? >> uint64,
+                      h5    : &uint64? >> uint64,
+                      h6    : &uint64? >> uint64,
+                      h7    : &uint64? >> uint64,
+                      h8    : &uint64? >> uint64,
+                      h9    : &uint64? >> uint64,
+                      h10   : &uint64? >> uint64,
+                      h11   : &uint64? >> uint64,
+                      state : &RD(@[uint64][NUMVARS])) :<!refwrt>
     void =
   if len < i2sz BUFSIZE then
     let
@@ -233,7 +335,7 @@ spookyhash_update {length} (context, message, length) =
     if new_length < i2sz BUFSIZE then
       (* The message fragment is short. Store it for later use. *)
       {
-        prval pf_bytes = array2bytes_v<u64_t> {2 * NUMVARS} pf_data
+        prval pf_bytes = array2bytes_v<uint64> {2 * NUMVARS} pf_data
         prval (pf1, pf2, pf3) =
           array_v_subdivide3 {byte} {p_data}
                              {rem, length, BUFSIZE - rem - length}
@@ -246,23 +348,23 @@ spookyhash_update {length} (context, message, length) =
 
         prval _ = pf_bytes := array_v_join3 (pf1, pf2, pf3)
         prval _ =
-          pf_data := bytes2array_v<u64_t> {2 * NUMVARS} pf_bytes
+          pf_data := bytes2array_v<uint64> {2 * NUMVARS} pf_bytes
         val _ = consume_views
       }
     else
       let
-        var h0 : u64_t
-        var h1 : u64_t
-        var h2 : u64_t
-        var h3 : u64_t
-        var h4 : u64_t
-        var h5 : u64_t
-        var h6 : u64_t
-        var h7 : u64_t
-        var h8 : u64_t
-        var h9 : u64_t
-        var h10 : u64_t
-        var h11 : u64_t
+        var h0 : uint64
+        var h1 : uint64
+        var h2 : uint64
+        var h3 : uint64
+        var h4 : uint64
+        var h5 : uint64
+        var h6 : uint64
+        var h7 : uint64
+        var h8 : uint64
+        var h9 : uint64
+        var h10 : uint64
+        var h11 : uint64
       in
         initialize_variables (!p_len, h0, h1, h2, h3,
                               h4, h5, h6, h7, h8, h9,
