@@ -45,10 +45,14 @@ typedef u64_t = [i : int] g1uint (uint64knd, i)
 (********************************************************************)
 
 %{
+_Static_assert (sizeof (atstype_byte) == 1,
+                "atstype_byte is not 1 byte");
+
 _Static_assert (sizeof (atstype_uint64) == 8,
                 "uint64 is not 8 bytes");
 %}
 
+prval _ = $UNSAFE.prop_assert {sizeof (byte) == 1} ()
 prval _ = $UNSAFE.prop_assert {sizeof (uint64) == 8} ()
 
 extern praxi {t : vt@ype}
@@ -380,6 +384,87 @@ initialize_variables (len   : Size_t,
       h11 := state[11]
     end
 
+fn {}
+use_buffered_data {p_data  : addr}
+                  {length  : int}
+                  {p_msg   : addr}
+                  {rem     : int | rem < BUFSIZE;
+                                   BUFSIZE - rem <= length}
+                  (pf_data : !(@[uint64][2 * NUMVARS] @ p_data) >> _,
+                   pf_msg  : @[byte][length] @ p_msg |
+                   p_data  : ptr p_data,
+                   p_msg   : ptr p_msg,
+                   rem     : size_t rem,
+                   length  : size_t length,
+                   s0      : &uint64,
+                   s1      : &uint64,
+                   s2      : &uint64,
+                   s3      : &uint64,
+                   s4      : &uint64,
+                   s5      : &uint64,
+                   s6      : &uint64,
+                   s7      : &uint64,
+                   s8      : &uint64,
+                   s9      : &uint64,
+                   s10     : &uint64,
+                   s11     : &uint64) :<!refwrt>
+    [j : int | ifintrel (rem == 0, 0, BUFSIZE - rem, j)]
+    (@[byte][j] @ p_msg,
+     @[byte][length - j] @ (p_msg + j * sizeof (byte)) |
+     ptr (p_msg + j * sizeof (byte)),
+     size_t (length - j)) =
+  let
+    prval _ = lemma_g1uint_param rem
+  in
+    if rem <> i2sz 0 then
+      let
+        prval (pf_prefx, pf_message) =
+          array_v_subdivide2
+            {byte} {p_msg}
+            {BUFSIZE - rem, length - (BUFSIZE - rem)} pf_msg
+
+        stadef prefx = BUFSIZE - rem
+        val prefx : size_t prefx = (i2sz BUFSIZE) - rem
+
+        (* Copy prefx bytes from the message to the data buffer. *)
+        prval pf_bytes = array2bytes_v<uint64> {2 * NUMVARS} pf_data
+        prval (pf1, pf2, pf3) =
+          array_v_subdivide3 {byte} {p_data}
+                             {rem, prefx, BUFSIZE - rem - prefx}
+                             pf_bytes
+        val _ = memcpy (!(ptr_add<byte> (p_data, rem)),
+                        !p_msg, prefx)
+        prval _ = pf_bytes := array_v_join3 (pf1, pf2, pf3)
+        prval _ =
+          pf_data := bytes2array_v<uint64> {2 * NUMVARS} pf_bytes
+
+        (* Mix in both halves of the data buffer. *)
+        prval (pf1, pf2) =
+          array_v_subdivide2 {uint64} {p_data} {NUMVARS, NUMVARS}
+                             pf_data
+        val p1 = p_data
+        val p2 = ptr_add<uint64> (p_data, i2sz NUMVARS)
+        val _ = spookyhash_mix (!p1, s0, s1, s2, s3, s4, s5,
+                                s6, s7, s8, s9, s10, s11)
+        val _ = spookyhash_mix (!p2, s0, s1, s2, s3, s4, s5,
+                                s6, s7, s8, s9, s10, s11)
+        prval _ = pf_data := array_v_join2 (pf1, pf2)
+      in
+        (* Return the rest of the message, coming after the
+           first prefx bytes. *)
+        (pf_prefx, pf_message | ptr_add<byte> (p_msg, prefx),
+                                length - prefx)
+      end
+    else
+      let      
+        prval (pf_prefx, pf_message) =
+          array_v_subdivide2 {byte} {p_msg} {0, length} pf_msg
+      in
+        (* Return the whole message. *)
+        (pf_prefx, pf_message | p_msg, length)
+      end
+  end
+
 implement
 spookyhash_update {length} (context, message, length) =
   let
@@ -427,7 +512,7 @@ spookyhash_update {length} (context, message, length) =
         val _ = consume_views
       }
     else
-      let
+      {
         var h0 : uint64
         var h1 : uint64
         var h2 : uint64
@@ -440,16 +525,23 @@ spookyhash_update {length} (context, message, length) =
         var h9 : uint64
         var h10 : uint64
         var h11 : uint64
-      in
-        initialize_variables (!p_len, h0, h1, h2, h3,
-                              h4, h5, h6, h7, h8, h9,
-                              h10, h11, !p_state);
-        !p_len := !p_len + length;
 
-        /* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
+        val _ = initialize_variables (!p_len, h0, h1, h2, h3,
+                                      h4, h5, h6, h7, h8, h9,
+                                      h10, h11, !p_state);
+        val _ = !p_len := !p_len + length;
+          
+        val (pf_prefx, pf_message | p_message, length) =
+          use_buffered_data (pf_data, view@ message |
+                             p_data, addr@ message, u8sz rem, length,
+                             h0, h1, h2, h3, h4, h5,
+                             h6, h7, h8, h9, h10, h11)
 
-        consume_views
-      end
+        // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+
+        prval _ = view@ message := array_v_join2 (pf_prefx, pf_message)
+        val _ = consume_views
+      }
   end
 
 (*
