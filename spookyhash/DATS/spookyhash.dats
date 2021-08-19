@@ -31,16 +31,12 @@ staload "spookyhash/SATS/spookyhash.sats"
 
 #include "spookyhash/HATS/spookyhash-parameters.hats"
 #define NUMVARS ATS2_SPOOKYHASH_NUMVARS
+#define BLOCKSIZE ATS2_SPOOKYHASH_BLOCKSIZE
 #define BUFSIZE ATS2_SPOOKYHASH_BUFSIZE
 #define CONST   ATS2_SPOOKYHASH_CONST
 
 typedef remainder_t (i : int) = [i < BUFSIZE] g1uint (uint8knd, i)
 typedef remainder_t = [i : int] remainder_t i
-
-(*
-typedef u64_t (i : int) = g1uint (uint64knd, i)
-typedef u64_t = [i : int] g1uint (uint64knd, i)
-*)
 
 (********************************************************************)
 
@@ -54,6 +50,17 @@ _Static_assert (sizeof (atstype_uint64) == 8,
 
 prval _ = $UNSAFE.prop_assert {sizeof (byte) == 1} ()
 prval _ = $UNSAFE.prop_assert {sizeof (uint64) == 8} ()
+
+prfn
+lemma_mul_isfun {m1, n1 : int}
+                {m2, n2 : int | m1 == m2; n1 == n2}
+                () :<prf>
+    [m1 * n1 == m2 * n2] void =
+  {
+    prval pf1 = mul_make {m1, n1} ()
+    prval pf2 = mul_make {m2, n2} ()
+    prval _ = mul_isfun {m1, n1} {m1 * n1, m2 * n2} (pf1, pf2)
+  }
 
 extern praxi {t : vt@ype}
 array2bytes_v :
@@ -87,7 +94,13 @@ g1ofg1_g1uint {tk : tkind}
               (i  : g1uint (tk, i)) :<>
     [j : int | j == i] g1uint (tk, j)
 
+extern castfn
+g1ofg1_ptr {p : addr}
+           (p : ptr p) :<>
+    [q : addr | q == p] ptr q
+
 overload g1ofg1 with g1ofg1_g1uint
+overload g1ofg1 with g1ofg1_ptr
 
 extern castfn
 u2u8 {i : int} (i : uint i) :<> uint8 i
@@ -103,6 +116,16 @@ memcpy {n   : int}
        (dst : &(@[byte?][n]) >> @[byte][n],
         src : &RD(@[byte][n]),
         n   : size_t n) :<!refwrt> void = "mac#%"
+
+(* A natural numbers mod function. *)
+extern fn
+natmod_size {x, y : nat | y != 0}
+            (x    : size_t x,
+             y    : size_t y) :<>
+    [z : nat | z <= x; z < y; z == x mod y]
+    size_t z = "mac#%"
+
+overload natmod with natmod_size
 
 extern fun
 bitwise_and_ullint (x : ullint, y : ullint) :<> ullint = "mac#%"
@@ -278,7 +301,7 @@ spookyhash_mix (data : &RD(@[uint64][NUMVARS]),
 
 fn {}
 spookyhash_mix_unaligned
-        (data : &RD(@[byte][NUMVARS * sizeof (uint64)]),
+        (data : &RD(@[byte][BLOCKSIZE]),
          s0   : &uint64,
          s1   : &uint64,
          s2   : &uint64,
@@ -331,6 +354,8 @@ spookyhash_init (context, seed1, seed2) =
     val _ = state[1] := g1ofg0 seed2
     prval _ = consume_pf pf
   }
+
+(********************************************************************)
 
 fn {}
 initialize_variables (len   : Size_t,
@@ -465,6 +490,49 @@ use_buffered_data {p_data  : addr}
       end
   end
 
+fun {}
+mix_in_blocks {block_count : int}
+              {p_blocks    : addr}
+              {i           : int | 0 <= i; i <= block_count}
+              .<block_count - i>.
+              (pf_blocks   : !(@[byte][block_count * BLOCKSIZE]
+                                  @ p_blocks) >> _ |
+               p_blocks    : ptr p_blocks,
+               block_count : size_t block_count,
+               i           : size_t i,
+               s0          : &uint64,
+               s1          : &uint64,
+               s2          : &uint64,
+               s3          : &uint64,
+               s4          : &uint64,
+               s5          : &uint64,
+               s6          : &uint64,
+               s7          : &uint64,
+               s8          : &uint64,
+               s9          : &uint64,
+               s10         : &uint64,
+               s11         : &uint64) :<!refwrt> void =
+  if i <> block_count then
+    {
+      stadef total_size = block_count * BLOCKSIZE
+      stadef before = i * BLOCKSIZE
+      stadef after = total_size - BLOCKSIZE - before
+      prval (pf_before, pf_block, pf_after) =
+        array_v_subdivide3 {byte} {p_blocks}
+                           {before, BLOCKSIZE, after}
+                           pf_blocks
+      val p = ptr_add<byte> (p_blocks, i * i2sz BLOCKSIZE)
+      val _ = spookyhash_mix_unaligned (!p, s0, s1, s2, s3, s4, s5,
+                                        s6, s7, s8, s9, s10, s11)
+      prval _ =
+        pf_blocks := array_v_join3 (pf_before, pf_block, pf_after)
+
+      val _ = mix_in_blocks (pf_blocks | p_blocks, block_count,
+                                         succ i, s0, s1, s2, s3,
+                                         s4, s5, s6, s7, s8, s9,
+                                         s10, s11) 
+    }
+
 implement
 spookyhash_update {length} (context, message, length) =
   let
@@ -509,6 +577,7 @@ spookyhash_update {length} (context, message, length) =
         prval _ = pf_bytes := array_v_join3 (pf1, pf2, pf3)
         prval _ =
           pf_data := bytes2array_v<uint64> {2 * NUMVARS} pf_bytes
+
         val _ = consume_views
       }
     else
@@ -530,76 +599,84 @@ spookyhash_update {length} (context, message, length) =
                                       h4, h5, h6, h7, h8, h9,
                                       h10, h11, !p_state);
         val _ = !p_len := !p_len + length;
-          
-        val (pf_prefx, pf_message | p_message, length) =
+
+        val [p_msg : addr] p_msg = g1ofg1 (addr@ message)          
+        val [j : int] (pf_prefx, pf_message | p_message, length1) =
           use_buffered_data (pf_data, view@ message |
-                             p_data, addr@ message, u8sz rem, length,
+                             p_data, p_msg, u8sz rem, length,
                              h0, h1, h2, h3, h4, h5,
                              h6, h7, h8, h9, h10, h11)
+        stadef length1 = length - j
+        stadef p_message = p_msg + j * sizeof (byte)
 
-        // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+        (* Divide the message into blocks and a small remainder. *)
+        stadef block_count = ndiv (length1, BLOCKSIZE)
+        stadef remainder = nmod (length1, BLOCKSIZE)
+        val block_count : size_t block_count =
+          g1uint_div (length1, i2sz BLOCKSIZE)
+        val remainder : size_t remainder =
+          natmod (length1, i2sz BLOCKSIZE)
 
+        prval _ = prop_verify {block_count * BLOCKSIZE + remainder
+                                    == length1} ()
+        prval _ = prop_verify {remainder < BLOCKSIZE} ()
+
+        prval (pf_blocks, pf_remainder) =
+          array_v_subdivide2
+            {byte} {p_message} {block_count * BLOCKSIZE, remainder}
+            pf_message
+
+        (* Handle all the full-size blocks. *)
+        val _ = mix_in_blocks (pf_blocks |
+                               p_message, block_count, i2sz 0,
+                               h0, h1, h2, h3, h4, h5,
+                               h6, h7, h8, h9, h10, h11)
+
+        (* Store the remainder. *)
+        val _ = !p_rem := sz2u8 remainder
+        val p_remainder =
+          ptr_add<byte> {p_message} {block_count * BLOCKSIZE}
+                        (p_message, block_count * i2sz BLOCKSIZE)
+        prval pf_bytes = array2bytes_v<uint64> {2 * NUMVARS} pf_data
+        prval (pf_data1, pf_data2) =
+          array_v_subdivide2 {byte} {p_data}
+                             {remainder, BUFSIZE - remainder}
+                             pf_bytes
+        val _ = memcpy (!p_data, !p_remainder, remainder)
+        prval _ = pf_bytes :=
+          array_v_join2 {byte} {p_data}
+                        {remainder, BUFSIZE - remainder}
+                        (pf_data1, pf_data2)
+        prval _ =
+          pf_data := bytes2array_v<uint64> {2 * NUMVARS} pf_bytes
+
+        (* Store the state variables. *)
+        val _ =
+          let
+            macdef state = !p_state
+          in
+            state[0] := h0;
+            state[1] := h1;
+            state[2] := h2;
+            state[3] := h3;
+            state[4] := h4;
+            state[5] := h5;
+            state[6] := h6;
+            state[7] := h7;
+            state[8] := h8;
+            state[9] := h9;
+            state[10] := h10;
+            state[11] := h11
+          end
+
+        prval _ = pf_message :=
+          array_v_join2 {byte} {p_message}
+                        {block_count * BLOCKSIZE, remainder}
+                        (pf_blocks, pf_remainder)
         prval _ = view@ message := array_v_join2 (pf_prefx, pf_message)
+
         val _ = consume_views
       }
   end
-
-(*
-    // if we've got anything stuffed away, use it now
-    if (m_remainder)
-    {
-        uint8 prefix = sc_bufSize-m_remainder;
-        memcpy(&(((uint8 * )m_data)[m_remainder]), message, prefix);
-        u.p64 = m_data;
-        Mix(u.p64, h0,h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11);
-        Mix(&u.p64[sc_numVars], h0,h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11);
-        u.p8 = ((const uint8 * )message) + prefix;
-        length -= prefix;
-    }
-    else
-    {
-        u.p8 = (const uint8 * )message;
-    }
-    
-    // handle all whole blocks of sc_blockSize bytes
-    end = u.p64 + (length/sc_blockSize)*sc_numVars;
-    remainder = (uint8)(length-((const uint8 * )end-u.p8));
-    if (ALLOW_UNALIGNED_READS || (u.i & 0x7) == 0)
-    {
-        while (u.p64 < end)
-        { 
-            Mix(u.p64, h0,h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11);
-	    u.p64 += sc_numVars;
-        }
-    }
-    else
-    {
-        while (u.p64 < end)
-        { 
-            memcpy(m_data, u.p8, sc_blockSize);
-            Mix(m_data, h0,h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11);
-	    u.p64 += sc_numVars;
-        }
-    }
-
-    // stuff away the last few bytes
-    m_remainder = remainder;
-    memcpy(m_data, end, remainder);
-    
-    // stuff away the variables
-    m_state[0] = h0;
-    m_state[1] = h1;
-    m_state[2] = h2;
-    m_state[3] = h3;
-    m_state[4] = h4;
-    m_state[5] = h5;
-    m_state[6] = h6;
-    m_state[7] = h7;
-    m_state[8] = h8;
-    m_state[9] = h9;
-    m_state[10] = h10;
-    m_state[11] = h11;
-}
-*)
 
 (********************************************************************)

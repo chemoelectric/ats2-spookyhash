@@ -21,8 +21,8 @@
 /* This file can be read as either C or ATS2. */
 
 #define ATS2_SPOOKYHASH_NUMVARS 12
-#define ATS2_SPOOKYHASH_BLOCKSIZE 96 /* = (NUMVARS * 8) */
-#define ATS2_SPOOKYHASH_BUFSIZE 192 /* = (BLOCKSIZE * 2) */
+#define ATS2_SPOOKYHASH_BLOCKSIZE 96 /* = (NUMVARS * sizeof uint64) */
+#define ATS2_SPOOKYHASH_BUFSIZE 192  /* = (BLOCKSIZE * 2) */
 
 /*
  * sc_const: a constant which:
@@ -31,4 +31,4 @@
  *    is a not-very-regular mix of 1's and 0's
  *    does not need any other special mathematical properties
  */
-#define ATS2_SPOOKYHASH_CONST 0xdeadbeefdeadbeefLL
+#define ATS2_SPOOKYHASH_CONST 0xdeadbeefdeadbeefULL

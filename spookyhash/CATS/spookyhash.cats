@@ -287,6 +287,13 @@ ats2_spookyhash_m_remainder (atstype_ref ctx)
   return &((ats2_spookyhash_context_t *) ctx)->remainder;
 }
 
+/* A natural numbers mod function. */
+ats2_spookyhash_always_inline atstype_size
+ats2_spookyhash_natmod_size (atstype_size x, atstype_size y)
+{
+  return (x % y);
+}
+
 /* Bitwise left rotation by an amount less than 64. */
 ats2_spookyhash_always_inline atstype_uint64
 ats2_spookyhash_bitwise_lrotate_uint64_uint (atstype_uint64 x,
