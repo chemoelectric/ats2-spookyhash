@@ -21,6 +21,15 @@
 #ifndef ATS2_SPOOKYHASH_CATS_HEADER_GUARD__
 #define ATS2_SPOOKYHASH_CATS_HEADER_GUARD__
 
+#ifndef ATS2_SPOOKYHASH_ALLOW_UNALIGNED_READS
+#if defined (__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+/* Intel/AMD x86 support unaligned reads. */
+#define ATS2_SPOOKYHASH_ALLOW_UNALIGNED_READS 1
+#else
+#define ATS2_SPOOKYHASH_ALLOW_UNALIGNED_READS 0
+#endif
+#endif
+
 _Static_assert (sizeof (atstype_uint32) == 4,
                 "uint32 is not 4 bytes");
 _Static_assert (sizeof (atstype_uint64) == 8,
@@ -284,6 +293,14 @@ ats2_spookyhash_bitwise_lrotate_uint64_uint (atstype_uint64 x,
                                              atstype_uint i)
 {
   return (x << i) | (x >> ((-i) & 63));
+}
+
+/* Bitwise and. */
+ats2_spookyhash_always_inline atstype_ullint
+ats2_spookyhash_bitwise_and_ullint (atstype_ullint x,
+                                    atstype_ullint y)
+{
+  return (x & y);
 }
 
 /* Bitwise exclusive or. */

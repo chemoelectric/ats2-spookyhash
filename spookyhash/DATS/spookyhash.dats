@@ -63,6 +63,18 @@ bytes2array_v :
   {p : addr}
   (@[byte][n * sizeof (t)] @ p) -<prf> (@[t][n] @ p)
 
+extern praxi {t : vt@ype}
+array2bytesqmark_v :
+  {n : int}
+  {p : addr}
+  (@[t][n] @ p) -<prf> (@[byte?][n * sizeof (t)] @ p)
+
+extern praxi {t : vt@ype}
+bytesqmark2array_v :
+  {n : int}
+  {p : addr}
+  (@[byte?][n * sizeof (t)] @ p) -<prf> (@[t][n] @ p)
+
 (********************************************************************)
 
 extern castfn
@@ -89,6 +101,11 @@ memcpy {n   : int}
         n   : size_t n) :<!refwrt> void = "mac#%"
 
 extern fun
+bitwise_and_ullint (x : ullint, y : ullint) :<> ullint = "mac#%"
+
+overload bitwise_and with bitwise_and_ullint
+
+extern fun
 bitwise_xor_uint64 (x : uint64, y : uint64) :<> uint64 = "mac#%"
 
 overload bitwise_xor with bitwise_xor_uint64
@@ -112,6 +129,28 @@ extern fun
 fix_byte_order_uint64 (x : uint64) :<> uint64 = "mac#%"
 
 overload fix_byte_order with fix_byte_order_uint64
+
+fn {}
+allow_direct_read_g1 {p : addr}
+                         (p : ptr p) :<> bool =
+  if $extval (int, "ATS2_SPOOKYHASH_ALLOW_UNALIGNED_READS") <> 0 then
+    true
+  else
+    let
+      (* FIXME: Use actual uintptr_t if possible. *)
+      typedef my_uintptr_t = ullint
+      val i = $UNSAFE.cast{my_uintptr_t} p
+      val mask = $UNSAFE.cast{my_uintptr_t} 0x07U
+    in
+      bitwise_and (i, mask) = $UNSAFE.cast{my_uintptr_t} 0
+    end
+
+fn {}
+allow_direct_read_g0 (p : ptr) :<> bool =
+  allow_direct_read_g1 (g1ofg0 p)
+
+overload allow_direct_read with allow_direct_read_g0 of 0
+overload allow_direct_read with allow_direct_read_g1 of 10
 
 (********************************************************************)
 
@@ -232,6 +271,42 @@ spookyhash_mix (data : &RD(@[uint64][NUMVARS]),
     s11 := s11 <<@ 46U;
     s10 := s10 + s0
   end
+
+fn {}
+spookyhash_mix_unaligned
+        (data : &RD(@[byte][NUMVARS * sizeof (uint64)]),
+         s0   : &uint64,
+         s1   : &uint64,
+         s2   : &uint64,
+         s3   : &uint64,
+         s4   : &uint64,
+         s5   : &uint64,
+         s6   : &uint64,
+         s7   : &uint64,
+         s8   : &uint64,
+         s9   : &uint64,
+         s10  : &uint64,
+         s11  : &uint64) :<!refwrt> void =
+  if allow_direct_read (addr@ data) then
+    {
+      prval _ =
+        view@ data := bytes2array_v<uint64> {NUMVARS} (view@ data)
+      val _ = spookyhash_mix (data, s0, s1, s2, s3, s4, s5,
+                              s6, s7, s8, s9, s10, s11)
+      prval _ =
+        view@ data := array2bytes_v<uint64> {NUMVARS} (view@ data)
+    }
+  else
+    {
+      var buf : @[uint64][NUMVARS]
+      prval _ =
+        view@ buf := array2bytesqmark_v<uint64?> {NUMVARS} (view@ buf)
+      val _ = memcpy (buf, data, (i2sz NUMVARS) * sizeof<uint64>)
+      prval _ =
+        view@ buf := bytes2array_v<uint64> {NUMVARS} (view@ buf)
+      val _ = spookyhash_mix (buf, s0, s1, s2, s3, s4, s5,
+                              s6, s7, s8, s9, s10, s11)
+    }
 
 (********************************************************************)
 
