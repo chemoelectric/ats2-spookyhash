@@ -95,47 +95,6 @@ lemma_mul_isfun {m1, n1 : int}
 
 (********************************************************************)
 
-extern castfn
-g1ofg1_g1uint {tk : tkind}
-              {i  : int}
-              (i  : g1uint (tk, i)) :<>
-    [j : int | j == i] g1uint (tk, j)
-
-extern castfn
-g1ofg1_ptr {p : addr}
-           (p : ptr p) :<>
-    [q : addr | q == p] ptr q
-
-overload g1ofg1 with g1ofg1_g1uint
-overload g1ofg1 with g1ofg1_ptr
-
-extern castfn
-u2u8 {i : int} (i : uint i) :<> uint8 i
-
-extern castfn
-u8sz {i : int} (i : uint8 i) :<> size_t i
-
-extern castfn
-sz2u8 {i : int} (i : size_t i) :<> uint8 i
-
-extern castfn
-u32u64 (i : uint32) :<> uint64
-
-fn {}
-byte2u64 (b : byte) :<> uint64 =
-  $UNSAFE.cast{uint64} ($UNSAFE.cast{uint8} b)
-
-(*------------------------------------------------------------------*)
-
-(* An interface to memcpy or __builtin_memcpy. *)
-extern fun
-memcpy {n   : int}
-       (dst : &(@[byte?][n]) >> @[byte][n],
-        src : &RD(@[byte][n]),
-        n   : size_t n) :<!refwrt> void = "mac#%"
-
-(*------------------------------------------------------------------*)
-
 (* A natural numbers mod function. *)
 extern fn
 natmod_size {x, y : nat | y != 0}
@@ -151,7 +110,11 @@ overload natmod with natmod_size
 extern fun
 bitwise_and_ullint (x : ullint, y : ullint) :<> ullint = "mac#%"
 
+extern fun
+bitwise_and_uint64 (x : uint64, y : uint64) :<> uint64 = "mac#%"
+
 overload bitwise_and with bitwise_and_ullint
+overload bitwise_and with bitwise_and_uint64
 
 (*------------------------------------------------------------------*)
 
@@ -203,6 +166,51 @@ fix_byte_order_uint64 (x : uint64) :<> uint64 = "mac#%"
 
 overload fix_byte_order with fix_byte_order_uint32
 overload fix_byte_order with fix_byte_order_uint64
+
+(*------------------------------------------------------------------*)
+
+extern castfn
+g1ofg1_g1uint {tk : tkind}
+              {i  : int}
+              (i  : g1uint (tk, i)) :<>
+    [j : int | j == i] g1uint (tk, j)
+
+extern castfn
+g1ofg1_ptr {p : addr}
+           (p : ptr p) :<>
+    [q : addr | q == p] ptr q
+
+overload g1ofg1 with g1ofg1_g1uint
+overload g1ofg1 with g1ofg1_ptr
+
+extern castfn
+u2u8 {i : int} (i : uint i) :<> uint8 i
+
+extern castfn
+u8sz {i : int} (i : uint8 i) :<> size_t i
+
+extern castfn
+sz2u8 {i : int} (i : size_t i) :<> uint8 i
+
+extern castfn
+u32u64 (i : uint32) :<> uint64
+
+fn {}
+u64u32 (i : uint64) :<> uint32 =
+  $UNSAFE.cast (bitwise_and (i, $UNSAFE.cast 0xFFFFFFFFULL))
+
+fn {}
+byte2u64 (b : byte) :<> uint64 =
+  $UNSAFE.cast{uint64} ($UNSAFE.cast{uint8} b)
+
+(*------------------------------------------------------------------*)
+
+(* An interface to memcpy or __builtin_memcpy. *)
+extern fun
+memcpy {n   : int}
+       (dst : &(@[byte?][n]) >> @[byte][n],
+        src : &RD(@[byte][n]),
+        n   : size_t n) :<!refwrt> void = "mac#%"
 
 (*------------------------------------------------------------------*)
 
@@ -663,8 +671,10 @@ fn {}
 _short {length  : int}
        (message : &(@[byte][length]), (* Message aligned for uint64 *)
         length  : size_t length,
-        hash1   : &uint64,
-        hash2   : &uint64) :<!refwrt> void =
+        seed1   : uint64,
+        seed2   : uint64) :<!refwrt>
+    @(uint64,       (* The first 64 bits (in native-endian order). *)
+      uint64) =     (* The second 64 bits (in native-endian order). *)
   let
     prval _ = lemma_g1uint_param length
 
@@ -678,8 +688,8 @@ _short {length  : int}
     stadef past_blocks = block_count * 32
     val past_blocks : size_t past_blocks = block_count * 32
 
-    var a : uint64 = hash1
-    var b : uint64 = hash2
+    var a : uint64 = seed1
+    var b : uint64 = seed2
     var c : uint64 = $UNSAFE.cast CONST
     var d : uint64 = $UNSAFE.cast CONST
 
@@ -959,20 +969,22 @@ _short {length  : int}
                          a, b, c, d);
 
     spookyhash_short_end<> (a, b, c, d);
-    hash1 := a;
-    hash2 := b
+
+    @(a, b)
   end
 
 fn {}
 spookyhash_short {length  : int | length <= BUFSIZE}
                  (message : &(@[byte][length]),
                   length  : size_t length,
-                  hash1   : &uint64,
-                  hash2   : &uint64) :<!refwrt> void =
+                  seed1   : uint64,
+                  seed2   : uint64) :<!refwrt>
+    @(uint64,       (* The first 64 bits (in native-endian order). *)
+      uint64) =     (* The second 64 bits (in native-endian order). *)
   if allow_direct_read (addr@ message) then
-    _short<> (message, length, hash1, hash2)
+    _short<> (message, length, seed1, seed2)
   else
-    {
+    let
       prval _ = lemma_g1uint_param length
 
       (* A buffer that obviously is aligned for uint64. *)
@@ -985,14 +997,16 @@ spookyhash_short {length  : int | length <= BUFSIZE}
                            pf_bytes
 
       val _ = memcpy (buf, message, length)
-      val _ = _short<> (buf, length, hash1, hash2)
+      val result = _short<> (buf, length, seed1, seed2)
 
       prval _ = pf_bytes :=
         array_v_join2 {byte} {..} {length, BUFSIZE - length}
                       (pf_dest, pf_after)
       prval _ = view@ buf :=
         bytes2array<uint64?> {TWICE_NUMVARS} pf_bytes
-    }
+    in
+      result
+    end
 
 (********************************************************************)
 
@@ -1386,5 +1400,17 @@ spookyhash_final (context) =
         ($UNSAFE.cast 111111111111111, $UNSAFE.cast 222222222222222222) (* FIXME *)
       end
   end
+
+(********************************************************************)
+(* Hash functions that are just spookyhash_hash128 with the
+   result truncated. *)
+
+implement
+spookyhash_hash64 (message, length, seed) =
+  (spookyhash_hash128 (message, length, seed, seed)).0
+
+implement
+spookyhash_hash32 (message, length, seed) =
+  u64u32 (spookyhash_hash64 (message, length, u32u64 seed))
 
 (********************************************************************)

@@ -31,6 +31,29 @@ along with this program. If not, see
 #define ATS_EXTERN_PREFIX "ats2_spookyhash_"
 
 (********************************************************************)
+
+fun
+spookyhash_hash128 {length  : int}
+                   (message : &(@[byte][length]),
+                    length  : size_t length,
+                    seed1   : uint64,
+                    seed2   : uint64) :<!refwrt>
+    @(uint64,       (* The first 64 bits (in native-endian order). *)
+      uint64)       (* The second 64 bits (in native-endian order). *)
+
+fun
+spookyhash_hash64 {length  : int}
+                  (message : &(@[byte][length]),
+                   length  : size_t length,
+                   seed    : uint64) :<!refwrt> uint64
+
+fun
+spookyhash_hash32 {length  : int}
+                  (message : &(@[byte][length]),
+                   length  : size_t length,
+                   seed    : uint32) :<!refwrt> uint32
+
+(********************************************************************)
 (* Calculation of a hash by incrementally updating.                 *)
 
 typedef spookyhash_context_t = $extype"ats2_spookyhash_context_t"

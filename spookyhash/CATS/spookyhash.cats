@@ -161,6 +161,14 @@ ats2_spookyhash_bitwise_and_ullint (atstype_ullint x,
   return (x & y);
 }
 
+/* Bitwise and. */
+ats2_spookyhash_always_inline atstype_uint64
+ats2_spookyhash_bitwise_and_uint64 (atstype_uint64 x,
+                                    atstype_uint64 y)
+{
+  return (x & y);
+}
+
 /* Bitwise exclusive or. */
 ats2_spookyhash_always_inline atstype_uint64
 ats2_spookyhash_bitwise_xor_uint64 (atstype_uint64 x,
