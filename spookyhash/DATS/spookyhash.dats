@@ -336,6 +336,268 @@ spookyhash_mix_unaligned
     }
 
 (********************************************************************)
+(*
+ * spookyhash_end_partial, spookyhash_end:
+ *
+ * Mix all 12 inputs together so that h0, h1 are a hash of them all.
+ *
+ * For two inputs differing in just the input bits
+ * Where "differ" means xor or subtraction
+ * And the base value is random, or a counting value starting at that bit
+ * The final result will have each bit of h0, h1 flip
+ * For every input bit,
+ * with probability 50 +- .3%
+ * For every pair of input bits,
+ * with probability 50 +- 3%
+ *
+ * This does not rely on the last Mix() call having already mixed some.
+ * Two iterations was almost good enough for a 64-bit result, but a
+ * 128-bit result is reported, so End() does three iterations.
+ *
+ *)
+
+fn {}
+spookyhash_end_partial (h0  : &uint64,
+                        h1  : &uint64,
+                        h2  : &uint64,
+                        h3  : &uint64,
+                        h4  : &uint64,
+                        h5  : &uint64,
+                        h6  : &uint64,
+                        h7  : &uint64,
+                        h8  : &uint64,
+                        h9  : &uint64,
+                        h10 : &uint64,
+                        h11 : &uint64) :<!refwrt> void =
+  begin
+    h11 := h11 + h1;
+    h2 := h2 ^ h11;
+    h1 := h1 <<@ 44U;
+
+    h0 := h0 + h2;
+    h3 := h3 ^ h0;
+    h2 := h2 <<@ 15U;
+
+    h1 := h1 + h3;
+    h4 := h4 ^ h1;
+    h3 := h3 <<@ 34U;
+
+    h2 := h2 + h4;
+    h5 := h5 ^ h2;
+    h4 := h4 <<@ 21U;
+
+    h3 := h3 + h5;
+    h6 := h6 ^ h3;
+    h5 := h5 <<@ 38U;
+
+    h4 := h4 + h6;
+    h7 := h7 ^ h4;
+    h6 := h6 <<@ 33U;
+
+    h5 := h5 + h7;
+    h8 := h8 ^ h5;
+    h7 := h7 <<@ 10U;
+
+    h6 := h6 + h8;
+    h9 := h9 ^ h6;
+    h8 := h8 <<@ 13U;
+
+    h7 := h7 + h9;
+    h10 := h10 ^ h7;
+    h9 := h9 <<@ 38U;
+
+    h8 := h8 + h10;
+    h11 := h11 ^ h8;
+    h10:= h10 <<@ 53U;
+
+    h9 := h9 + h11;
+    h0 := h0 ^ h9;
+    h11:= h11 <<@ 42U;
+
+    h10 := h10 + h0;
+    h1 := h1 ^ h10;
+    h0 := h0 <<@ 54U
+  end
+
+fn {}
+spookyhash_end (data : &RD(@[uint64][NUMVARS]),
+                h0   : &uint64,
+                h1   : &uint64,
+                h2   : &uint64,
+                h3   : &uint64,
+                h4   : &uint64,
+                h5   : &uint64,
+                h6   : &uint64,
+                h7   : &uint64,
+                h8   : &uint64,
+                h9   : &uint64,
+                h10  : &uint64,
+                h11  : &uint64) :<!refwrt> void =
+  begin
+    h0 := h0 + fix_byte_order data[0];
+    h1 := h1 + fix_byte_order data[1];
+    h2 := h2 + fix_byte_order data[2];
+    h3 := h3 + fix_byte_order data[3];
+    h4 := h4 + fix_byte_order data[4];
+    h5 := h5 + fix_byte_order data[5];
+    h6 := h6 + fix_byte_order data[6];
+    h7 := h7 + fix_byte_order data[7];
+    h8 := h8 + fix_byte_order data[8];
+    h9 := h9 + fix_byte_order data[9];
+    h10 := h10 + fix_byte_order data[10];
+    h11 := h11 + fix_byte_order data[11];
+    spookyhash_end_partial<> (h0, h1, h2, h3, h4, h5,
+                              h6, h7, h8, h9, h10, h11);
+    spookyhash_end_partial<> (h0, h1, h2, h3, h4, h5,
+                              h6, h7, h8, h9, h10, h11);
+    spookyhash_end_partial<> (h0, h1, h2, h3, h4, h5,
+                              h6, h7, h8, h9, h10, h11)
+  end
+
+(********************************************************************)
+(*
+ * spookyhash_short_mix:
+ *
+ * The goal is for each bit of the input to expand into 128 bits of 
+ *   apparent entropy before it is fully overwritten.
+ * n trials both set and cleared at least m bits of h0 h1 h2 h3
+ *   n: 2   m: 29
+ *   n: 3   m: 46
+ *   n: 4   m: 57
+ *   n: 5   m: 107
+ *   n: 6   m: 146
+ *   n: 7   m: 152
+ * when run forwards or backwards
+ * for all 1-bit and 2-bit diffs
+ * with diffs defined by either xor or subtraction
+ * with a base of all zeros plus a counter, or plus another bit, or random
+ *
+ *)
+
+fn {}
+spookyhash_short_mix (h0 : &uint64,
+                      h1 : &uint64,
+                      h2 : &uint64,
+                      h3 : &uint64) :<!refwrt> void =
+  begin
+    h2 := h2 <<@ 50U;
+    h2 := h2 + h3;
+    h0 := h0 ^ h2;
+
+    h3 := h3 <<@ 52U;
+    h3 := h3 + h0;
+    h1 := h1 ^ h3;
+
+    h0 := h0 <<@ 30U;
+    h0 := h0 + h1;
+    h2 := h2 ^ h0;
+
+    h1 := h1 <<@ 41U;
+    h1 := h1 + h2;
+    h3 := h3 ^ h1;
+
+    h2 := h2 <<@ 54U;
+    h2 := h2 + h3;
+    h0 := h0 ^ h2;
+
+    h3 := h3 <<@ 48U;
+    h3 := h3 + h0;
+    h1 := h1 ^ h3;
+
+    h0 := h0 <<@ 38U;
+    h0 := h0 + h1;
+    h2 := h2 ^ h0;
+
+    h1 := h1 <<@ 37U;
+    h1 := h1 + h2;
+    h3 := h3 ^ h1;
+
+    h2 := h2 <<@ 62U;
+    h2 := h2 + h3;
+    h0 := h0 ^ h2;
+
+    h3 := h3 <<@ 34U;
+    h3 := h3 + h0;
+    h1 := h1 ^ h3;
+
+    h0 := h0 <<@ 5U;
+    h0 := h0 + h1;
+    h2 := h2 ^ h0;
+
+    h1 := h1 <<@ 36U;
+    h1 := h1 + h2;
+    h3 := h3 ^ h1
+  end
+
+(********************************************************************)
+(*
+ * spookyhash_short_end:
+ *
+ * Mix all 4 inputs together so that h0, h1 are a hash of them all.
+ *
+ * For two inputs differing in just the input bits
+ * Where "differ" means xor or subtraction
+ * And the base value is random, or a counting value starting at that bit
+ * The final result will have each bit of h0, h1 flip
+ * For every input bit,
+ * with probability 50 +- .3% (it is probably better than that)
+ * For every pair of input bits,
+ * with probability 50 +- .75% (the worst case is approximately that)
+ *
+ *)
+
+fn {}
+spookyhash_short_end (h0 : &uint64,
+                      h1 : &uint64,
+                      h2 : &uint64,
+                      h3 : &uint64) :<!refwrt> void =
+  begin
+    h3 := h3 ^ h2;
+    h2 := h2 <<@ 15U;
+    h3 := h3 + h2;
+    
+    h0 := h0 ^ h3;
+    h3 := h3 <<@ 52U;
+    h0 := h0 + h3;
+    
+    h1 := h1 ^ h0;
+    h0 := h0 <<@ 26U;
+    h1 := h1 + h0;
+    
+    h2 := h2 ^ h1;
+    h1 := h1 <<@ 51U;
+    h2 := h2 + h1;
+    
+    h3 := h3 ^ h2;
+    h2 := h2 <<@ 28U;
+    h3 := h3 + h2;
+    
+    h0 := h0 ^ h3;
+    h3 := h3 <<@ 9U;
+    h0 := h0 + h3;
+    
+    h1 := h1 ^ h0;
+    h0 := h0 <<@ 47U;
+    h1 := h1 + h0;
+    
+    h2 := h2 ^ h1;
+    h1 := h1 <<@ 54U;
+    h2 := h2 + h1;
+    
+    h3 := h3 ^ h2;
+    h2 := h2 <<@ 32U;
+    h3 := h3 + h2;
+    
+    h0 := h0 ^ h3;
+    h3 := h3 <<@ 25U;
+    h0 := h0 + h3;
+    
+    h1 := h1 ^ h0;
+    h0 := h0 <<@ 63U;
+    h1 := h1 + h0
+  end
+
+(********************************************************************)
 
 implement
 spookyhash_init (context, seed1, seed2) =
@@ -689,6 +951,42 @@ spookyhash_update {length} (context, message, length) =
 
         val _ = consume_views
       }
+  end
+
+(********************************************************************)
+
+implement
+spookyhash_final (context) =
+  let
+    val [p_data : addr]
+        (pf_data, consume_pf_data | p_data) = m_data (context)
+    val [p_state : addr]
+        (pf_state, consume_pf_state | p_state) = m_state (context)
+    val [p_len : addr]
+        (pf_len, consume_pf_len | p_len) = m_length (context)
+    val [p_rem : addr]
+        (pf_rem, consume_pf_rem | p_rem) = m_remainder (context)
+  
+    macdef consume_views =
+      {
+        prval _ = consume_pf_data pf_data
+        prval _ = consume_pf_state pf_state
+        prval _ = consume_pf_len pf_len
+        prval _ = consume_pf_rem pf_rem
+      }
+
+    val len = !p_len
+  in
+    if len < i2sz BUFSIZE then
+      begin
+        consume_views;
+        ($UNSAFE.cast 111111111111111, $UNSAFE.cast 222222222222222222) (* FIXME *)
+      end
+    else
+      begin
+        consume_views;
+        ($UNSAFE.cast 111111111111111, $UNSAFE.cast 222222222222222222) (* FIXME *)
+      end
   end
 
 (********************************************************************)
