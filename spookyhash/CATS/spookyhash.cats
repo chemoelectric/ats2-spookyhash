@@ -92,163 +92,6 @@ _Static_assert (ats2_spookyhash_bswap32 (0xDEADBEEFU) == 0xEFBEADDEU,
                 "ats2_spookyhash_bswap32 does not work correctly.");
 /* FIXME: Add a test of ats2_spookyhash_bswap64 */
 
-
-#if 0                           /////////////////////////////////////////////////////////////////// FIXME //////////////////////////////////////////
-/* A natural numbers mod function. */
-ats2_spookyhash_always_inline atstype_size
-ats2_spookyhash_natmod_size (atstype_size x, atstype_size y)
-{
-  return (x % y);
-}
-
-/* Bitwise inclusive or. */
-ats2_spookyhash_always_inline atstype_uint32
-ats2_spookyhash_bitwise_ior_uint32 (atstype_uint32 x,
-                                    atstype_uint32 y)
-{
-  return (x | y);
-}
-
-/* Bitwise inclusive or. */
-ats2_spookyhash_always_inline atstype_uint64
-ats2_spookyhash_bitwise_ior_uint64 (atstype_uint64 x,
-                                    atstype_uint64 y)
-{
-  return (x | y);
-}
-
-/* Bitwise exclusive or. */
-ats2_spookyhash_always_inline atstype_uint32
-ats2_spookyhash_bitwise_xor_uint32 (atstype_uint32 x,
-                                    atstype_uint32 y)
-{
-  return (x ^ y);
-}
-
-/* Bitwise exclusive or. */
-ats2_spookyhash_always_inline atstype_uint64
-ats2_spookyhash_bitwise_xor_uint64 (atstype_uint64 x,
-                                    atstype_uint64 y)
-{
-  return (x ^ y);
-}
-
-/* Bitwise left shift, with zero-fill. */
-ats2_spookyhash_always_inline atstype_uint32
-ats2_spookyhash_bitwise_lshift_uint32_uint (atstype_uint32 x,
-                                            atstype_uint i)
-{
-  return (x << i);
-}
-
-/* Bitwise left shift, with zero-fill. */
-ats2_spookyhash_always_inline atstype_uint64
-ats2_spookyhash_bitwise_lshift_uint64_uint (atstype_uint64 x,
-                                            atstype_uint i)
-{
-  return (x << i);
-}
-
-/* Bitwise right shift, with zero-fill. */
-ats2_spookyhash_always_inline atstype_uint32
-ats2_spookyhash_bitwise_rshift_uint32_uint (atstype_uint32 x,
-                                            atstype_uint i)
-{
-  return (x >> i);
-}
-
-/* Bitwise right shift, with zero-fill. */
-ats2_spookyhash_always_inline atstype_uint64
-ats2_spookyhash_bitwise_rshift_uint64_uint (atstype_uint64 x,
-                                            atstype_uint i)
-{
-  return (x >> i);
-}
-
-/* Bitwise left rotation by an amount less than 32. */
-ats2_spookyhash_always_inline atstype_uint32
-ats2_spookyhash_bitwise_lrotate_uint32_uint (atstype_uint32 x,
-                                             atstype_uint i)
-{
-  return (x << i) | (x >> ((-i) & 31));
-}
-
-/* Bitwise left rotation by an amount less than 64. */
-ats2_spookyhash_always_inline atstype_uint64
-ats2_spookyhash_bitwise_lrotate_uint64_uint (atstype_uint64 x,
-                                             atstype_uint i)
-{
-  return (x << i) | (x >> ((-i) & 63));
-}
-
-/* On big endian platforms, swap the byte order. On little endian
-   platforms, do not change the value. */
-ats2_spookyhash_always_inline atstype_uint32
-ats2_spookyhash_fix_byte_order_uint32 (atstype_uint32 x)
-{
-#if ATS2_SPOOKYHASH_BIG_ENDIAN
-  return ats2_spookyhash_bswap32 (x);
-#else
-  return x;
-#endif
-}
-
-/* Get a little endian atstype_uint32 from memory, where perhaps the
-   data is misaligned. */
-ats2_spookyhash_always_inline atstype_uint32
-ats2_spookyhash_get32bits (const atstype_ptr p)
-{
-#if defined (__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-  return *((const atstype_uint32 *) p);
-#else
-  atstype_uint32 v;
-  ats2_spookyhash_memcpy (&v, p, 4);
-  return ats2_spookyhash_fix_byte_order_uint32 (v);
-#endif
-}
-
-/* Get a little endian atstype_uint64 from memory, where perhaps the
-   data is misaligned. */
-ats2_spookyhash_always_inline atstype_uint64
-ats2_spookyhash_get64bits (const atstype_ptr p)
-{
-#if defined (__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-  return *((const atstype_uint64 *) p);
-#else
-  atstype_uint64 v;
-  ats2_spookyhash_memcpy (&v, p, 8);
-  return ats2_spookyhash_fix_byte_order_uint64 (v);
-#endif
-}
-
-/* Put a little endian atstype_uint32 to memory, where perhaps the
-   data is misaligned. */
-ats2_spookyhash_always_inline void
-ats2_spookyhash_put32bits (atstype_ptr p, atstype_uint32 v)
-{
-#if defined (__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-  *((atstype_uint32 *) p) = v;
-#else
-  v = ats2_spookyhash_fix_byte_order_uint32 (v);
-  ats2_spookyhash_memcpy (p, &v, 4);
-#endif
-}
-
-/* Put a little endian atstype_uint64 to memory, where perhaps the
-   data is misaligned. */
-ats2_spookyhash_always_inline void
-ats2_spookyhash_put64bits (atstype_ptr p, atstype_uint64 v)
-{
-#if defined (__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-  *((atstype_uint64 *) p) = v;
-#else
-  v = ats2_spookyhash_fix_byte_order_uint64 (v);
-  ats2_spookyhash_memcpy (p, &v, 8);
-#endif
-}
-
-#endif /////////////////////////////////////////////////////////////////// FIXME //////////////////////////////////////////
-
 #include "spookyhash/HATS/spookyhash-parameters.hats"
 
 typedef struct
@@ -294,6 +137,14 @@ ats2_spookyhash_natmod_size (atstype_size x, atstype_size y)
   return (x % y);
 }
 
+/* Bitwise left shift, with zero-fill. */
+ats2_spookyhash_always_inline atstype_uint64
+ats2_spookyhash_bitwise_lshift_uint64_uint (atstype_uint64 x,
+                                            atstype_uint i)
+{
+  return (x << i);
+}
+
 /* Bitwise left rotation by an amount less than 64. */
 ats2_spookyhash_always_inline atstype_uint64
 ats2_spookyhash_bitwise_lrotate_uint64_uint (atstype_uint64 x,
@@ -318,6 +169,20 @@ ats2_spookyhash_bitwise_xor_uint64 (atstype_uint64 x,
   return (x ^ y);
 }
 
+/* On big endian platforms, swap the byte order. On little endian
+   platforms, do not change the value. */
+ats2_spookyhash_always_inline atstype_uint32
+ats2_spookyhash_fix_byte_order_uint32 (atstype_uint32 x)
+{
+#if ATS2_SPOOKYHASH_BIG_ENDIAN
+  return ats2_spookyhash_bswap32 (x);
+#else
+  return x;
+#endif
+}
+
+/* On big endian platforms, swap the byte order. On little endian
+   platforms, do not change the value. */
 ats2_spookyhash_always_inline atstype_uint64
 ats2_spookyhash_fix_byte_order_uint64 (atstype_uint64 x)
 {

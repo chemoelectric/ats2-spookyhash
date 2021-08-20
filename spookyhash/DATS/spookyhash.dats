@@ -31,6 +31,7 @@ staload "spookyhash/SATS/spookyhash.sats"
 
 #include "spookyhash/HATS/spookyhash-parameters.hats"
 #define NUMVARS ATS2_SPOOKYHASH_NUMVARS
+#define TWICE_NUMVARS ATS2_SPOOKYHASH_TWICE_NUMVARS
 #define BLOCKSIZE ATS2_SPOOKYHASH_BLOCKSIZE
 #define BUFSIZE ATS2_SPOOKYHASH_BUFSIZE
 #define CONST   ATS2_SPOOKYHASH_CONST
@@ -44,23 +45,16 @@ typedef remainder_t = [i : int] remainder_t i
 _Static_assert (sizeof (atstype_byte) == 1,
                 "atstype_byte is not 1 byte");
 
+_Static_assert (sizeof (atstype_uint32) == 4,
+                "uint32 is not 4 bytes");
+
 _Static_assert (sizeof (atstype_uint64) == 8,
                 "uint64 is not 8 bytes");
 %}
 
 prval _ = $UNSAFE.prop_assert {sizeof (byte) == 1} ()
+prval _ = $UNSAFE.prop_assert {sizeof (uint32) == 4} ()
 prval _ = $UNSAFE.prop_assert {sizeof (uint64) == 8} ()
-
-prfn
-lemma_mul_isfun {m1, n1 : int}
-                {m2, n2 : int | m1 == m2; n1 == n2}
-                () :<prf>
-    [m1 * n1 == m2 * n2] void =
-  {
-    prval pf1 = mul_make {m1, n1} ()
-    prval pf2 = mul_make {m2, n2} ()
-    prval _ = mul_isfun {m1, n1} {m1 * n1, m2 * n2} (pf1, pf2)
-  }
 
 extern praxi {t : vt@ype}
 array2bytes :
@@ -88,6 +82,19 @@ bytesqmark2array_v :
 
 (********************************************************************)
 
+prfn
+lemma_mul_isfun {m1, n1 : int}
+                {m2, n2 : int | m1 == m2; n1 == n2}
+                () :<prf>
+    [m1 * n1 == m2 * n2] void =
+  {
+    prval pf1 = mul_make {m1, n1} ()
+    prval pf2 = mul_make {m2, n2} ()
+    prval _ = mul_isfun {m1, n1} {m1 * n1, m2 * n2} (pf1, pf2)
+  }
+
+(********************************************************************)
+
 extern castfn
 g1ofg1_g1uint {tk : tkind}
               {i  : int}
@@ -111,11 +118,23 @@ u8sz {i : int} (i : uint8 i) :<> size_t i
 extern castfn
 sz2u8 {i : int} (i : size_t i) :<> uint8 i
 
+extern castfn
+u32u64 (i : uint32) :<> uint64
+
+fn {}
+byte2u64 (b : byte) :<> uint64 =
+  $UNSAFE.cast{uint64} ($UNSAFE.cast{uint8} b)
+
+(*------------------------------------------------------------------*)
+
+(* An interface to memcpy or __builtin_memcpy. *)
 extern fun
 memcpy {n   : int}
        (dst : &(@[byte?][n]) >> @[byte][n],
         src : &RD(@[byte][n]),
         n   : size_t n) :<!refwrt> void = "mac#%"
+
+(*------------------------------------------------------------------*)
 
 (* A natural numbers mod function. *)
 extern fn
@@ -127,10 +146,14 @@ natmod_size {x, y : nat | y != 0}
 
 overload natmod with natmod_size
 
+(*------------------------------------------------------------------*)
+
 extern fun
 bitwise_and_ullint (x : ullint, y : ullint) :<> ullint = "mac#%"
 
 overload bitwise_and with bitwise_and_ullint
+
+(*------------------------------------------------------------------*)
 
 extern fun
 bitwise_xor_uint64 (x : uint64, y : uint64) :<> uint64 = "mac#%"
@@ -139,6 +162,20 @@ overload bitwise_xor with bitwise_xor_uint64
 
 infixl ( + ) ^
 overload ^ with bitwise_xor
+
+(*------------------------------------------------------------------*)
+
+extern fun
+bitwise_lshift_uint64_uint {i : int | i < 64}
+                           (x : uint64,
+                            i : uint i) :<> uint64 = "mac#%"
+
+overload bitwise_lshift with bitwise_lshift_uint64_uint
+
+infix ( * ) <<
+overload << with bitwise_lshift
+
+(*------------------------------------------------------------------*)
 
 extern fun
 bitwise_lrotate_uint64_uint {i : int | i < 64}
@@ -150,16 +187,28 @@ overload bitwise_lrotate with bitwise_lrotate_uint64_uint
 infix ( * ) <<@
 overload <<@ with bitwise_lrotate
 
-(* On big-endian platforms, swap the byte order.
-   On little-endian platforms, make no changes. *)
+(*------------------------------------------------------------------*)
+(*
+   fix_byte_order:
+
+   On big-endian platforms, reverse the byte order.
+   On little-endian platforms, make no changes.
+*)
+
+extern fun
+fix_byte_order_uint32 (x : uint32) :<> uint32 = "mac#%"
+
 extern fun
 fix_byte_order_uint64 (x : uint64) :<> uint64 = "mac#%"
 
+overload fix_byte_order with fix_byte_order_uint32
 overload fix_byte_order with fix_byte_order_uint64
+
+(*------------------------------------------------------------------*)
 
 fn {}
 allow_direct_read_g1 {p : addr}
-                         (p : ptr p) :<> bool =
+                     (p : ptr p) :<> bool =
   if $extval (int, "ATS2_SPOOKYHASH_ALLOW_UNALIGNED_READS") <> 0 then
     true
   else
@@ -184,8 +233,8 @@ overload allow_direct_read with allow_direct_read_g1 of 10
 extern fun
 m_data (context : &spookyhash_context_t) :<!ref>
     [p : addr]
-    (@[uint64][2 * NUMVARS] @ p,
-     @[uint64][2 * NUMVARS] @ p -<lin,prf> void |
+    (@[uint64][TWICE_NUMVARS] @ p,
+     @[uint64][TWICE_NUMVARS] @ p -<lin,prf> void |
      ptr p) = "mac#%"
 
 extern fun
@@ -598,6 +647,354 @@ spookyhash_short_end (h0 : &uint64,
   end
 
 (********************************************************************)
+(*
+ * spookyhash_short:
+ *
+ * Short is used for messages under 192 bytes in length
+ * (although it could be used for any message).
+ *
+ * Short has a low startup cost, the normal mode is good for long
+ * keys, the cost crossover is at about 192 bytes.
+ * The two modes were held to the same quality bar.
+ *
+ *)
+
+fn {}
+_short {length  : int}
+       (message : &(@[byte][length]), (* Message aligned for uint64 *)
+        length  : size_t length,
+        hash1   : &uint64,
+        hash2   : &uint64) :<!refwrt> void =
+  let
+    prval _ = lemma_g1uint_param length
+
+    stadef block_count = ndiv (length, 32)
+    stadef remainder = nmod (length, 32)
+    val block_count : size_t block_count =
+      g1uint_div (length, i2sz 32)
+    val remainder : size_t remainder =
+      natmod (length, i2sz 32)
+
+    stadef past_blocks = block_count * 32
+    val past_blocks : size_t past_blocks = block_count * 32
+
+    var a : uint64 = hash1
+    var b : uint64 = hash2
+    var c : uint64 = $UNSAFE.cast CONST
+    var d : uint64 = $UNSAFE.cast CONST
+
+    fun
+    handle_blocks {i : int | 0 <= i; i <= block_count}
+                  .<block_count - i>.
+                  (message     : &(@[byte][length]),
+                   block_count : size_t block_count,
+                   i           : size_t i,
+                   a           : &uint64,
+                   b           : &uint64,
+                   c           : &uint64,
+                   d           : &uint64) :<!refwrt> void =
+      if i <> block_count then
+        let
+          val p_data = ptr_add<byte> (addr@ message, i2sz 32 * i)
+
+          prval (pf_before, pf_data, pf_after) =
+            array_v_subdivide3 {byte} {..}
+                               {32 * i, 32, length - 32 * i - 32}
+                               (view@ message)
+          prval pf_uint64 = bytes2array<uint64> {4} pf_data
+
+          macdef data = !p_data
+
+          val _ = c := c + fix_byte_order data[0]
+          val _ = d := d + fix_byte_order data[1]
+          val _ = spookyhash_short_mix<> (a, b, c, d)
+          val _ = a := a + fix_byte_order data[2]
+          val _ = b := b + fix_byte_order data[3]
+
+          prval _ = pf_data := array2bytes<uint64> {4} pf_uint64
+          prval _ = view@ message :=
+            array_v_join3 {byte} {..}
+                          {32 * i, 32, length - 32 * i - 32}
+                          (pf_before, pf_data, pf_after)
+        in
+          handle_blocks (message, block_count, succ i, a, b, c, d)
+        end
+
+    fn {}
+    handle_16_bytes {length : int |
+                        32 * block_count + 16 <= length}
+                    (message     : &(@[byte][length]),
+                     past_blocks : size_t past_blocks,
+                     a           : &uint64,
+                     b           : &uint64,
+                     c           : &uint64,
+                     d           : &uint64) :<!refwrt> void =
+      {
+        val p_data = ptr_add<byte> (addr@ message, past_blocks)
+
+        prval (pf_before, pf_data, pf_after) =
+          array_v_subdivide3
+            {byte} {..}
+            {past_blocks, 16, length - past_blocks - 16}
+            (view@ message)
+        prval pf_uint64 = bytes2array<uint64> {2} pf_data
+
+        macdef data = !p_data
+
+        val _ = c := c + fix_byte_order data[0]
+        val _ = d := d + fix_byte_order data[1]
+        val _ = spookyhash_short_mix<> (a, b, c, d)
+
+        prval _ = pf_data := array2bytes<uint64> {2} pf_uint64
+        prval _ = view@ message :=
+          array_v_join3
+            {byte} {..}
+            {past_blocks, 16, length - past_blocks - 16}
+            (pf_before, pf_data, pf_after)
+      }
+
+    fn {}
+    handle_last_bytes {length    : int}
+                      {offset    : int | offset == past_blocks ||
+                                         offset == past_blocks + 16}
+                      {num_bytes : int | 0 <= num_bytes;
+                                         num_bytes < 16;
+                                         offset + num_bytes == length}
+                      (message   : &(@[byte][length]),
+                       offset    : size_t offset,
+                       num_bytes : size_t num_bytes,
+                       a         : &uint64,
+                       b         : &uint64,
+                       c         : &uint64,
+                       d         : &uint64) :<!refwrt> void =
+      {
+        val p_data = ptr_add<byte> (addr@ message, offset)
+
+        prval (pf_before, pf_data) =
+          array_v_subdivide2 {byte} {..} {offset, length - offset}
+                             (view@ message)
+
+        val _ = d := d + (($UNSAFE.cast{uint64} length) <<@ 56U)
+
+        fn {}
+        get_uint32 {index   : int | 0 <= index;
+                                    index * 4 + 4 <= num_bytes}
+                   {p_data  : addr}
+                   (pf_data : !(@[byte][num_bytes] @ p_data) >> _ |
+                    p_data  : ptr p_data,
+                    index   : int index) :<!ref> uint32 =
+          let
+            prval _ = lemma_mul_isfun {index, 4}
+                                      {index, sizeof (uint32)} ()
+
+            prval (pf_uint32_bytes, pf_after) =
+              array_v_subdivide2
+                {byte} {p_data}
+                {index * 4 + 4, num_bytes - index * 4 - 4}
+                pf_data
+            prval pf_uint32 =
+              bytes2array<uint32> {index + 1} pf_uint32_bytes
+
+            macdef data = !p_data
+            val result = data[index]
+
+            prval _ = pf_uint32_bytes :=
+              array2bytes<uint32> {index + 1} pf_uint32
+            prval _ = pf_data :=
+              array_v_join2
+                {byte} {p_data}
+                {index * 4 + 4, num_bytes - index * 4 - 4}
+                (pf_uint32_bytes, pf_after)
+          in
+            result
+          end
+
+        fn {}
+        get_uint64 {index   : int | 0 <= index;
+                                    index * 8 + 8 <= num_bytes}
+                   {p_data  : addr}
+                   (pf_data : !(@[byte][num_bytes] @ p_data) >> _ |
+                    p_data  : ptr p_data,
+                    index   : int index) :<!ref> uint64 =
+          let
+            prval _ = lemma_mul_isfun {index, 8}
+                                      {index, sizeof (uint64)} ()
+
+            prval (pf_uint64_bytes, pf_after) =
+              array_v_subdivide2
+                {byte} {p_data}
+                {index * 8 + 8, num_bytes - index * 8 - 8}
+                pf_data
+            prval pf_uint64 =
+              bytes2array<uint64> {index + 1} pf_uint64_bytes
+
+            macdef data = !p_data
+            val result = data[index]
+
+            prval _ = pf_uint64_bytes :=
+              array2bytes<uint64> {index + 1} pf_uint64
+            prval _ = pf_data :=
+              array_v_join2
+                {byte} {p_data}
+                {index * 8 + 8, num_bytes - index * 8 - 8}
+                (pf_uint64_bytes, pf_after)
+          in
+            result
+          end
+
+        macdef data = !p_data
+
+        val _ =
+          case+ (sz2i num_bytes) of
+          | 0 =>
+            begin
+              c := c + $UNSAFE.cast CONST;
+              d := d + $UNSAFE.cast CONST
+            end
+          | 1 =>
+            begin
+              c := c + (byte2u64 data[0])
+            end
+          | 2 =>
+            begin
+              c := c + ((byte2u64 data[1]) << 8U);
+              c := c + (byte2u64 data[0])
+            end
+          | 3 =>
+            begin
+              c := c + ((byte2u64 data[2]) << 16U);
+              c := c + ((byte2u64 data[1]) << 8U);
+              c := c + (byte2u64 data[0])
+            end
+          | 4 =>
+            begin
+              c := c + u32u64 (get_uint32 (pf_data | p_data, 0))
+            end
+          | 5 =>
+            begin
+              c := c + ((byte2u64 data[4]) << 32U);
+              c := c + u32u64 (get_uint32 (pf_data | p_data, 0))
+            end
+          | 6 =>
+            begin
+              c := c + ((byte2u64 data[5]) << 40U);
+              c := c + ((byte2u64 data[4]) << 32U);
+              c := c + u32u64 (get_uint32 (pf_data | p_data, 0))
+            end
+          | 7 =>
+            begin
+              c := c + ((byte2u64 data[6]) << 48U);
+              c := c + ((byte2u64 data[5]) << 40U);
+              c := c + ((byte2u64 data[4]) << 32U);
+              c := c + u32u64 (get_uint32 (pf_data | p_data, 0))
+            end
+          | 8 =>
+            begin
+              c := c + get_uint64 (pf_data | p_data, 0)
+            end
+          | 9 =>
+            begin
+              d := d + (byte2u64 data[8]);
+              c := c + get_uint64 (pf_data | p_data, 0)
+            end
+          | 10 =>
+            begin
+              d := d + ((byte2u64 data[9]) << 8U);
+              d := d + (byte2u64 data[8]);
+              c := c + get_uint64 (pf_data | p_data, 0)
+            end
+          | 11 =>
+            begin
+              d := d + ((byte2u64 data[10]) << 16U);
+              d := d + ((byte2u64 data[9]) << 8U);
+              d := d + (byte2u64 data[8]);
+              c := c + get_uint64 (pf_data | p_data, 0)
+            end
+          | 12 =>
+            begin
+              d := d + u32u64 (get_uint32 (pf_data | p_data, 2));
+              c := c + get_uint64 (pf_data | p_data, 0)
+            end
+          | 13 =>
+            begin
+              d := d + ((byte2u64 data[12]) << 32U);
+              d := d + u32u64 (get_uint32 (pf_data | p_data, 2));
+              c := c + get_uint64 (pf_data | p_data, 0)
+            end
+          | 14 =>
+            begin
+              d := d + ((byte2u64 data[13]) << 40U);
+              d := d + ((byte2u64 data[12]) << 32U);
+              d := d + u32u64 (get_uint32 (pf_data | p_data, 2));
+              c := c + get_uint64 (pf_data | p_data, 0)
+            end
+          | 15 =>
+            begin
+              d := d + ((byte2u64 data[14]) << 48U);
+              d := d + ((byte2u64 data[13]) << 40U);
+              d := d + ((byte2u64 data[12]) << 32U);
+              d := d + u32u64 (get_uint32 (pf_data | p_data, 2));
+              c := c + get_uint64 (pf_data | p_data, 0)
+            end
+
+        prval _ = view@ message :=
+          array_v_join2 {byte} {..} {offset, length - offset}
+                        (pf_before, pf_data)
+      }
+  in
+    (* Handle all complete sets of 32 bytes. *)
+    if block_count <> i2sz 0 then
+      handle_blocks (message, block_count, i2sz 0, a, b, c, d);
+
+    if i2sz 16 <= remainder then
+      begin
+        (* Handle the case of 16 or more remaining bytes. *)
+        handle_16_bytes (message, past_blocks, a, b, c, d);
+        handle_last_bytes (message, past_blocks + i2sz 16,
+                           remainder - i2sz 16, a, b, c, d)
+      end
+    else
+      (* Handle the case of 15 or fewer remaining bytes. *)
+      handle_last_bytes (message, past_blocks, remainder,
+                         a, b, c, d);
+
+    spookyhash_short_end<> (a, b, c, d);
+    hash1 := a;
+    hash2 := b
+  end
+
+fn {}
+spookyhash_short {length  : int | length <= BUFSIZE}
+                 (message : &(@[byte][length]),
+                  length  : size_t length,
+                  hash1   : &uint64,
+                  hash2   : &uint64) :<!refwrt> void =
+  if allow_direct_read (addr@ message) then
+    _short<> (message, length, hash1, hash2)
+  else
+    {
+      prval _ = lemma_g1uint_param length
+
+      (* A buffer that obviously is aligned for uint64. *)
+      var buf : @[uint64][TWICE_NUMVARS]
+
+      prval pf_bytes =
+        array2bytes<uint64?> {TWICE_NUMVARS} (view@ buf)
+      prval (pf_dest, pf_after) =
+        array_v_subdivide2 {byte} {..} {length, BUFSIZE - length}
+                           pf_bytes
+
+      val _ = memcpy (buf, message, length)
+      val _ = _short<> (buf, length, hash1, hash2)
+
+      prval _ = pf_bytes :=
+        array_v_join2 {byte} {..} {length, BUFSIZE - length}
+                      (pf_dest, pf_after)
+      prval _ = view@ buf :=
+        bytes2array<uint64?> {TWICE_NUMVARS} pf_bytes
+    }
+
+(********************************************************************)
 
 implement
 spookyhash_init (context, seed1, seed2) =
@@ -677,7 +1074,8 @@ use_buffered_data {p_data  : addr}
                   {p_msg   : addr}
                   {rem     : int | rem < BUFSIZE;
                                    BUFSIZE - rem <= length}
-                  (pf_data : !(@[uint64][2 * NUMVARS] @ p_data) >> _,
+                  (pf_data : !(@[uint64][TWICE_NUMVARS] @ p_data)
+                                  >> _,
                    pf_msg  : @[byte][length] @ p_msg |
                    p_data  : ptr p_data,
                    p_msg   : ptr p_msg,
@@ -714,7 +1112,7 @@ use_buffered_data {p_data  : addr}
         val prefx : size_t prefx = (i2sz BUFSIZE) - rem
 
         (* Copy prefx bytes from the message to the data buffer. *)
-        prval pf_bytes = array2bytes<uint64> {2 * NUMVARS} pf_data
+        prval pf_bytes = array2bytes<uint64> {TWICE_NUMVARS} pf_data
         prval (pf_before, pf_dest, pf_after) =
           array_v_subdivide3 {byte} {p_data}
                              {rem, prefx, BUFSIZE - rem - prefx}
@@ -726,7 +1124,7 @@ use_buffered_data {p_data  : addr}
                         {rem, prefx, BUFSIZE - rem - prefx}
                         (pf_before, pf_dest, pf_after)
         prval _ = pf_data :=
-          bytes2array<uint64> {2 * NUMVARS} pf_bytes
+          bytes2array<uint64> {TWICE_NUMVARS} pf_bytes
 
         (* Mix in both halves of the data buffer. *)
         prval (pf1, pf2) =
@@ -832,7 +1230,7 @@ spookyhash_update {length} (context, message, length) =
     if new_length < i2sz BUFSIZE then
       (* The message fragment is short. Store it for later use. *)
       {
-        prval pf_bytes = array2bytes<uint64> {2 * NUMVARS} pf_data
+        prval pf_bytes = array2bytes<uint64> {TWICE_NUMVARS} pf_data
         prval (pf_before, pf_dest, pf_after) =
           array_v_subdivide3 {byte} {p_data}
                              {rem, length, BUFSIZE - rem - length}
@@ -846,7 +1244,7 @@ spookyhash_update {length} (context, message, length) =
                         {rem, length, BUFSIZE - rem - length}
                         (pf_before, pf_dest, pf_after)
         prval _ = pf_data :=
-          bytes2array<uint64> {2 * NUMVARS} pf_bytes
+          bytes2array<uint64> {TWICE_NUMVARS} pf_bytes
 
         val _ = !p_len := !p_len + length
         val _ = !p_rem := sz2u8 new_length
@@ -910,7 +1308,7 @@ spookyhash_update {length} (context, message, length) =
         val p_remainder =
           ptr_add<byte> {p_message} {block_count * BLOCKSIZE}
                         (p_message, block_count * i2sz BLOCKSIZE)
-        prval pf_bytes = array2bytes<uint64> {2 * NUMVARS} pf_data
+        prval pf_bytes = array2bytes<uint64> {TWICE_NUMVARS} pf_data
         prval (pf_data1, pf_data2) =
           array_v_subdivide2 {byte} {p_data}
                              {remainder, BUFSIZE - remainder}
@@ -921,7 +1319,7 @@ spookyhash_update {length} (context, message, length) =
                         {remainder, BUFSIZE - remainder}
                         (pf_data1, pf_data2)
         prval _ =
-          pf_data := bytes2array<uint64> {2 * NUMVARS} pf_bytes
+          pf_data := bytes2array<uint64> {TWICE_NUMVARS} pf_bytes
 
         (* Store the state variables. *)
         val _ =

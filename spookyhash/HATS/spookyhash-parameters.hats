@@ -20,7 +20,13 @@
 
 /* This file can be read as either C or ATS2. */
 
+/* Unfortunately, ATS2/Postiats does not (at the time of
+   this writing) compute constants at compile time, the
+   way the C compiler does. So the constant values here
+   must be computed already, at least if they are to be
+   used to allocate arrays on the stack. */
 #define ATS2_SPOOKYHASH_NUMVARS 12
+#define ATS2_SPOOKYHASH_TWICE_NUMVARS 24
 #define ATS2_SPOOKYHASH_BLOCKSIZE 96 /* = (NUMVARS * sizeof uint64) */
 #define ATS2_SPOOKYHASH_BUFSIZE 192  /* = (BLOCKSIZE * 2) */
 
