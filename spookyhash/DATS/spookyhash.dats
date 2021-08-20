@@ -63,13 +63,13 @@ lemma_mul_isfun {m1, n1 : int}
   }
 
 extern praxi {t : vt@ype}
-array2bytes_v :
+array2bytes :
   {n : int}
   {p : addr}
   (@[t][n] @ p) -<prf> (@[byte][n * sizeof (t)] @ p)
 
 extern praxi {t : vt@ype}
-bytes2array_v :
+bytes2array :
   {n : int}
   {p : addr}
   (@[byte][n * sizeof (t)] @ p) -<prf> (@[t][n] @ p)
@@ -317,11 +317,11 @@ spookyhash_mix_unaligned
   if allow_direct_read (addr@ data) then
     {
       prval _ =
-        view@ data := bytes2array_v<uint64> {NUMVARS} (view@ data)
+        view@ data := bytes2array<uint64> {NUMVARS} (view@ data)
       val _ = spookyhash_mix (data, s0, s1, s2, s3, s4, s5,
                               s6, s7, s8, s9, s10, s11)
       prval _ =
-        view@ data := array2bytes_v<uint64> {NUMVARS} (view@ data)
+        view@ data := array2bytes<uint64> {NUMVARS} (view@ data)
     }
   else
     {
@@ -330,7 +330,7 @@ spookyhash_mix_unaligned
         view@ buf := array2bytesqmark_v<uint64?> {NUMVARS} (view@ buf)
       val _ = memcpy (buf, data, (i2sz NUMVARS) * sizeof<uint64>)
       prval _ =
-        view@ buf := bytes2array_v<uint64> {NUMVARS} (view@ buf)
+        view@ buf := bytes2array<uint64> {NUMVARS} (view@ buf)
       val _ = spookyhash_mix (buf, s0, s1, s2, s3, s4, s5,
                               s6, s7, s8, s9, s10, s11)
     }
@@ -452,7 +452,7 @@ use_buffered_data {p_data  : addr}
         val prefx : size_t prefx = (i2sz BUFSIZE) - rem
 
         (* Copy prefx bytes from the message to the data buffer. *)
-        prval pf_bytes = array2bytes_v<uint64> {2 * NUMVARS} pf_data
+        prval pf_bytes = array2bytes<uint64> {2 * NUMVARS} pf_data
         prval (pf1, pf2, pf3) =
           array_v_subdivide3 {byte} {p_data}
                              {rem, prefx, BUFSIZE - rem - prefx}
@@ -461,7 +461,7 @@ use_buffered_data {p_data  : addr}
                         !p_msg, prefx)
         prval _ = pf_bytes := array_v_join3 (pf1, pf2, pf3)
         prval _ =
-          pf_data := bytes2array_v<uint64> {2 * NUMVARS} pf_bytes
+          pf_data := bytes2array<uint64> {2 * NUMVARS} pf_bytes
 
         (* Mix in both halves of the data buffer. *)
         prval (pf1, pf2) =
@@ -563,7 +563,7 @@ spookyhash_update {length} (context, message, length) =
     if new_length < i2sz BUFSIZE then
       (* The message fragment is short. Store it for later use. *)
       {
-        prval pf_bytes = array2bytes_v<uint64> {2 * NUMVARS} pf_data
+        prval pf_bytes = array2bytes<uint64> {2 * NUMVARS} pf_data
         prval (pf1, pf2, pf3) =
           array_v_subdivide3 {byte} {p_data}
                              {rem, length, BUFSIZE - rem - length}
@@ -576,7 +576,7 @@ spookyhash_update {length} (context, message, length) =
 
         prval _ = pf_bytes := array_v_join3 (pf1, pf2, pf3)
         prval _ =
-          pf_data := bytes2array_v<uint64> {2 * NUMVARS} pf_bytes
+          pf_data := bytes2array<uint64> {2 * NUMVARS} pf_bytes
 
         val _ = consume_views
       }
@@ -637,7 +637,7 @@ spookyhash_update {length} (context, message, length) =
         val p_remainder =
           ptr_add<byte> {p_message} {block_count * BLOCKSIZE}
                         (p_message, block_count * i2sz BLOCKSIZE)
-        prval pf_bytes = array2bytes_v<uint64> {2 * NUMVARS} pf_data
+        prval pf_bytes = array2bytes<uint64> {2 * NUMVARS} pf_data
         prval (pf_data1, pf_data2) =
           array_v_subdivide2 {byte} {p_data}
                              {remainder, BUFSIZE - remainder}
@@ -648,7 +648,7 @@ spookyhash_update {length} (context, message, length) =
                         {remainder, BUFSIZE - remainder}
                         (pf_data1, pf_data2)
         prval _ =
-          pf_data := bytes2array_v<uint64> {2 * NUMVARS} pf_bytes
+          pf_data := bytes2array<uint64> {2 * NUMVARS} pf_bytes
 
         (* Store the state variables. *)
         val _ =
