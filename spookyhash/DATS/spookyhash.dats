@@ -453,15 +453,18 @@ use_buffered_data {p_data  : addr}
 
         (* Copy prefx bytes from the message to the data buffer. *)
         prval pf_bytes = array2bytes<uint64> {2 * NUMVARS} pf_data
-        prval (pf1, pf2, pf3) =
+        prval (pf_before, pf_dest, pf_after) =
           array_v_subdivide3 {byte} {p_data}
                              {rem, prefx, BUFSIZE - rem - prefx}
                              pf_bytes
         val _ = memcpy (!(ptr_add<byte> (p_data, rem)),
                         !p_msg, prefx)
-        prval _ = pf_bytes := array_v_join3 (pf1, pf2, pf3)
-        prval _ =
-          pf_data := bytes2array<uint64> {2 * NUMVARS} pf_bytes
+        prval _ = pf_bytes :=
+          array_v_join3 {byte} {p_data}
+                        {rem, prefx, BUFSIZE - rem - prefx}
+                        (pf_before, pf_dest, pf_after)
+        prval _ = pf_data :=
+          bytes2array<uint64> {2 * NUMVARS} pf_bytes
 
         (* Mix in both halves of the data buffer. *)
         prval (pf1, pf2) =
@@ -473,7 +476,9 @@ use_buffered_data {p_data  : addr}
                                 s6, s7, s8, s9, s10, s11)
         val _ = spookyhash_mix (!p2, s0, s1, s2, s3, s4, s5,
                                 s6, s7, s8, s9, s10, s11)
-        prval _ = pf_data := array_v_join2 (pf1, pf2)
+        prval _ = pf_data :=
+          array_v_join2 {uint64} {p_data} {NUMVARS, NUMVARS}
+                        (pf1, pf2)
       in
         (* Return the rest of the message, coming after the
            first prefx bytes. *)
@@ -524,8 +529,10 @@ mix_in_blocks {block_count : int}
       val p = ptr_add<byte> (p_blocks, i * i2sz BLOCKSIZE)
       val _ = spookyhash_mix_unaligned (!p, s0, s1, s2, s3, s4, s5,
                                         s6, s7, s8, s9, s10, s11)
-      prval _ =
-        pf_blocks := array_v_join3 (pf_before, pf_block, pf_after)
+      prval _ = pf_blocks :=
+        array_v_join3 {byte} {p_blocks}
+                      {before, BLOCKSIZE, after}
+                      (pf_before, pf_block, pf_after)
 
       val _ = mix_in_blocks (pf_blocks | p_blocks, block_count,
                                          succ i, s0, s1, s2, s3,
@@ -564,19 +571,23 @@ spookyhash_update {length} (context, message, length) =
       (* The message fragment is short. Store it for later use. *)
       {
         prval pf_bytes = array2bytes<uint64> {2 * NUMVARS} pf_data
-        prval (pf1, pf2, pf3) =
+        prval (pf_before, pf_dest, pf_after) =
           array_v_subdivide3 {byte} {p_data}
                              {rem, length, BUFSIZE - rem - length}
                              pf_bytes
 
         val _ = memcpy (!(ptr_add<byte> (p_data, u8sz rem)),
                         message, length)
+
+        prval _ = pf_bytes :=
+          array_v_join3 {byte} {p_data}
+                        {rem, length, BUFSIZE - rem - length}
+                        (pf_before, pf_dest, pf_after)
+        prval _ = pf_data :=
+          bytes2array<uint64> {2 * NUMVARS} pf_bytes
+
         val _ = !p_len := !p_len + length
         val _ = !p_rem := sz2u8 new_length
-
-        prval _ = pf_bytes := array_v_join3 (pf1, pf2, pf3)
-        prval _ =
-          pf_data := bytes2array<uint64> {2 * NUMVARS} pf_bytes
 
         val _ = consume_views
       }
@@ -673,7 +684,8 @@ spookyhash_update {length} (context, message, length) =
           array_v_join2 {byte} {p_message}
                         {block_count * BLOCKSIZE, remainder}
                         (pf_blocks, pf_remainder)
-        prval _ = view@ message := array_v_join2 (pf_prefx, pf_message)
+        prval _ = view@ message :=
+          array_v_join2 (pf_prefx, pf_message)
 
         val _ = consume_views
       }
