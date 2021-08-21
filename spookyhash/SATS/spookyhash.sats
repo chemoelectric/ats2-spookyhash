@@ -83,8 +83,8 @@ spookyhash_update {length  : int}
 
    Compute the hash for the current context.
 
-   The context itself is not altered; you can continue updating
-   it. *)
+   You can continue updating the context, even after
+   you have used spookyhash_final. *)
 fun
 spookyhash_final (context : &spookyhash_context_t) :<!refwrt>
     @(uint64,       (* The first 64 bits (in native-endian order). *)

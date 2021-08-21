@@ -48,6 +48,7 @@ _Static_assert (sizeof (atstype_uint64) == 8,
 #endif
 
 #define ats2_spookyhash_memcpy __builtin_memcpy
+#define ats2_spookyhash_memset __builtin_memset
 #define ats2_spookyhash_bswap32 __builtin_bswap32
 #define ats2_spookyhash_bswap64 __builtin_bswap64
 
@@ -67,6 +68,7 @@ _Static_assert (sizeof (atstype_uint64) == 8,
 #define ats2_spookyhash_always_inline ats2_spookyhash_inline
 
 #define ats2_spookyhash_memcpy memcpy
+#define ats2_spookyhash_memset memset
 #define ats2_spookyhash_bswap32(x)              \
   ((((x) & UINT32_C(0x000000FF)) << 24) |       \
    (((x) & UINT32_C(0x0000FF00)) << 8) |        \
@@ -90,7 +92,9 @@ _Static_assert (sizeof (atstype_uint64) == 8,
 
 _Static_assert (ats2_spookyhash_bswap32 (0xDEADBEEFU) == 0xEFBEADDEU,
                 "ats2_spookyhash_bswap32 does not work correctly.");
-/* FIXME: Add a test of ats2_spookyhash_bswap64 */
+_Static_assert (ats2_spookyhash_bswap64 (0xDEADBEEF01020304U) ==
+                0x04030201EFBEADDEU,
+                "ats2_spookyhash_bswap64 does not work correctly.");
 
 #include "spookyhash/HATS/spookyhash-parameters.hats"
 

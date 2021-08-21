@@ -193,6 +193,9 @@ extern castfn
 sz2u8 {i : int} (i : size_t i) :<> uint8 i
 
 extern castfn
+u2u64 {i : int} (i : uint i) :<> uint64 i
+
+extern castfn
 u32u64 (i : uint32) :<> uint64
 
 fn {}
@@ -1525,6 +1528,89 @@ spookyhash_final (context) =
         (h0, h1)
       end
   end
+
+(********************************************************************)
+
+implement
+spookyhash_hash128 {length} (message, length, seed1, seed2) =
+  if length < i2sz BUFSIZE then
+    spookyhash_short<> (message, length, seed1, seed2)
+  else
+    let
+      var h0 : uint64 = seed1
+      var h1 : uint64 = seed2
+      var h2 : uint64 = $UNSAFE.cast CONST
+      var h3 : uint64 = seed1
+      var h4 : uint64 = seed2
+      var h5 : uint64 = $UNSAFE.cast CONST
+      var h6 : uint64 = seed1
+      var h7 : uint64 = seed2
+      var h8 : uint64 = $UNSAFE.cast CONST
+      var h9 : uint64 = seed1
+      var h10 : uint64 = seed2
+      var h11 : uint64 = $UNSAFE.cast CONST
+
+      (* Divide the message into blocks and a small remainder. *)
+      stadef block_count = ndiv (length, BLOCKSIZE)
+      stadef remainder = nmod (length, BLOCKSIZE)
+      val block_count : size_t block_count =
+        g1uint_div (length, i2sz BLOCKSIZE)
+      val remainder : size_t remainder =
+        natmod (length, i2sz BLOCKSIZE)
+
+      prval _ = prop_verify {block_count * BLOCKSIZE + remainder
+                                  == length} ()
+      prval _ = prop_verify {remainder < BLOCKSIZE} ()
+
+      prval (pf_blocks, pf_remainder) =
+        array_v_subdivide2
+          {byte} {..} {block_count * BLOCKSIZE, remainder}
+          (view@ message)
+
+      (* Handle all the full-size blocks. *)
+      val _ = mix_in_blocks (pf_blocks |
+                             addr@ message, block_count, i2sz 0,
+                             h0, h1, h2, h3, h4, h5,
+                             h6, h7, h8, h9, h10, h11)
+
+      (* Handle the remainder. *)
+
+      var buf : @[uint64][NUMVARS]
+
+      prval pf_bytes = array2bytesqmark<uint64?> {NUMVARS} (view@ buf)
+      prval (pf_memcpy, pf_memset) =
+        array_v_subdivide2
+          {byte?} {..} {remainder, BLOCKSIZE - remainder}
+          pf_bytes
+
+      val p_remainder =
+        ptr_add<byte> {..} {block_count * BLOCKSIZE}
+                      (addr@ message, block_count * i2sz BLOCKSIZE)
+      val p_memcpy = addr@ buf
+      val p_memset = ptr_add<byte> {..} {remainder}
+                                   (p_memcpy, remainder)
+      val _ = memcpy (!p_memcpy, !p_remainder, remainder)
+      val _ = memset (!p_memset, u2byte 0U,
+                      i2sz BLOCKSIZE - remainder)
+
+      prval _ = pf_bytes :=
+        array_v_join2
+          {byte} {..} {remainder, BLOCKSIZE - remainder}
+          (pf_memcpy, pf_memset)
+
+      val _ = buf[BLOCKSIZE - 1] := sz2byte remainder
+
+      prval _ = view@ buf := bytes2array<uint64> {NUMVARS} pf_bytes
+      prval _ = view@ message :=
+        array_v_join2
+          {byte} {..} {block_count * BLOCKSIZE, remainder}
+          (pf_blocks, pf_remainder)
+
+      val _ = spookyhash_end<> (buf, h0, h1, h2, h3, h4, h5,
+                                h6, h7, h8, h9, h10, h11)
+    in
+      (h0, h1)
+    end
 
 (********************************************************************)
 (* Hash functions that are just spookyhash_hash128 with the
