@@ -816,7 +816,7 @@ _short {length  : int}
                 {index * 4 + 4, num_bytes - index * 4 - 4}
                 (pf_uint32_bytes, pf_after)
           in
-            result
+            fix_byte_order result
           end
 
         fn {}
@@ -849,7 +849,7 @@ _short {length  : int}
                 {index * 8 + 8, num_bytes - index * 8 - 8}
                 (pf_uint64_bytes, pf_after)
           in
-            result
+            fix_byte_order result
           end
 
         macdef data = !p_data
