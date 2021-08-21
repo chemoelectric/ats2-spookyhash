@@ -69,13 +69,13 @@ bytes2array :
   (@[byte][n * sizeof (t)] @ p) -<prf> (@[t][n] @ p)
 
 extern praxi {t : vt@ype}
-array2bytesqmark_v :
+array2bytesqmark :
   {n : int}
   {p : addr}
   (@[t][n] @ p) -<prf> (@[byte?][n * sizeof (t)] @ p)
 
 extern praxi {t : vt@ype}
-bytesqmark2array_v :
+bytesqmark2array :
   {n : int}
   {p : addr}
   (@[byte?][n * sizeof (t)] @ p) -<prf> (@[t][n] @ p)
@@ -384,7 +384,7 @@ spookyhash_mix_unaligned
     {
       var buf : @[uint64][NUMVARS]
       prval _ =
-        view@ buf := array2bytesqmark_v<uint64?> {NUMVARS} (view@ buf)
+        view@ buf := array2bytesqmark<uint64?> {NUMVARS} (view@ buf)
       val _ = memcpy (buf, data, (i2sz NUMVARS) * sizeof<uint64>)
       prval _ =
         view@ buf := bytes2array<uint64> {NUMVARS} (view@ buf)
@@ -1381,27 +1381,39 @@ spookyhash_final (context) =
         (pf_state, consume_pf_state | p_state) = m_state (context)
     val [p_len : addr]
         (pf_len, consume_pf_len | p_len) = m_length (context)
-    val [p_rem : addr]
-        (pf_rem, consume_pf_rem | p_rem) = m_remainder (context)
+//    val [p_rem : addr]
+//        (pf_rem, consume_pf_rem | p_rem) = m_remainder (context)
+
+    macdef state = !p_state
   
-    macdef consume_views =
-      {
+    val [len : int] len = g1ofg1 (!p_len)
+  in
+    if len < i2sz BUFSIZE then
+      let
+        prval pf_bytes =
+          array2bytes<uint64> {TWICE_NUMVARS} {p_data} pf_data
+        prval (pf_src, pf_after) =
+          array_v_subdivide2
+            {byte} {p_data} {len, BUFSIZE - len} pf_bytes
+        val result =
+          spookyhash_short<> (!p_data, len, state[0], state[1])
+        prval _ = pf_bytes :=
+          array_v_join2
+            {byte} {p_data} {len, BUFSIZE - len} (pf_src, pf_after)
+        prval _ = pf_data :=
+          bytes2array<uint64> {TWICE_NUMVARS} {p_data} pf_bytes
         prval _ = consume_pf_data pf_data
         prval _ = consume_pf_state pf_state
         prval _ = consume_pf_len pf_len
-        prval _ = consume_pf_rem pf_rem
-      }
-
-    val len = !p_len
-  in
-    if len < i2sz BUFSIZE then
-      begin
-        consume_views;
-        ($UNSAFE.cast 111111111111111, $UNSAFE.cast 222222222222222222) (* FIXME *)
+      in
+        result
       end
     else
-      begin
-        consume_views;
+      let
+        prval _ = consume_pf_data pf_data
+        prval _ = consume_pf_state pf_state
+        prval _ = consume_pf_len pf_len
+      in
         ($UNSAFE.cast 111111111111111, $UNSAFE.cast 222222222222222222) (* FIXME *)
       end
   end

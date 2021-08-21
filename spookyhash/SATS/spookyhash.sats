@@ -86,7 +86,7 @@ spookyhash_update {length  : int}
    The context itself is not altered; you can continue updating
    it. *)
 fun
-spookyhash_final (context : &spookyhash_context_t) :<!ref>
+spookyhash_final (context : &spookyhash_context_t) :<!refwrt>
     @(uint64,       (* The first 64 bits (in native-endian order). *)
       uint64)       (* The second 64 bits (in native-endian order). *)
 
