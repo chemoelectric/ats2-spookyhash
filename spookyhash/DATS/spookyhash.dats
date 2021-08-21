@@ -203,6 +203,15 @@ fn {}
 byte2u64 (b : byte) :<> uint64 =
   $UNSAFE.cast{uint64} ($UNSAFE.cast{uint8} b)
 
+fn {}
+sz2byte {i : int | i < 256}
+        (i : size_t i) :<> byte =
+  $UNSAFE.cast{byte} ($UNSAFE.cast{uint8} i)
+
+fn {}
+u2byte (i : uint) :<> byte =
+  $UNSAFE.cast{byte} (u2u8 (g1ofg0 i))
+
 (*------------------------------------------------------------------*)
 
 (* An interface to memcpy or __builtin_memcpy. *)
@@ -211,6 +220,13 @@ memcpy {n   : int}
        (dst : &(@[byte?][n]) >> @[byte][n],
         src : &RD(@[byte][n]),
         n   : size_t n) :<!refwrt> void = "mac#%"
+
+(* An interface to memset or __builtin_memset. *)
+extern fun
+memset {n     : int}
+       (dst   : &(@[byte?][n]) >> @[byte][n],
+        value : byte,
+        n     : size_t n) :<!refwrt> void = "mac#%"
 
 (*------------------------------------------------------------------*)
 
@@ -1151,10 +1167,10 @@ use_buffered_data {p_data  : addr}
                              pf_data
         val p1 = p_data
         val p2 = ptr_add<uint64> (p_data, i2sz NUMVARS)
-        val _ = spookyhash_mix (!p1, s0, s1, s2, s3, s4, s5,
-                                s6, s7, s8, s9, s10, s11)
-        val _ = spookyhash_mix (!p2, s0, s1, s2, s3, s4, s5,
-                                s6, s7, s8, s9, s10, s11)
+        val _ = spookyhash_mix<> (!p1, s0, s1, s2, s3, s4, s5,
+                                  s6, s7, s8, s9, s10, s11)
+        val _ = spookyhash_mix<> (!p2, s0, s1, s2, s3, s4, s5,
+                                  s6, s7, s8, s9, s10, s11)
         prval _ = pf_data :=
           array_v_join2 {uint64} {p_data} {NUMVARS, NUMVARS}
                         (pf1, pf2)
@@ -1372,6 +1388,49 @@ spookyhash_update {length} (context, message, length) =
 
 (********************************************************************)
 
+fn {}
+final_mixing {p_data  : addr}
+             {rem     : int | rem < BLOCKSIZE}
+             (pf_data : !(@[uint64][NUMVARS] @ p_data) >> _ |
+              p_data  : ptr p_data,
+              rem     : size_t rem,
+              h0      : &uint64,
+              h1      : &uint64,
+              h2      : &uint64,
+              h3      : &uint64,
+              h4      : &uint64,
+              h5      : &uint64,
+              h6      : &uint64,
+              h7      : &uint64,
+              h8      : &uint64,
+              h9      : &uint64,
+              h10     : &uint64,
+              h11     : &uint64) :<!refwrt> void =
+  {
+    (* Mix in the last partial block, and the length mod BLOCKSIZE. *)
+
+    prval _ = lemma_g1uint_param rem
+
+    prval pf_bytes = array2bytes<uint64> {NUMVARS} pf_data
+    prval (pf_before, pf_fill) =
+      array_v_subdivide2 {byte} {p_data} {rem, BLOCKSIZE - rem}
+                         pf_bytes
+
+    val _ = memset (!(ptr_add<byte> (p_data, rem)),
+                    u2byte 0U, i2sz BLOCKSIZE - rem)
+    prval _ = pf_bytes :=
+      array_v_join2 {byte} {p_data} {rem, BLOCKSIZE - rem}
+                    (pf_before, pf_fill)
+
+    macdef data = !p_data
+    val _ = data[BLOCKSIZE - 1] := sz2byte rem
+
+    prval _ = pf_data := bytes2array<uint64> {NUMVARS} pf_bytes
+
+    val _ = spookyhash_end<> (data, h0, h1, h2, h3, h4, h5, h6,
+                              h7, h8, h9, h10, h11)
+  }
+
 implement
 spookyhash_final (context) =
   let
@@ -1381,12 +1440,11 @@ spookyhash_final (context) =
         (pf_state, consume_pf_state | p_state) = m_state (context)
     val [p_len : addr]
         (pf_len, consume_pf_len | p_len) = m_length (context)
-//    val [p_rem : addr]
-//        (pf_rem, consume_pf_rem | p_rem) = m_remainder (context)
 
     macdef state = !p_state
   
     val [len : int] len = g1ofg1 (!p_len)
+    prval _ = lemma_g1uint_param len
   in
     if len < i2sz BUFSIZE then
       let
@@ -1410,11 +1468,61 @@ spookyhash_final (context) =
       end
     else
       let
+        var h0 : uint64 = state[0]
+        var h1 : uint64 = state[1]
+        var h2 : uint64 = state[2]
+        var h3 : uint64 = state[3]
+        var h4 : uint64 = state[4]
+        var h5 : uint64 = state[5]
+        var h6 : uint64 = state[6]
+        var h7 : uint64 = state[7]
+        var h8 : uint64 = state[8]
+        var h9 : uint64 = state[9]
+        var h10 : uint64 = state[10]
+        var h11 : uint64 = state[11]
+
+        val [p_rem : addr]
+            (pf_rem, consume_pf_rem | p_rem) = m_remainder (context)
+
+        val [rem : int] rem = g1ofg1 (!p_rem)
+        val rem = u8sz rem
+        prval _ = lemma_g1uint_param rem
+
+        prval (pf_half1, pf_half2) =
+          array_v_subdivide2
+            {uint64} {p_data} {NUMVARS, NUMVARS} pf_data
+
+        val _ =
+          if i2sz BLOCKSIZE <= rem then
+            {
+
+              (* The data field of a spookyhash_context_t
+                 can contain two blocks; handle any whole
+                 first block. *)
+              val _ = spookyhash_mix<> (!p_data, h0, h1, h2, h3, h4,
+                                        h5, h6, h7, h8, h9, h10, h11)
+
+              val p_half2 = ptr_add<uint64> (p_data, i2sz NUMVARS)
+              val _ =
+                final_mixing<> (pf_half2 | p_half2,
+                                rem - i2sz BLOCKSIZE, h0, h1, h2, h3,
+                                h4, h5, h6, h7, h8, h9, h10, h11)
+            }
+          else
+            final_mixing<> (pf_half1 | p_data,
+                            rem, h0, h1, h2, h3, h4, h5, h6, h7, h8,
+                            h9, h10, h11)
+
+        prval _ = pf_data :=
+          array_v_join2 {uint64} {p_data} {NUMVARS, NUMVARS}
+                        (pf_half1, pf_half2)
+
         prval _ = consume_pf_data pf_data
         prval _ = consume_pf_state pf_state
         prval _ = consume_pf_len pf_len
+        prval _ = consume_pf_rem pf_rem
       in
-        ($UNSAFE.cast 111111111111111, $UNSAFE.cast 222222222222222222) (* FIXME *)
+        (h0, h1)
       end
   end
 
