@@ -65,7 +65,8 @@ typedef spookyhash_context_t = $extype"ats2_spookyhash_context_t"
    Any 64-bit value, including zero, will work as a seed.
    Different seeds produce independent hashes. *)
 fun
-spookyhash_init (context : &spookyhash_context_t,
+spookyhash_init (context : &spookyhash_context_t?
+                              >> spookyhash_context_t,
                  seed1   : uint64,
                  seed2   : uint64) :<!refwrt> void
 

@@ -1013,6 +1013,11 @@ spookyhash_short {length  : int | length <= BUFSIZE}
 implement
 spookyhash_init (context, seed1, seed2) =
   {
+    extern praxi
+    initialize (ctx : &spookyhash_context_t?
+                          >> spookyhash_context_t) :<prf> void
+    prval _ = initialize context
+
     val (pf, consume_pf | p) = m_length (context)
     val _ = !p := i2sz 0
     prval _ = consume_pf pf
