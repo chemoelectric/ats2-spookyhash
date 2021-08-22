@@ -20,8 +20,6 @@ along with this program. If not, see
 
 (* Spookyhash version 2 *)
 
-#include "spookyhash/HATS/spookyhash-parameters.hats"
-
 #define ATS_PACKNAME "ats2-spookyhash"
 #define ATS_EXTERN_PREFIX "ats2_spookyhash_"
 
