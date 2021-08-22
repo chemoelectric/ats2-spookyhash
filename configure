@@ -623,7 +623,7 @@ PACKAGE_STRING='ats2-spookyhash 1.0.0'
 PACKAGE_BUGREPORT=''
 PACKAGE_URL=''
 
-ac_unique_file="spookyhash/CATS/spookyhash.cats"
+ac_unique_file="spookyhash/CATS/spookyhash-implementation.cats"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stddef.h>

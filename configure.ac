@@ -21,7 +21,7 @@
 AC_PREREQ([2.71])
 AC_INIT([ats2-spookyhash],[1.0.0],[],[ats2-spookyhash],[])
 
-AC_CONFIG_SRCDIR([spookyhash/CATS/spookyhash.cats])
+AC_CONFIG_SRCDIR([spookyhash/CATS/spookyhash-implementation.cats])
 
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])

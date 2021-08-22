@@ -696,8 +696,8 @@ _short {length  : int}
         length  : size_t length,
         seed1   : uint64,
         seed2   : uint64) :<!refwrt>
-    @(uint64,       (* The first 64 bits (in native-endian order). *)
-      uint64) =     (* The second 64 bits (in native-endian order). *)
+    @(uint64,         (* The first 64 bits (in native byte order). *)
+      uint64) =       (* The second 64 bits (in native byte order). *)
   let
     prval _ = lemma_g1uint_param length
 
@@ -1002,8 +1002,8 @@ spookyhash_short {length  : int | length <= BUFSIZE}
                   length  : size_t length,
                   seed1   : uint64,
                   seed2   : uint64) :<!refwrt>
-    @(uint64,       (* The first 64 bits (in native-endian order). *)
-      uint64) =     (* The second 64 bits (in native-endian order). *)
+    @(uint64,         (* The first 64 bits (in native byte order). *)
+      uint64) =       (* The second 64 bits (in native byte order). *)
   if allow_direct_read (addr@ message) then
     _short<> (message, length, seed1, seed2)
   else

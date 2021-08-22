@@ -31,20 +31,24 @@ spookyhash_hash128 {length  : int}
                     length  : size_t length,
                     seed1   : uint64,
                     seed2   : uint64) :<!refwrt>
-    @(uint64,       (* The first 64 bits (in native-endian order). *)
-      uint64)       (* The second 64 bits (in native-endian order). *)
+    @(uint64,         (* The first 64 bits (in native byte order). *)
+      uint64)         (* The second 64 bits (in native byte order). *)
 
 fun
 spookyhash_hash64 {length  : int}
                   (message : &(@[byte][length]),
                    length  : size_t length,
-                   seed    : uint64) :<!refwrt> uint64
+                   seed    : uint64) :<!refwrt>
+    uint64                     (* The first 64 bits of the hash value,
+                                  in native byte order. *)
 
 fun
 spookyhash_hash32 {length  : int}
                   (message : &(@[byte][length]),
                    length  : size_t length,
-                   seed    : uint32) :<!refwrt> uint32
+                   seed    : uint32) :<!refwrt>
+    uint32                     (* The first 32 bits of the hash value,
+                                  in native byte order. *)
 
 (********************************************************************)
 (* Calculation of a hash by incrementally updating.                 *)
@@ -80,7 +84,7 @@ spookyhash_update {length  : int}
    you have used spookyhash_final. *)
 fun
 spookyhash_final (context : &spookyhash_context_t) :<!refwrt>
-    @(uint64,       (* The first 64 bits (in native-endian order). *)
-      uint64)       (* The second 64 bits (in native-endian order). *)
+    @(uint64,         (* The first 64 bits (in native byte order). *)
+      uint64)         (* The second 64 bits (in native byte order). *)
 
 (********************************************************************)
