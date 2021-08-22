@@ -85,6 +85,9 @@ AX_CODE_COVERAGE
 
 AX_CHECK_ALIGNED_ACCESS_REQUIRED
 
+AC_C_BIGENDIAN(,,,
+  [AC_MSG_ERROR([Universal binary files are not yet supported.])])
+
 #--------------------------------------------------------------------------
 #
 # Checks for library functions.

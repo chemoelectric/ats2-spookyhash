@@ -93,22 +93,22 @@ escape = $(subst $$,\$$,$(subst ^,\^,$(subst ],\],$(subst [,\[,$(subst .,\.,$(su
 
 #--------------------------------------------------------------------------
 
-M4_DEPS =
-
-AM_M4FLAGS =
-
-TOTAL_M4FLAGS =
-TOTAL_M4FLAGS += $(AM_M4FLAGS)
-TOTAL_M4FLAGS += $(M4FLAGS)
-TOTAL_M4FLAGS += $(XM4FLAGS)
-
-%: %.m4 common-macros.m4
-	@$(MKDIR_P) $(@D)
-	$(call v,M4)$(M4) $(TOTAL_M4FLAGS) $(<) > $(@)
-
-%.c: %.c.m4 common-macros.m4
-	@$(MKDIR_P) $(@D)
-	$(call v,M4)$(M4) $(TOTAL_M4FLAGS) $(<) > $(@)
+#M4_DEPS =
+#
+#AM_M4FLAGS =
+#
+#TOTAL_M4FLAGS =
+#TOTAL_M4FLAGS += $(AM_M4FLAGS)
+#TOTAL_M4FLAGS += $(M4FLAGS)
+#TOTAL_M4FLAGS += $(XM4FLAGS)
+#
+#%: %.m4 common-macros.m4
+#	@$(MKDIR_P) $(@D)
+#	$(call v,M4)$(M4) $(TOTAL_M4FLAGS) $(<) > $(@)
+#
+#%.c: %.c.m4 common-macros.m4
+#	@$(MKDIR_P) $(@D)
+#	$(call v,M4)$(M4) $(TOTAL_M4FLAGS) $(<) > $(@)
 
 PATSOPT_DEPS =
 

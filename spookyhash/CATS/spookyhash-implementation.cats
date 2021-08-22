@@ -43,14 +43,6 @@ _Static_assert (sizeof (atstype_uint64) == 8,
 #define ats2_spookyhash_bswap32 __builtin_bswap32
 #define ats2_spookyhash_bswap64 __builtin_bswap64
 
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define ATS2_SPOOKYHASH_BIG_ENDIAN 0
-#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define ATS2_SPOOKYHASH_BIG_ENDIAN 1
-#else
-#error The platform must be little endian or big endian.
-#endif
-
 #else /* not __GNUC__ */
 
 #include <string.h>
@@ -74,10 +66,6 @@ _Static_assert (sizeof (atstype_uint64) == 8,
    (((x) & UINT64_C(0x0000FF0000000000)) >> 24) |   \
    (((x) & UINT64_C(0x00FF000000000000)) >> 40) |   \
    (((x) & UINT64_C(0xFF00000000000000)) >> 56))
-
-#ifndef ATS2_SPOOKYHASH_BIG_ENDIAN
-#error Please set ATS2_SPOOKYHASH_BIG_ENDIAN to 0 or 1 in CFLAGS.
-#endif
 
 #endif
 
@@ -177,7 +165,7 @@ ats2_spookyhash_bitwise_xor_uint64 (atstype_uint64 x,
 ats2_spookyhash_always_inline atstype_uint32
 ats2_spookyhash_fix_byte_order_uint32 (atstype_uint32 x)
 {
-#if ATS2_SPOOKYHASH_BIG_ENDIAN
+#if WORDS_BIGENDIAN
   return ats2_spookyhash_bswap32 (x);
 #else
   return x;
@@ -189,7 +177,7 @@ ats2_spookyhash_fix_byte_order_uint32 (atstype_uint32 x)
 ats2_spookyhash_always_inline atstype_uint64
 ats2_spookyhash_fix_byte_order_uint64 (atstype_uint64 x)
 {
-#if ATS2_SPOOKYHASH_BIG_ENDIAN
+#if WORDS_BIGENDIAN
   return ats2_spookyhash_bswap64 (x);
 #else
   return x;
