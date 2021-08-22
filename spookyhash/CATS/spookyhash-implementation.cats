@@ -21,15 +21,6 @@
 #ifndef ATS2_SPOOKYHASH_IMPLEMENTATIONS_CATS_HEADER_GUARD__
 #define ATS2_SPOOKYHASH_IMPLEMENTATIONS_CATS_HEADER_GUARD__
 
-#ifndef ATS2_SPOOKYHASH_ALLOW_UNALIGNED_READS
-#if defined (__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-/* Intel/AMD x86 support unaligned reads. */
-#define ATS2_SPOOKYHASH_ALLOW_UNALIGNED_READS 1
-#else
-#define ATS2_SPOOKYHASH_ALLOW_UNALIGNED_READS 0
-#endif
-#endif
-
 _Static_assert (sizeof (atstype_uint32) == 4,
                 "uint32 is not 4 bytes");
 _Static_assert (sizeof (atstype_uint64) == 8,
@@ -202,6 +193,17 @@ ats2_spookyhash_fix_byte_order_uint64 (atstype_uint64 x)
   return ats2_spookyhash_bswap64 (x);
 #else
   return x;
+#endif
+}
+
+ats2_spookyhash_always_inline atstype_bool
+ats2_spookyhash_allow_direct_read_g1 (atstype_ptr p)
+{
+#if HAVE_ALIGNED_ACCESS_REQUIRED
+  return ((((uintptr_t) p) % sizeof (atstype_uint64) == 0) ?
+          atsbool_true : atsbool_false);
+#else
+  return atsbool_true;
 #endif
 }
 

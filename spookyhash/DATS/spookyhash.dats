@@ -237,20 +237,8 @@ memset {n     : int}
 
 (*------------------------------------------------------------------*)
 
-fn {}
-allow_direct_read_g1 {p : addr}
-                     (p : ptr p) :<> bool =
-  if $extval (int, "ATS2_SPOOKYHASH_ALLOW_UNALIGNED_READS") <> 0 then
-    true
-  else
-    let
-      (* FIXME: Use actual uintptr_t if possible. *)
-      typedef my_uintptr_t = ullint
-      val i = $UNSAFE.cast{my_uintptr_t} p
-      val mask = $UNSAFE.cast{my_uintptr_t} 0x07U
-    in
-      bitwise_and (i, mask) = $UNSAFE.cast{my_uintptr_t} 0
-    end
+extern fn
+allow_direct_read_g1 {p : addr} (p : ptr p) :<> bool = "mac#%"
 
 fn {}
 allow_direct_read_g0 (p : ptr) :<> bool =

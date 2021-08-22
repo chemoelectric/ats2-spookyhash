@@ -83,6 +83,8 @@ AX_CODE_COVERAGE
 #
 # Checks for typedefs, structures, and compiler characteristics.
 
+AX_CHECK_ALIGNED_ACCESS_REQUIRED
+
 #--------------------------------------------------------------------------
 #
 # Checks for library functions.
@@ -96,8 +98,6 @@ CFLAGS="${CFLAGS}${CFLAGS+ }\$(CODE_COVERAGE_CFLAGS)"
 # Automake. (By the way, you often can use ‘$(eval ...)’ as well, but
 # @GNU@ here may be better.)
 AC_SUBST([GNU],[])
-
-#AC_CONFIG_HEADERS([config.h])
 
 StM_REQUIRE_GNU_MAKE_IN_PATH
 StM_CONFIG_MAKEFILES
