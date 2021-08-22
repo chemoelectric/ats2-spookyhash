@@ -20,11 +20,6 @@ along with this program. If not, see
 
 (* Spookyhash version 2 *)
 
-
-%{#
-#include "spookyhash/CATS/spookyhash.cats"
-%}
-
 #include "spookyhash/HATS/spookyhash-parameters.hats"
 
 #define ATS_PACKNAME "ats2-spookyhash"

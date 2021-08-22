@@ -18,6 +18,10 @@ along with this program. If not, see
 
 *)
 
+%{^
+#include "spookyhash/CATS/spookyhash-implementation.cats"
+%}
+
 #define ATS_PACKNAME "ats2-spookyhash"
 #define ATS_EXTERN_PREFIX "ats2_spookyhash_"
 

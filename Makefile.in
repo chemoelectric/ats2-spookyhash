@@ -255,7 +255,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/build-aux/depcomp \
 	$(top_srcdir)/build-aux/install-sh \
 	$(top_srcdir)/build-aux/ltmain.sh \
-	$(top_srcdir)/build-aux/missing AUTHORS COPYING INSTALL \
+	$(top_srcdir)/build-aux/missing AUTHORS COPYING INSTALL README \
 	build-aux/compile build-aux/config.guess build-aux/config.sub \
 	build-aux/depcomp build-aux/install-sh build-aux/ltmain.sh \
 	build-aux/missing
@@ -736,7 +736,7 @@ AUTOMAKE_OPTIONS = foreign subdir-objects -Wno-portability
 #
 #--------------------------------------------------------------------------
 EXTRA_DIST = $(srcdir)/silent-rules.mk COPYING INSTALL README AUTHORS \
-	$(SPOOKYHASH_PARAMETERS_HATS) $(SPOOKYHASH_CATS) \
+	$(SPOOKYHASH_PARAMETERS_HATS) $(SPOOKYHASH_IMPL_CATS) \
 	$(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS) $(SPOOKYHASH_SATS) \
 	$(SPOOKYHASH_DATS) reference-implementation/SpookyV2.cpp \
 	reference-implementation/SpookyV2.h \
@@ -762,9 +762,7 @@ LDADD = $(CODE_COVERAGE_LIBS)
 # The ATS2 library.
 #
 lib_LTLIBRARIES = libats2-spookyhash.la
-nobase_nodist_pkginclude_HEADERS = $(SPOOKYHASH_PARAMETERS_HATS) \
-	$(SPOOKYHASH_CATS) $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS) \
-	$(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS)
+nobase_nodist_pkginclude_HEADERS = $(SPOOKYHASH_SATS)
 pkgconfigdir = ${libdir}/pkgconfig
 nodist_pkgconfig_DATA = 
 CODE_COVERAGE_IGNORE_PATTERN = /usr/include/* /usr/include/*/* \
@@ -792,7 +790,7 @@ AM_PATSOPTFLAGS = -IATS $(builddir) -IATS $(srcdir)
 TOTAL_PATSOPTFLAGS = $(AM_PATSOPTFLAGS) $(PATSOPTFLAGS) \
 	$(XPATSOPTFLAGS)
 SPOOKYHASH_PARAMETERS_HATS = spookyhash/HATS/spookyhash-parameters.hats
-SPOOKYHASH_CATS = spookyhash/CATS/spookyhash.cats
+SPOOKYHASH_IMPL_CATS = spookyhash/CATS/spookyhash-implementation.cats
 ARRAY_PRF_SATS = spookyhash/SATS/array_prf.sats
 ARRAY_PRF_SATS_C = spookyhash/SATS/array_prf_sats.c
 ARRAY_PRF_DATS = spookyhash/DATS/array_prf.dats
@@ -1568,10 +1566,10 @@ distclean-local: code-coverage-dist-clean
 
 $(ARRAY_PRF_SATS_C): $(ARRAY_PRF_SATS)
 $(ARRAY_PRF_DATS_C): $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS)
-$(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
+$(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_IMPL_CATS) \
 						$(SPOOKYHASH_PARAMETERS_HATS)
 $(SPOOKYHASH_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS) \
-						$(SPOOKYHASH_CATS) \
+						$(SPOOKYHASH_IMPL_CATS) \
 						$(SPOOKYHASH_PARAMETERS_HATS) \
 						$(ARRAY_PRF_SATS)
 

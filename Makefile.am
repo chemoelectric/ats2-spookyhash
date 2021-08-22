@@ -139,8 +139,8 @@ lib_LTLIBRARIES += libats2-spookyhash.la
 SPOOKYHASH_PARAMETERS_HATS = spookyhash/HATS/spookyhash-parameters.hats
 EXTRA_DIST += $(SPOOKYHASH_PARAMETERS_HATS)
 
-SPOOKYHASH_CATS = spookyhash/CATS/spookyhash.cats
-EXTRA_DIST += $(SPOOKYHASH_CATS)
+SPOOKYHASH_IMPL_CATS = spookyhash/CATS/spookyhash-implementation.cats
+EXTRA_DIST += $(SPOOKYHASH_IMPL_CATS)
 
 ARRAY_PRF_SATS = spookyhash/SATS/array_prf.sats
 ARRAY_PRF_SATS_C = spookyhash/SATS/array_prf_sats.c
@@ -170,19 +170,14 @@ nodist_libats2_spookyhash_la_SOURCES += $(SPOOKYHASH_DATS_C)
 
 $(ARRAY_PRF_SATS_C): $(ARRAY_PRF_SATS)
 $(ARRAY_PRF_DATS_C): $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS)
-$(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
+$(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_IMPL_CATS) \
 						$(SPOOKYHASH_PARAMETERS_HATS)
 $(SPOOKYHASH_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS) \
-						$(SPOOKYHASH_CATS) \
+						$(SPOOKYHASH_IMPL_CATS) \
 						$(SPOOKYHASH_PARAMETERS_HATS) \
 						$(ARRAY_PRF_SATS)
 
-nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_PARAMETERS_HATS)
-nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_CATS)
-nobase_nodist_pkginclude_HEADERS += $(ARRAY_PRF_SATS)
-nobase_nodist_pkginclude_HEADERS += $(ARRAY_PRF_DATS)
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_SATS)
-nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_DATS)
 
 # #--------------------------------------------------------------------------
 # #
