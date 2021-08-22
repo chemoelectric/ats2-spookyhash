@@ -61,6 +61,11 @@ prval _ = $UNSAFE.prop_assert {sizeof (uint32) == 4} ()
 prval _ = $UNSAFE.prop_assert {sizeof (uint64) == 8} ()
 
 extern praxi {t : vt@ype}
+fake_initialize_array_v :
+  {n : int} {p : addr}
+  (@[t?][n] @ p) -<prf> @[t][n] @ p
+
+extern praxi {t : vt@ype}
 array2bytes :
   {n : int}
   {p : addr}
@@ -1010,11 +1015,7 @@ spookyhash_short {length  : int | length <= BUFSIZE}
       val _ = memcpy (buf, message, length)
       val result = _short<> (buf, length, seed1, seed2)
 
-      extern praxi
-      ignore_array :
-        {n : int} {p : addr}
-        (@[byte?][n] @ p) -<prf> @[byte][n] @ p
-      prval pf_after = ignore_array pf_after
+      prval pf_after = fake_initialize_array_v<byte> pf_after
 
       prval _ = pf_bytes :=
         array_v_join2 {byte} {..} {length, BUFSIZE - length}
