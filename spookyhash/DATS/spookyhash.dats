@@ -1002,13 +1002,19 @@ spookyhash_short {length  : int | length <= BUFSIZE}
       var buf : @[uint64][TWICE_NUMVARS]
 
       prval pf_bytes =
-        array2bytes<uint64?> {TWICE_NUMVARS} (view@ buf)
+        array2bytesqmark<uint64?> {TWICE_NUMVARS} (view@ buf)
       prval (pf_dest, pf_after) =
-        array_v_subdivide2 {byte} {..} {length, BUFSIZE - length}
+        array_v_subdivide2 {byte?} {..} {length, BUFSIZE - length}
                            pf_bytes
 
       val _ = memcpy (buf, message, length)
       val result = _short<> (buf, length, seed1, seed2)
+
+      extern praxi
+      ignore_array :
+        {n : int} {p : addr}
+        (@[byte?][n] @ p) -<prf> @[byte][n] @ p
+      prval pf_after = ignore_array pf_after
 
       prval _ = pf_bytes :=
         array_v_join2 {byte} {..} {length, BUFSIZE - length}
