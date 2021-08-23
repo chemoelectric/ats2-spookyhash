@@ -780,13 +780,11 @@ _short {length  : int}
       }
 
     fn {}
-    handle_last_bytes {length    : int}
-                      {offset    : int | offset == past_blocks ||
+    handle_last_bytes {offset    : int | offset == past_blocks ||
                                          offset == past_blocks + 16}
                       {num_bytes : int | 0 <= num_bytes;
-                                         num_bytes < 16;
-                                         offset + num_bytes == length}
-                      (message   : &(@[byte][length]),
+                                         num_bytes < 16}
+                      (message   : &(@[byte][offset + num_bytes]),
                        offset    : size_t offset,
                        num_bytes : size_t num_bytes,
                        a         : &uint64,
@@ -794,6 +792,8 @@ _short {length  : int}
                        c         : &uint64,
                        d         : &uint64) :<!refwrt> void =
       {
+        stadef length = offset + num_bytes
+
         val p_data = ptr_add<byte> (addr@ message, offset)
 
         prval (pf_before, pf_data) =

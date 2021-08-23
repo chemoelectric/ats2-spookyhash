@@ -47,7 +47,7 @@ fill_message_0 (char *message,
                 size_t length)
 {
   for (size_t i = 0; i != length; i += 1)
-    message[i] = (char) (unsigned char) ((i + 0x80) % 0xFF);
+    message[i] = (char) (unsigned char) ((i + 128) % 256);
 }
 
 static void

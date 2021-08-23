@@ -122,6 +122,10 @@ TOTAL_PATSOPTFLAGS += $(AM_PATSOPTFLAGS)
 TOTAL_PATSOPTFLAGS += $(PATSOPTFLAGS)
 TOTAL_PATSOPTFLAGS += $(XPATSOPTFLAGS)
 
+TESTS_PATSOPTFLAGS =
+TESTS_PATSOPTFLAGS += -IATS $(builddir)/tests
+TESTS_PATSOPTFLAGS += -IATS $(srcdir)/tests
+
 %_sats.c: %.sats $(PATSOPT_DEPS)
 	@$(MKDIR_P) $(@D)
 	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -s $(<)
@@ -129,6 +133,11 @@ TOTAL_PATSOPTFLAGS += $(XPATSOPTFLAGS)
 %_dats.c: %.dats $(PATSOPT_DEPS)
 	@$(MKDIR_P) $(@D)
 	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -d $(<)
+
+%_tests.c: %.dats $(PATSOPT_DEPS)
+	@$(MKDIR_P) $(@D)
+	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) \
+			$(TESTS_PATSOPTFLAGS) -d $(<)
 
 #--------------------------------------------------------------------------
 #
@@ -196,17 +205,19 @@ tests_compute_reference_result_CPPFLAGS += -I$(srcdir)/tests
 
 EXTRA_PROGRAMS += tests/try-spookyhash_hash128
 CLEANFILES += tests/try-spookyhash_hash128
-CLEANFILES += tests/try-spookyhash_hash128_dats.c
+CLEANFILES += tests/try-spookyhash_hash128_tests.c
 
 tests_try_spookyhash_hash128_SOURCES =
-tests_try_spookyhash_hash128_SOURCES += tests/try-spookyhash_hash128_dats.c
+tests_try_spookyhash_hash128_SOURCES += tests/try-spookyhash_hash128_tests.c
 tests_try_spookyhash_hash128_DEPENDENCIES =
 tests_try_spookyhash_hash128_DEPENDENCIES += tests/try-spookyhash_hash128.dats
+tests_try_spookyhash_hash128_DEPENDENCIES += tests/try-spookyhash-common.hats
 tests_try_spookyhash_hash128_DEPENDENCIES += libats2-spookyhash.la
 tests_try_spookyhash_hash128_LDADD =
 tests_try_spookyhash_hash128_LDADD += libats2-spookyhash.la
 
-tests/try-spookyhash_hash128_dats.c: tests/try-spookyhash_hash128.dats
+tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash_hash128.dats
+tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash-common.hats
 
 tests-clean:
 	-rm -f tests/*.o
@@ -256,259 +267,6 @@ tests-clean:
 # nodist_pkgconfig_DATA += spookyhash.pc
 # 
 # #--------------------------------------------------------------------------
-# 
-# AM_DEFAULT_SOURCE_EXT = _dats.c
-# 
-# TESTS =
-# TESTS += $(check_PROGRAMS)
-# 
-# DISTRIBUTED_ATS2_TESTS =
-# 
-# M4_GENERATED_ATS2_TESTS =
-# M4_GENERATED_ATS2_TESTS += tests/test-spookyhash-2-4-64
-# M4_GENERATED_ATS2_TESTS += tests/test-spookyhash-2-4-128
-# M4_GENERATED_ATS2_TESTS += tests/test-spookyhash-4-8-64
-# M4_GENERATED_ATS2_TESTS += tests/test-spookyhash-4-8-128
-# M4_GENERATED_ATS2_TESTS += tests/test-spookyhash-2-4-64-hats
-# M4_GENERATED_ATS2_TESTS += tests/test-spookyhash-4-8-64-hats
-# M4_GENERATED_ATS2_TESTS += tests/test-halfspookyhash-2-4-32
-# M4_GENERATED_ATS2_TESTS += tests/test-halfspookyhash-2-4-64
-# M4_GENERATED_ATS2_TESTS += tests/test-halfspookyhash-4-8-32
-# M4_GENERATED_ATS2_TESTS += tests/test-halfspookyhash-4-8-64
-# M4_GENERATED_ATS2_TESTS += tests/test-halfspookyhash-2-4-32-hats
-# M4_GENERATED_ATS2_TESTS += tests/test-halfspookyhash-4-8-32-hats
-# M4_GENERATED_ATS2_TESTS += tests/test-key
-# 
-# tests_test_spookyhash_2_4_64_SOURCES =
-# tests_test_spookyhash_2_4_64_SOURCES += tests/test-spookyhash-2-4-64_dats.c
-# tests_test_spookyhash_2_4_64_SOURCES += tests/vectors_sats.c
-# tests_test_spookyhash_2_4_64_SOURCES += tests/vectors-2-4_dats.c
-# tests_test_spookyhash_2_4_64_LDADD =
-# tests_test_spookyhash_2_4_64_LDADD += libats2-spookyhash.la
-# tests_test_spookyhash_2_4_64_DEPENDENCIES =
-# tests_test_spookyhash_2_4_64_DEPENDENCIES += tests/vectors-2-4.h
-# tests_test_spookyhash_2_4_64_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_spookyhash_2_4_128_SOURCES =
-# tests_test_spookyhash_2_4_128_SOURCES += tests/test-spookyhash-2-4-128_dats.c
-# tests_test_spookyhash_2_4_128_SOURCES += tests/vectors_sats.c
-# tests_test_spookyhash_2_4_128_SOURCES += tests/vectors-2-4_dats.c
-# tests_test_spookyhash_2_4_128_LDADD =
-# tests_test_spookyhash_2_4_128_LDADD += libats2-spookyhash.la
-# tests_test_spookyhash_2_4_128_DEPENDENCIES =
-# tests_test_spookyhash_2_4_128_DEPENDENCIES += tests/vectors-2-4.h
-# tests_test_spookyhash_2_4_128_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_spookyhash_4_8_64_SOURCES =
-# tests_test_spookyhash_4_8_64_SOURCES += tests/test-spookyhash-4-8-64_dats.c
-# tests_test_spookyhash_4_8_64_SOURCES += tests/vectors_sats.c
-# tests_test_spookyhash_4_8_64_SOURCES += tests/vectors-4-8_dats.c
-# tests_test_spookyhash_4_8_64_LDADD =
-# tests_test_spookyhash_4_8_64_LDADD += libats2-spookyhash.la
-# tests_test_spookyhash_4_8_64_DEPENDENCIES =
-# tests_test_spookyhash_4_8_64_DEPENDENCIES += tests/vectors-4-8.h
-# tests_test_spookyhash_4_8_64_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_spookyhash_4_8_128_SOURCES =
-# tests_test_spookyhash_4_8_128_SOURCES += tests/test-spookyhash-4-8-128_dats.c
-# tests_test_spookyhash_4_8_128_SOURCES += tests/vectors_sats.c
-# tests_test_spookyhash_4_8_128_SOURCES += tests/vectors-4-8_dats.c
-# tests_test_spookyhash_4_8_128_LDADD =
-# tests_test_spookyhash_4_8_128_LDADD += libats2-spookyhash.la
-# tests_test_spookyhash_4_8_128_DEPENDENCIES =
-# tests_test_spookyhash_4_8_128_DEPENDENCIES += tests/vectors-4-8.h
-# tests_test_spookyhash_4_8_128_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_spookyhash_2_4_64_hats_SOURCES =
-# tests_test_spookyhash_2_4_64_hats_SOURCES += tests/test-spookyhash-2-4-64-hats_dats.c
-# tests_test_spookyhash_2_4_64_hats_SOURCES += tests/vectors_sats.c
-# tests_test_spookyhash_2_4_64_hats_SOURCES += tests/vectors-2-4_dats.c
-# tests_test_spookyhash_2_4_64_hats_LDADD =
-# tests_test_spookyhash_2_4_64_hats_LDADD += libats2-spookyhash.la
-# tests_test_spookyhash_2_4_64_hats_DEPENDENCIES =
-# tests_test_spookyhash_2_4_64_hats_DEPENDENCIES += tests/vectors-2-4.h
-# tests_test_spookyhash_2_4_64_hats_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_spookyhash_4_8_64_hats_SOURCES =
-# tests_test_spookyhash_4_8_64_hats_SOURCES += tests/test-spookyhash-4-8-64-hats_dats.c
-# tests_test_spookyhash_4_8_64_hats_SOURCES += tests/vectors_sats.c
-# tests_test_spookyhash_4_8_64_hats_SOURCES += tests/vectors-4-8_dats.c
-# tests_test_spookyhash_4_8_64_hats_LDADD =
-# tests_test_spookyhash_4_8_64_hats_LDADD += libats2-spookyhash.la
-# tests_test_spookyhash_4_8_64_hats_DEPENDENCIES =
-# tests_test_spookyhash_4_8_64_hats_DEPENDENCIES += tests/vectors-4-8.h
-# tests_test_spookyhash_4_8_64_hats_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_halfspookyhash_2_4_32_SOURCES =
-# tests_test_halfspookyhash_2_4_32_SOURCES += tests/test-halfspookyhash-2-4-32_dats.c
-# tests_test_halfspookyhash_2_4_32_SOURCES += tests/vectors_sats.c
-# tests_test_halfspookyhash_2_4_32_SOURCES += tests/vectors-2-4_dats.c
-# tests_test_halfspookyhash_2_4_32_LDADD =
-# tests_test_halfspookyhash_2_4_32_LDADD += libats2-spookyhash.la
-# tests_test_halfspookyhash_2_4_32_DEPENDENCIES =
-# tests_test_halfspookyhash_2_4_32_DEPENDENCIES += tests/vectors-2-4.h
-# tests_test_halfspookyhash_2_4_32_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_halfspookyhash_2_4_64_SOURCES =
-# tests_test_halfspookyhash_2_4_64_SOURCES += tests/test-halfspookyhash-2-4-64_dats.c
-# tests_test_halfspookyhash_2_4_64_SOURCES += tests/vectors_sats.c
-# tests_test_halfspookyhash_2_4_64_SOURCES += tests/vectors-2-4_dats.c
-# tests_test_halfspookyhash_2_4_64_LDADD =
-# tests_test_halfspookyhash_2_4_64_LDADD += libats2-spookyhash.la
-# tests_test_halfspookyhash_2_4_64_DEPENDENCIES =
-# tests_test_halfspookyhash_2_4_64_DEPENDENCIES += tests/vectors-2-4.h
-# tests_test_halfspookyhash_2_4_64_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_halfspookyhash_4_8_32_SOURCES =
-# tests_test_halfspookyhash_4_8_32_SOURCES += tests/test-halfspookyhash-4-8-32_dats.c
-# tests_test_halfspookyhash_4_8_32_SOURCES += tests/vectors_sats.c
-# tests_test_halfspookyhash_4_8_32_SOURCES += tests/vectors-4-8_dats.c
-# tests_test_halfspookyhash_4_8_32_LDADD =
-# tests_test_halfspookyhash_4_8_32_LDADD += libats2-spookyhash.la
-# tests_test_halfspookyhash_4_8_32_DEPENDENCIES =
-# tests_test_halfspookyhash_4_8_32_DEPENDENCIES += tests/vectors-4-8.h
-# tests_test_halfspookyhash_4_8_32_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_halfspookyhash_4_8_64_SOURCES =
-# tests_test_halfspookyhash_4_8_64_SOURCES += tests/test-halfspookyhash-4-8-64_dats.c
-# tests_test_halfspookyhash_4_8_64_SOURCES += tests/vectors_sats.c
-# tests_test_halfspookyhash_4_8_64_SOURCES += tests/vectors-4-8_dats.c
-# tests_test_halfspookyhash_4_8_64_LDADD =
-# tests_test_halfspookyhash_4_8_64_LDADD += libats2-spookyhash.la
-# tests_test_halfspookyhash_4_8_64_DEPENDENCIES =
-# tests_test_halfspookyhash_4_8_64_DEPENDENCIES += tests/vectors-4-8.h
-# tests_test_halfspookyhash_4_8_64_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_halfspookyhash_2_4_32_hats_SOURCES =
-# tests_test_halfspookyhash_2_4_32_hats_SOURCES += tests/test-halfspookyhash-2-4-32-hats_dats.c
-# tests_test_halfspookyhash_2_4_32_hats_SOURCES += tests/vectors_sats.c
-# tests_test_halfspookyhash_2_4_32_hats_SOURCES += tests/vectors-2-4_dats.c
-# tests_test_halfspookyhash_2_4_32_hats_LDADD =
-# tests_test_halfspookyhash_2_4_32_hats_LDADD += libats2-spookyhash.la
-# tests_test_halfspookyhash_2_4_32_hats_DEPENDENCIES =
-# tests_test_halfspookyhash_2_4_32_hats_DEPENDENCIES += tests/vectors-2-4.h
-# tests_test_halfspookyhash_2_4_32_hats_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_halfspookyhash_4_8_32_hats_SOURCES =
-# tests_test_halfspookyhash_4_8_32_hats_SOURCES += tests/test-halfspookyhash-4-8-32-hats_dats.c
-# tests_test_halfspookyhash_4_8_32_hats_SOURCES += tests/vectors_sats.c
-# tests_test_halfspookyhash_4_8_32_hats_SOURCES += tests/vectors-4-8_dats.c
-# tests_test_halfspookyhash_4_8_32_hats_LDADD =
-# tests_test_halfspookyhash_4_8_32_hats_LDADD += libats2-spookyhash.la
-# tests_test_halfspookyhash_4_8_32_hats_DEPENDENCIES =
-# tests_test_halfspookyhash_4_8_32_hats_DEPENDENCIES += tests/vectors-4-8.h
-# tests_test_halfspookyhash_4_8_32_hats_DEPENDENCIES += spookyhash/SATS/array_prf.sats
-# 
-# tests_test_key_SOURCES =
-# tests_test_key_SOURCES += tests/test-key_dats.c
-# tests_test_key_LDADD =
-# tests_test_key_LDADD += libats2-spookyhash.la
-# tests_test_key_DEPENDENCIES =
-# 
-# tests/vectors_sats.c: tests/vectors.sats
-# tests/vectors_dats.c: tests/vectors.dats tests/vectors.sats
-# EXTRA_DIST += tests/vectors.sats
-# EXTRA_DIST += tests/vectors-2-4.dats
-# EXTRA_DIST += tests/vectors-4-8.dats
-# CLEANFILES += tests/vectors_sats.c
-# CLEANFILES += tests/vectors-2-4_dats.c
-# CLEANFILES += tests/vectors-4-8_dats.c
-# 
-# DISTRIBUTED_C_TESTS =
-# 
-# M4_GENERATED_C_TESTS =
-# M4_GENERATED_C_TESTS += tests/test-spookyhash-2-4-64-C
-# M4_GENERATED_C_TESTS += tests/test-spookyhash-2-4-128-C
-# M4_GENERATED_C_TESTS += tests/test-spookyhash-4-8-64-C
-# M4_GENERATED_C_TESTS += tests/test-spookyhash-4-8-128-C
-# M4_GENERATED_C_TESTS += tests/test-halfspookyhash-2-4-32-C
-# M4_GENERATED_C_TESTS += tests/test-halfspookyhash-2-4-64-C
-# M4_GENERATED_C_TESTS += tests/test-halfspookyhash-4-8-32-C
-# M4_GENERATED_C_TESTS += tests/test-halfspookyhash-4-8-64-C
-# M4_GENERATED_C_TESTS += tests/test-key-C
-# 
-# tests_test_spookyhash_2_4_64_C_SOURCES =
-# tests_test_spookyhash_2_4_64_C_SOURCES += tests/test-spookyhash-2-4-64-C.c
-# tests_test_spookyhash_2_4_64_C_SOURCES += tests/vectors-2-4.h
-# tests_test_spookyhash_2_4_64_C_LDADD =
-# tests_test_spookyhash_2_4_64_C_LDADD += libspookyhash.la
-# 
-# tests_test_spookyhash_2_4_128_C_SOURCES =
-# tests_test_spookyhash_2_4_128_C_SOURCES += tests/test-spookyhash-2-4-128-C.c
-# tests_test_spookyhash_2_4_128_C_SOURCES += tests/vectors-2-4.h
-# tests_test_spookyhash_2_4_128_C_LDADD =
-# tests_test_spookyhash_2_4_128_C_LDADD += libspookyhash.la
-# 
-# tests_test_spookyhash_4_8_64_C_SOURCES =
-# tests_test_spookyhash_4_8_64_C_SOURCES += tests/test-spookyhash-4-8-64-C.c
-# tests_test_spookyhash_4_8_64_C_SOURCES += tests/vectors-4-8.h
-# tests_test_spookyhash_4_8_64_C_LDADD =
-# tests_test_spookyhash_4_8_64_C_LDADD += libspookyhash.la
-# 
-# tests_test_spookyhash_4_8_128_C_SOURCES =
-# tests_test_spookyhash_4_8_128_C_SOURCES += tests/test-spookyhash-4-8-128-C.c
-# tests_test_spookyhash_4_8_128_C_SOURCES += tests/vectors-4-8.h
-# tests_test_spookyhash_4_8_128_C_LDADD =
-# tests_test_spookyhash_4_8_128_C_LDADD += libspookyhash.la
-# 
-# tests_test_halfspookyhash_2_4_32_C_SOURCES =
-# tests_test_halfspookyhash_2_4_32_C_SOURCES += tests/test-halfspookyhash-2-4-32-C.c
-# tests_test_halfspookyhash_2_4_32_C_SOURCES += tests/vectors-2-4.h
-# tests_test_halfspookyhash_2_4_32_C_LDADD =
-# tests_test_halfspookyhash_2_4_32_C_LDADD += libspookyhash.la
-# 
-# tests_test_halfspookyhash_2_4_64_C_SOURCES =
-# tests_test_halfspookyhash_2_4_64_C_SOURCES += tests/test-halfspookyhash-2-4-64-C.c
-# tests_test_halfspookyhash_2_4_64_C_SOURCES += tests/vectors-2-4.h
-# tests_test_halfspookyhash_2_4_64_C_LDADD =
-# tests_test_halfspookyhash_2_4_64_C_LDADD += libspookyhash.la
-# 
-# tests_test_halfspookyhash_4_8_32_C_SOURCES =
-# tests_test_halfspookyhash_4_8_32_C_SOURCES += tests/test-halfspookyhash-4-8-32-C.c
-# tests_test_halfspookyhash_4_8_32_C_SOURCES += tests/vectors-4-8.h
-# tests_test_halfspookyhash_4_8_32_C_LDADD =
-# tests_test_halfspookyhash_4_8_32_C_LDADD += libspookyhash.la
-# 
-# tests_test_halfspookyhash_4_8_64_C_SOURCES =
-# tests_test_halfspookyhash_4_8_64_C_SOURCES += tests/test-halfspookyhash-4-8-64-C.c
-# tests_test_halfspookyhash_4_8_64_C_SOURCES += tests/vectors-4-8.h
-# tests_test_halfspookyhash_4_8_64_C_LDADD =
-# tests_test_halfspookyhash_4_8_64_C_LDADD += libspookyhash.la
-# 
-# tests_test_key_C_SOURCES =
-# tests_test_key_C_SOURCES += tests/test-key-C.c
-# tests_test_key_C_LDADD =
-# tests_test_key_C_LDADD += libspookyhash.la
-# 
-# DISTRIBUTED_TESTS =
-# DISTRIBUTED_TESTS += $(DISTRIBUTED_ATS2_TESTS)
-# DISTRIBUTED_TESTS += $(DISTRIBUTED_C_TESTS)
-# 
-# GENERATED_TESTS =
-# GENERATED_TESTS += $(M4_GENERATED_ATS2_TESTS)
-# GENERATED_TESTS += $(M4_GENERATED_C_TESTS)
-# 
-# check_PROGRAMS =
-# check_PROGRAMS += $(DISTRIBUTED_TESTS)
-# check_PROGRAMS += $(GENERATED_TESTS)
-# 
-# EXTRA_DIST += $(DISTRIBUTED_ATS2_TESTS:%=%.dats)
-# EXTRA_DIST += $(M4_GENERATED_ATS2_TESTS:%=%.dats.m4)
-# EXTRA_DIST += $(DISTRIBUTED_C_TESTS:%=%.c)
-# EXTRA_DIST += $(M4_GENERATED_C_TESTS:%=%.c.m4)
-# 
-# CLEANFILES += $(DISTRIBUTED_ATS2_TESTS:%=%_dats.c)
-# CLEANFILES += $(M4_GENERATED_ATS2_TESTS:%=%.dats)
-# CLEANFILES += $(M4_GENERATED_ATS2_TESTS:%=%_dats.c)
-# CLEANFILES += $(M4_GENERATED_C_TESTS:%=%.c)
-# 
-# $(foreach f,$(M4_GENERATED_ATS2_TESTS), \
-# 	$(eval $(f:%=%.dats) $(f:%=%_dats.c): $(f:%=%.dats.m4)))
-# 
-# $(foreach f,$(M4_GENERATED_C_TESTS), \
-# 	$(eval $(f:%=%.c): $(f:%=%.c.m4)))
-#
-#--------------------------------------------------------------------------
 
 EXTRA_DIST += reference-implementation/SpookyV2.cpp
 EXTRA_DIST += reference-implementation/SpookyV2.h
