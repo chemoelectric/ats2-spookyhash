@@ -71,8 +71,8 @@ _Static_assert (sizeof (atstype_uint64) == 8,
 
 _Static_assert (ats2_spookyhash_bswap32 (0xDEADBEEFU) == 0xEFBEADDEU,
                 "ats2_spookyhash_bswap32 does not work correctly.");
-_Static_assert (ats2_spookyhash_bswap64 (0xDEADBEEF01020304U) ==
-                0x04030201EFBEADDEU,
+_Static_assert (ats2_spookyhash_bswap64 (0xDEADBEEFFEEDFACEU) ==
+                0xCEFAEDFEEFBEADDEU,
                 "ats2_spookyhash_bswap64 does not work correctly.");
 
 #include "spookyhash/HATS/spookyhash-parameters.hats"

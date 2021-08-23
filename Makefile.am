@@ -40,6 +40,7 @@ AM_LDFLAGS =
 LDADD =
 bin_PROGRAMS =
 lib_LTLIBRARIES =
+EXTRA_PROGRAMS =
 nobase_nodist_pkginclude_HEADERS =
 
 pkgconfigdir = ${libdir}/pkgconfig
@@ -74,7 +75,7 @@ CODE_COVERAGE_IGNORE_PATTERN += /usr/include/*/*
 CODE_COVERAGE_IGNORE_PATTERN += $(PATSHOME)/ccomp/runtime/*
 CODE_COVERAGE_IGNORE_PATTERN += $(PATSHOME)/prelude/CATS/*
 
-clean-local: code-coverage-clean
+clean-local: code-coverage-clean tests-clean
 distclean-local: code-coverage-dist-clean
 
 #EXTRA_DIST += m4/gnulib-cache.m4
@@ -178,6 +179,37 @@ $(SPOOKYHASH_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS) \
 						$(ARRAY_PRF_SATS)
 
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_SATS)
+
+#--------------------------------------------------------------------------
+
+EXTRA_PROGRAMS += tests/compute-reference-result
+CLEANFILES += tests/compute-reference-result
+
+tests_compute_reference_result_SOURCES =
+tests_compute_reference_result_SOURCES += tests/compute-reference-result.cpp
+tests_compute_reference_result_SOURCES += tests/SpookyV2.cpp
+tests_compute_reference_result_SOURCES += tests/SpookyV2.h
+tests_compute_reference_result_CPPFLAGS =
+tests_compute_reference_result_CPPFLAGS += $(AM_CPPFLAGS)
+tests_compute_reference_result_CPPFLAGS += -I$(builddir)/tests
+tests_compute_reference_result_CPPFLAGS += -I$(srcdir)/tests
+
+EXTRA_PROGRAMS += tests/try-spookyhash_hash128
+CLEANFILES += tests/try-spookyhash_hash128
+CLEANFILES += tests/try-spookyhash_hash128_dats.c
+
+tests_try_spookyhash_hash128_SOURCES =
+tests_try_spookyhash_hash128_SOURCES += tests/try-spookyhash_hash128_dats.c
+tests_try_spookyhash_hash128_DEPENDENCIES =
+tests_try_spookyhash_hash128_DEPENDENCIES += tests/try-spookyhash_hash128.dats
+tests_try_spookyhash_hash128_DEPENDENCIES += libats2-spookyhash.la
+tests_try_spookyhash_hash128_LDADD =
+tests_try_spookyhash_hash128_LDADD += libats2-spookyhash.la
+
+tests/try-spookyhash_hash128_dats.c: tests/try-spookyhash_hash128.dats
+
+tests-clean:
+	-rm -f tests/*.o
 
 # #--------------------------------------------------------------------------
 # #

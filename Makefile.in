@@ -33,7 +33,7 @@
 #
 
 # aminclude_static.am generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on Sun Aug 22 11:21:28 CDT 2021
+# from AX_AM_MACROS_STATIC on Mon Aug 23 13:13:39 CDT 2021
 
 
 
@@ -113,6 +113,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS =
+EXTRA_PROGRAMS = tests/compute-reference-result$(EXEEXT) \
+	tests/try-spookyhash_hash128$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_ac_append_to_file.m4 \
@@ -136,7 +138,7 @@ DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = tests/SpookyV2.h tests/SpookyV2.cpp
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" \
 	"$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(pkgincludedir)"
@@ -183,6 +185,17 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_tests_compute_reference_result_OBJECTS = tests/compute_reference_result-compute-reference-result.$(OBJEXT) \
+	tests/compute_reference_result-SpookyV2.$(OBJEXT)
+tests_compute_reference_result_OBJECTS =  \
+	$(am_tests_compute_reference_result_OBJECTS)
+tests_compute_reference_result_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+tests_compute_reference_result_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_tests_try_spookyhash_hash128_OBJECTS =  \
+	tests/try-spookyhash_hash128_dats.$(OBJEXT)
+tests_try_spookyhash_hash128_OBJECTS =  \
+	$(am_tests_try_spookyhash_hash128_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -201,7 +214,10 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo \
 	spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo \
 	spookyhash/SATS/$(DEPDIR)/array_prf_sats.Plo \
-	spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo
+	spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo \
+	tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po \
+	tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po \
+	tests/$(DEPDIR)/try-spookyhash_hash128_dats.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -221,8 +237,29 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(nodist_libats2_spookyhash_la_SOURCES)
-DIST_SOURCES =
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_@AM_V@)
+am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
+am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
+SOURCES = $(nodist_libats2_spookyhash_la_SOURCES) \
+	$(tests_compute_reference_result_SOURCES) \
+	$(tests_try_spookyhash_hash128_SOURCES)
+DIST_SOURCES = $(tests_compute_reference_result_SOURCES) \
+	$(tests_try_spookyhash_hash128_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -256,10 +293,12 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/build-aux/depcomp \
 	$(top_srcdir)/build-aux/install-sh \
 	$(top_srcdir)/build-aux/ltmain.sh \
-	$(top_srcdir)/build-aux/missing AUTHORS COPYING INSTALL README \
-	build-aux/compile build-aux/config.guess build-aux/config.sub \
-	build-aux/depcomp build-aux/install-sh build-aux/ltmain.sh \
-	build-aux/missing
+	$(top_srcdir)/build-aux/missing \
+	$(top_srcdir)/reference-implementation/SpookyV2.cpp \
+	$(top_srcdir)/reference-implementation/SpookyV2.h AUTHORS \
+	COPYING INSTALL README build-aux/compile \
+	build-aux/config.guess build-aux/config.sub build-aux/depcomp \
+	build-aux/install-sh build-aux/ltmain.sh build-aux/missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -298,6 +337,10 @@ CODE_COVERAGE_LIBS = @CODE_COVERAGE_LIBS@
 CPPFLAGS = @CPPFLAGS@
 CSCOPE = @CSCOPE@
 CTAGS = @CTAGS@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+CXXDEPMODE = @CXXDEPMODE@
+CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -367,6 +410,7 @@ abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
@@ -744,7 +788,9 @@ EXTRA_DIST = $(srcdir)/silent-rules.mk COPYING INSTALL README AUTHORS \
 	reference-implementation/TestSpookyV2.cpp
 MOSTLYCLEANFILES = 
 CLEANFILES = $(ARRAY_PRF_SATS_C) $(ARRAY_PRF_DATS_C) \
-	$(SPOOKYHASH_SATS_C) $(SPOOKYHASH_DATS_C)
+	$(SPOOKYHASH_SATS_C) $(SPOOKYHASH_DATS_C) \
+	tests/compute-reference-result tests/try-spookyhash_hash128 \
+	tests/try-spookyhash_hash128_dats.c
 DISTCLEANFILES = Makefile GNUmakefile
 BUILT_SOURCES = 
 #DISTCLEANFILES += lib/Makefile
@@ -816,11 +862,21 @@ SPOOKYHASH_DATS = spookyhash/DATS/spookyhash.dats
 SPOOKYHASH_DATS_C = spookyhash/DATS/spookyhash_dats.c
 nodist_libats2_spookyhash_la_SOURCES = $(ARRAY_PRF_SATS_C) \
 	$(ARRAY_PRF_DATS_C) $(SPOOKYHASH_SATS_C) $(SPOOKYHASH_DATS_C)
+tests_compute_reference_result_SOURCES =  \
+	tests/compute-reference-result.cpp tests/SpookyV2.cpp \
+	tests/SpookyV2.h
+tests_compute_reference_result_CPPFLAGS = $(AM_CPPFLAGS) \
+	-I$(builddir)/tests -I$(srcdir)/tests
+tests_try_spookyhash_hash128_SOURCES =  \
+	tests/try-spookyhash_hash128_dats.c
+tests_try_spookyhash_hash128_DEPENDENCIES =  \
+	tests/try-spookyhash_hash128.dats libats2-spookyhash.la
+tests_try_spookyhash_hash128_LDADD = libats2-spookyhash.la
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .cpp .lo .o .obj
 am--refresh: GNUmakefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/aminclude_static.am $(am__configure_deps)
@@ -855,6 +911,10 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
+tests/SpookyV2.h: $(top_builddir)/config.status $(top_srcdir)/reference-implementation/SpookyV2.h
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+tests/SpookyV2.cpp: $(top_builddir)/config.status $(top_srcdir)/reference-implementation/SpookyV2.cpp
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -962,6 +1022,26 @@ spookyhash/DATS/spookyhash_dats.lo: spookyhash/DATS/$(am__dirstamp) \
 
 libats2-spookyhash.la: $(libats2_spookyhash_la_OBJECTS) $(libats2_spookyhash_la_DEPENDENCIES) $(EXTRA_libats2_spookyhash_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(LINK) -rpath $(libdir) $(libats2_spookyhash_la_OBJECTS) $(libats2_spookyhash_la_LIBADD) $(LIBS)
+tests/$(am__dirstamp):
+	@$(MKDIR_P) tests
+	@: > tests/$(am__dirstamp)
+tests/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) tests/$(DEPDIR)
+	@: > tests/$(DEPDIR)/$(am__dirstamp)
+tests/compute_reference_result-compute-reference-result.$(OBJEXT):  \
+	tests/$(am__dirstamp) tests/$(DEPDIR)/$(am__dirstamp)
+tests/compute_reference_result-SpookyV2.$(OBJEXT):  \
+	tests/$(am__dirstamp) tests/$(DEPDIR)/$(am__dirstamp)
+
+tests/compute-reference-result$(EXEEXT): $(tests_compute_reference_result_OBJECTS) $(tests_compute_reference_result_DEPENDENCIES) $(EXTRA_tests_compute_reference_result_DEPENDENCIES) tests/$(am__dirstamp)
+	@rm -f tests/compute-reference-result$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(tests_compute_reference_result_OBJECTS) $(tests_compute_reference_result_LDADD) $(LIBS)
+tests/try-spookyhash_hash128_dats.$(OBJEXT): tests/$(am__dirstamp) \
+	tests/$(DEPDIR)/$(am__dirstamp)
+
+tests/try-spookyhash_hash128$(EXEEXT): $(tests_try_spookyhash_hash128_OBJECTS) $(tests_try_spookyhash_hash128_DEPENDENCIES) $(EXTRA_tests_try_spookyhash_hash128_DEPENDENCIES) tests/$(am__dirstamp)
+	@rm -f tests/try-spookyhash_hash128$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tests_try_spookyhash_hash128_OBJECTS) $(tests_try_spookyhash_hash128_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -969,6 +1049,7 @@ mostlyclean-compile:
 	-rm -f spookyhash/DATS/*.lo
 	-rm -f spookyhash/SATS/*.$(OBJEXT)
 	-rm -f spookyhash/SATS/*.lo
+	-rm -f tests/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -977,6 +1058,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/SATS/$(DEPDIR)/array_prf_sats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/try-spookyhash_hash128_dats.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1008,6 +1092,58 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
+.cpp.o:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cpp.lo:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
+tests/compute_reference_result-compute-reference-result.o: tests/compute-reference-result.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_compute_reference_result_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tests/compute_reference_result-compute-reference-result.o -MD -MP -MF tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Tpo -c -o tests/compute_reference_result-compute-reference-result.o `test -f 'tests/compute-reference-result.cpp' || echo '$(srcdir)/'`tests/compute-reference-result.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Tpo tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tests/compute-reference-result.cpp' object='tests/compute_reference_result-compute-reference-result.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_compute_reference_result_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tests/compute_reference_result-compute-reference-result.o `test -f 'tests/compute-reference-result.cpp' || echo '$(srcdir)/'`tests/compute-reference-result.cpp
+
+tests/compute_reference_result-compute-reference-result.obj: tests/compute-reference-result.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_compute_reference_result_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tests/compute_reference_result-compute-reference-result.obj -MD -MP -MF tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Tpo -c -o tests/compute_reference_result-compute-reference-result.obj `if test -f 'tests/compute-reference-result.cpp'; then $(CYGPATH_W) 'tests/compute-reference-result.cpp'; else $(CYGPATH_W) '$(srcdir)/tests/compute-reference-result.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Tpo tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tests/compute-reference-result.cpp' object='tests/compute_reference_result-compute-reference-result.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_compute_reference_result_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tests/compute_reference_result-compute-reference-result.obj `if test -f 'tests/compute-reference-result.cpp'; then $(CYGPATH_W) 'tests/compute-reference-result.cpp'; else $(CYGPATH_W) '$(srcdir)/tests/compute-reference-result.cpp'; fi`
+
+tests/compute_reference_result-SpookyV2.o: tests/SpookyV2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_compute_reference_result_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tests/compute_reference_result-SpookyV2.o -MD -MP -MF tests/$(DEPDIR)/compute_reference_result-SpookyV2.Tpo -c -o tests/compute_reference_result-SpookyV2.o `test -f 'tests/SpookyV2.cpp' || echo '$(srcdir)/'`tests/SpookyV2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) tests/$(DEPDIR)/compute_reference_result-SpookyV2.Tpo tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tests/SpookyV2.cpp' object='tests/compute_reference_result-SpookyV2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_compute_reference_result_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tests/compute_reference_result-SpookyV2.o `test -f 'tests/SpookyV2.cpp' || echo '$(srcdir)/'`tests/SpookyV2.cpp
+
+tests/compute_reference_result-SpookyV2.obj: tests/SpookyV2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_compute_reference_result_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tests/compute_reference_result-SpookyV2.obj -MD -MP -MF tests/$(DEPDIR)/compute_reference_result-SpookyV2.Tpo -c -o tests/compute_reference_result-SpookyV2.obj `if test -f 'tests/SpookyV2.cpp'; then $(CYGPATH_W) 'tests/SpookyV2.cpp'; else $(CYGPATH_W) '$(srcdir)/tests/SpookyV2.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) tests/$(DEPDIR)/compute_reference_result-SpookyV2.Tpo tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tests/SpookyV2.cpp' object='tests/compute_reference_result-SpookyV2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_compute_reference_result_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tests/compute_reference_result-SpookyV2.obj `if test -f 'tests/SpookyV2.cpp'; then $(CYGPATH_W) 'tests/SpookyV2.cpp'; else $(CYGPATH_W) '$(srcdir)/tests/SpookyV2.cpp'; fi`
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -1015,6 +1151,7 @@ clean-libtool:
 	-rm -rf .libs _libs
 	-rm -rf spookyhash/DATS/.libs spookyhash/DATS/_libs
 	-rm -rf spookyhash/SATS/.libs spookyhash/SATS/_libs
+	-rm -rf tests/.libs tests/_libs
 
 distclean-libtool:
 	-rm -f libtool config.lt
@@ -1338,6 +1475,8 @@ distclean-generic:
 	-rm -f spookyhash/DATS/$(am__dirstamp)
 	-rm -f spookyhash/SATS/$(DEPDIR)/$(am__dirstamp)
 	-rm -f spookyhash/SATS/$(am__dirstamp)
+	-rm -f tests/$(DEPDIR)/$(am__dirstamp)
+	-rm -f tests/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -1355,6 +1494,9 @@ distclean: distclean-am
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/array_prf_sats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo
+	-rm -f tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po
+	-rm -f tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po
+	-rm -f tests/$(DEPDIR)/try-spookyhash_hash128_dats.Po
 	-rm -f GNUmakefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-libtool distclean-local distclean-tags
@@ -1407,6 +1549,9 @@ maintainer-clean: maintainer-clean-am
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_dats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/array_prf_sats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo
+	-rm -f tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po
+	-rm -f tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po
+	-rm -f tests/$(DEPDIR)/try-spookyhash_hash128_dats.Po
 	-rm -f GNUmakefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1560,7 +1705,7 @@ code-coverage-capture-hook:
 
 @GNU@ include $(srcdir)/silent-rules.mk
 
-clean-local: code-coverage-clean
+clean-local: code-coverage-clean tests-clean
 distclean-local: code-coverage-dist-clean
 
 %_sats.c: %.sats $(PATSOPT_DEPS)
@@ -1579,6 +1724,11 @@ $(SPOOKYHASH_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS) \
 						$(SPOOKYHASH_IMPL_CATS) \
 						$(SPOOKYHASH_PARAMETERS_HATS) \
 						$(ARRAY_PRF_SATS)
+
+tests/try-spookyhash_hash128_dats.c: tests/try-spookyhash_hash128.dats
+
+tests-clean:
+	-rm -f tests/*.o
 
 #--------------------------------------------------------------------------
 # local variables:

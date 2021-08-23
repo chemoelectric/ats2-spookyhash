@@ -52,6 +52,8 @@ fi
 AC_PROG_CC
 #gl_EARLY
 AC_PROG_CC_C_O
+AC_PROG_CXX
+AC_PROG_CXX_C_O
 AC_CHECK_PROGS([PATSOPT],[patsopt])
 AC_PROG_INSTALL
 AC_PROG_LN_S
@@ -105,6 +107,10 @@ AC_SUBST([GNU],[])
 StM_REQUIRE_GNU_MAKE_IN_PATH
 StM_CONFIG_MAKEFILES
 #StM_CONFIG_MAKEFILES([lib/Makefile],[lib/GNUmakefile])
+
+AC_CONFIG_FILES(
+  [tests/SpookyV2.h:reference-implementation/SpookyV2.h
+   tests/SpookyV2.cpp:reference-implementation/SpookyV2.cpp])
 
 #AC_CONFIG_FILES([common-macros.m4])
 
