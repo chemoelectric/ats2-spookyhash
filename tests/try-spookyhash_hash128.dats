@@ -38,6 +38,16 @@ main0 (argc, argv) =
       spookyhash_hash128 (!p_msg, length, seed1, seed2)
     val _ = mfree_gc (pf_msg, pf_msg_mem | p_msg)
 
-    val _ = $extfcall (void, "print_results", seed1, seed2,
-                       length, pattern, hash1, hash2)
+    val _ = 
+      if hash1 <> reference_hash1 || hash2 <> reference_hash2 then
+        {
+          val _ = $extfcall (int, "printf", "Expected:\n")
+          val _ = $extfcall (void, "print_results", seed1, seed2,
+                             length, pattern, reference_hash1,
+                             reference_hash2)
+          val _ = $extfcall (int, "printf", "Got:\n")
+          val _ = $extfcall (void, "print_results", seed1, seed2,
+                             length, pattern, hash1, hash2)
+          val _ = $extfcall (void, "exit", 1)
+        }
   }

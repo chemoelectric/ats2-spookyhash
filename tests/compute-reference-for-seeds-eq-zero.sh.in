@@ -1,0 +1,9 @@
+#!@POSIX_SH@
+
+max_length=${1-512}
+
+length=0
+while [ ${length} -le ${max_length} ] ; do
+    tests/compute-reference-result 0 0 ${length} 0
+    length=`expr ${length} + 1`
+done

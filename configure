@@ -660,6 +660,7 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+POSIX_SH
 GNU_MAKE
 GNU
 CODE_COVERAGE_LIBS
@@ -841,7 +842,8 @@ CXXCPP
 PKG_CONFIG
 PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
-GNU_MAKE'
+GNU_MAKE
+POSIX_SH'
 
 
 # Initialize some variables set by options.
@@ -1521,6 +1523,7 @@ Some influential environment variables:
   PKG_CONFIG_LIBDIR
               path overriding pkg-config's built-in search path
   GNU_MAKE    GNU Make command
+  POSIX_SH    The full path of a POSIX shell
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -19238,6 +19241,15 @@ ac_config_files="$ac_config_files tests/SpookyV2.h:reference-implementation/Spoo
 #AC_CONFIG_FILES([ats2-spookyhash.pc])
 #AC_CONFIG_FILES([spookyhash.pc])
 
+
+POSIX_SH=${POSIX_SH-`command -p -v sh`}
+ac_config_files="$ac_config_files tests/compute-reference-for-seeds-eq-zero.sh"
+
+ac_config_files="$ac_config_files tests/test-spookyhash_hash128.sh"
+
+ac_config_files="$ac_config_files tests/test-spookyhash_hash128-for-seeds-eq-zero.sh"
+
+
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -20376,6 +20388,9 @@ do
     "GNUmakefile") CONFIG_FILES="$CONFIG_FILES GNUmakefile:Makefile.in" ;;
     "tests/SpookyV2.h") CONFIG_FILES="$CONFIG_FILES tests/SpookyV2.h:reference-implementation/SpookyV2.h" ;;
     "tests/SpookyV2.cpp") CONFIG_FILES="$CONFIG_FILES tests/SpookyV2.cpp:reference-implementation/SpookyV2.cpp" ;;
+    "tests/compute-reference-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/compute-reference-for-seeds-eq-zero.sh" ;;
+    "tests/test-spookyhash_hash128.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash128.sh" ;;
+    "tests/test-spookyhash_hash128-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash128-for-seeds-eq-zero.sh" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -21626,6 +21641,9 @@ _LT_EOF
 EOF
       fi
     ;;
+    "tests/compute-reference-for-seeds-eq-zero.sh":F) chmod +x tests/compute-reference-for-seeds-eq-zero.sh ;;
+    "tests/test-spookyhash_hash128.sh":F) chmod +x tests/test-spookyhash_hash128.sh ;;
+    "tests/test-spookyhash_hash128-for-seeds-eq-zero.sh":F) chmod +x tests/test-spookyhash_hash128-for-seeds-eq-zero.sh ;;
 
   esac
 done # for ac_tag

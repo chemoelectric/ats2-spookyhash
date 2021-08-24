@@ -216,8 +216,28 @@ tests_try_spookyhash_hash128_DEPENDENCIES += libats2-spookyhash.la
 tests_try_spookyhash_hash128_LDADD =
 tests_try_spookyhash_hash128_LDADD += libats2-spookyhash.la
 
+EXTRA_DIST += tests/try-spookyhash_hash128.dats
+EXTRA_DIST += tests/try-spookyhash-common.hats
+
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash_hash128.dats
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash-common.hats
+
+EXTRA_DIST += tests/compute-reference-for-seeds-eq-zero.sh
+EXTRA_DIST += $(srcdir)/tests/reference-for-seeds-eq-zero.dat
+
+$(srcdir)/tests/reference-for-seeds-eq-zero.dat: \
+				tests/compute-reference-for-seeds-eq-zero.sh \
+				tests/compute-reference-result
+# If the srcdir is unwritable, do not try to write over the test
+# data. This will be the case during a ‘make distcheck’.
+	if test -w $(@D) ; then $(<) > $(@) ; else : ; fi
+
+TESTS =
+TESTS += tests/test-spookyhash_hash128-for-seeds-eq-zero.sh
+
+$(TESTS): $(srcdir)/tests/reference-for-seeds-eq-zero.dat
+$(TESTS): tests/try-spookyhash_hash128
+$(TESTS): tests/test-spookyhash_hash128.sh
 
 tests-clean:
 	-rm -f tests/*.o

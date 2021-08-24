@@ -117,6 +117,15 @@ AC_CONFIG_FILES(
 #AC_CONFIG_FILES([ats2-spookyhash.pc])
 #AC_CONFIG_FILES([spookyhash.pc])
 
+AC_ARG_VAR([POSIX_SH],[The full path of a POSIX shell])
+POSIX_SH=${POSIX_SH-`command -p -v sh`}
+AC_CONFIG_FILES([tests/compute-reference-for-seeds-eq-zero.sh],
+                [chmod +x tests/compute-reference-for-seeds-eq-zero.sh])
+AC_CONFIG_FILES([tests/test-spookyhash_hash128.sh],
+                [chmod +x tests/test-spookyhash_hash128.sh])
+AC_CONFIG_FILES([tests/test-spookyhash_hash128-for-seeds-eq-zero.sh],
+                [chmod +x tests/test-spookyhash_hash128-for-seeds-eq-zero.sh])
+
 AC_OUTPUT
 
 #--------------------------------------------------------------------------
