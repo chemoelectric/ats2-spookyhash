@@ -33,7 +33,7 @@
 #
 
 # aminclude_static.am generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on Tue Aug 24 12:31:27 CDT 2021
+# from AX_AM_MACROS_STATIC on Tue Aug 24 17:31:55 CDT 2021
 
 
 
@@ -117,7 +117,8 @@ EXTRA_PROGRAMS = tests/compute-reference-result$(EXEEXT) \
 	tests/try-spookyhash_hash128$(EXEEXT) \
 	tests/try-spookyhash_hash64$(EXEEXT) \
 	tests/try-spookyhash_hash32$(EXEEXT) \
-	tests/try-spookyhash-incremental$(EXEEXT)
+	tests/try-spookyhash-incremental$(EXEEXT) \
+	tests/try-spookyhash_hash128-misaligned$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_ac_append_to_file.m4 \
@@ -150,7 +151,9 @@ CONFIG_CLEAN_FILES = tests/SpookyV2.h tests/SpookyV2.cpp \
 	tests/test-spookyhash_hash32.sh \
 	tests/test-spookyhash_hash32-for-seeds-eq-zero.sh \
 	tests/test-spookyhash-incremental.sh \
-	tests/test-spookyhash-incremental-for-seeds-eq-zero.sh
+	tests/test-spookyhash-incremental-for-seeds-eq-zero.sh \
+	tests/test-spookyhash_hash128-misaligned.sh \
+	tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" \
 	"$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(pkgincludedir)"
@@ -212,6 +215,10 @@ am_tests_try_spookyhash_hash128_OBJECTS =  \
 	tests/try-spookyhash_hash128_tests.$(OBJEXT)
 tests_try_spookyhash_hash128_OBJECTS =  \
 	$(am_tests_try_spookyhash_hash128_OBJECTS)
+am_tests_try_spookyhash_hash128_misaligned_OBJECTS =  \
+	tests/try-spookyhash_hash128-misaligned_tests.$(OBJEXT)
+tests_try_spookyhash_hash128_misaligned_OBJECTS =  \
+	$(am_tests_try_spookyhash_hash128_misaligned_OBJECTS)
 am_tests_try_spookyhash_hash32_OBJECTS =  \
 	tests/try-spookyhash_hash32_tests.$(OBJEXT)
 tests_try_spookyhash_hash32_OBJECTS =  \
@@ -242,6 +249,7 @@ am__depfiles_remade = spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo \
 	tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po \
 	tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po \
 	tests/$(DEPDIR)/try-spookyhash-incremental_tests.Po \
+	tests/$(DEPDIR)/try-spookyhash_hash128-misaligned_tests.Po \
 	tests/$(DEPDIR)/try-spookyhash_hash128_tests.Po \
 	tests/$(DEPDIR)/try-spookyhash_hash32_tests.Po \
 	tests/$(DEPDIR)/try-spookyhash_hash64_tests.Po
@@ -286,11 +294,13 @@ SOURCES = $(nodist_libats2_spookyhash_la_SOURCES) \
 	$(tests_compute_reference_result_SOURCES) \
 	$(tests_try_spookyhash_incremental_SOURCES) \
 	$(tests_try_spookyhash_hash128_SOURCES) \
+	$(tests_try_spookyhash_hash128_misaligned_SOURCES) \
 	$(tests_try_spookyhash_hash32_SOURCES) \
 	$(tests_try_spookyhash_hash64_SOURCES)
 DIST_SOURCES = $(tests_compute_reference_result_SOURCES) \
 	$(tests_try_spookyhash_incremental_SOURCES) \
 	$(tests_try_spookyhash_hash128_SOURCES) \
+	$(tests_try_spookyhash_hash128_misaligned_SOURCES) \
 	$(tests_try_spookyhash_hash32_SOURCES) \
 	$(tests_try_spookyhash_hash64_SOURCES)
 am__can_run_installinfo = \
@@ -511,6 +521,8 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/tests/test-spookyhash-incremental-for-seeds-eq-zero.sh.in \
 	$(top_srcdir)/tests/test-spookyhash-incremental.sh.in \
 	$(top_srcdir)/tests/test-spookyhash_hash128-for-seeds-eq-zero.sh.in \
+	$(top_srcdir)/tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh.in \
+	$(top_srcdir)/tests/test-spookyhash_hash128-misaligned.sh.in \
 	$(top_srcdir)/tests/test-spookyhash_hash128.sh.in \
 	$(top_srcdir)/tests/test-spookyhash_hash32-for-seeds-eq-zero.sh.in \
 	$(top_srcdir)/tests/test-spookyhash_hash32.sh.in \
@@ -757,6 +769,7 @@ EXTRA_DIST = $(srcdir)/silent-rules.mk COPYING INSTALL README AUTHORS \
 	tests/try-spookyhash_hash32.dats \
 	tests/try-spookyhash-incremental.dats \
 	tests/try-spookyhash-common.hats \
+	tests/try-spookyhash_hash128-misaligned.dats \
 	tests/compute-reference-for-seeds-eq-zero.sh \
 	$(srcdir)/tests/reference-for-seeds-eq-zero.dat \
 	reference-implementation/SpookyV2.cpp \
@@ -772,7 +785,9 @@ CLEANFILES = $(ARRAY_PRF_SATS_C) $(ARRAY_PRF_DATS_C) \
 	tests/try-spookyhash_hash32 \
 	tests/try-spookyhash_hash32_tests.c \
 	tests/try-spookyhash-incremental \
-	tests/try-spookyhash-incremental_tests.c
+	tests/try-spookyhash-incremental_tests.c \
+	tests/try-spookyhash_hash128-misaligned \
+	tests/try-spookyhash_hash128-misaligned_tests.c
 DISTCLEANFILES = Makefile GNUmakefile
 BUILT_SOURCES = 
 #DISTCLEANFILES += lib/Makefile
@@ -876,10 +891,17 @@ tests_try_spookyhash_incremental_DEPENDENCIES =  \
 	tests/try-spookyhash-incremental.dats \
 	tests/try-spookyhash-common.hats libats2-spookyhash.la
 tests_try_spookyhash_incremental_LDADD = libats2-spookyhash.la
+tests_try_spookyhash_hash128_misaligned_SOURCES =  \
+	tests/try-spookyhash_hash128-misaligned_tests.c
+tests_try_spookyhash_hash128_misaligned_DEPENDENCIES =  \
+	tests/try-spookyhash_hash128-misaligned.dats \
+	tests/try-spookyhash-common.hats libats2-spookyhash.la
+tests_try_spookyhash_hash128_misaligned_LDADD = libats2-spookyhash.la
 TESTS = tests/test-spookyhash_hash128-for-seeds-eq-zero.sh \
 	tests/test-spookyhash_hash64-for-seeds-eq-zero.sh \
 	tests/test-spookyhash_hash32-for-seeds-eq-zero.sh \
-	tests/test-spookyhash-incremental-for-seeds-eq-zero.sh
+	tests/test-spookyhash-incremental-for-seeds-eq-zero.sh \
+	tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -940,6 +962,10 @@ tests/test-spookyhash_hash32-for-seeds-eq-zero.sh: $(top_builddir)/config.status
 tests/test-spookyhash-incremental.sh: $(top_builddir)/config.status $(top_srcdir)/tests/test-spookyhash-incremental.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 tests/test-spookyhash-incremental-for-seeds-eq-zero.sh: $(top_builddir)/config.status $(top_srcdir)/tests/test-spookyhash-incremental-for-seeds-eq-zero.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+tests/test-spookyhash_hash128-misaligned.sh: $(top_builddir)/config.status $(top_srcdir)/tests/test-spookyhash_hash128-misaligned.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh: $(top_builddir)/config.status $(top_srcdir)/tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
@@ -1074,6 +1100,12 @@ tests/try-spookyhash_hash128_tests.$(OBJEXT): tests/$(am__dirstamp) \
 tests/try-spookyhash_hash128$(EXEEXT): $(tests_try_spookyhash_hash128_OBJECTS) $(tests_try_spookyhash_hash128_DEPENDENCIES) $(EXTRA_tests_try_spookyhash_hash128_DEPENDENCIES) tests/$(am__dirstamp)
 	@rm -f tests/try-spookyhash_hash128$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(tests_try_spookyhash_hash128_OBJECTS) $(tests_try_spookyhash_hash128_LDADD) $(LIBS)
+tests/try-spookyhash_hash128-misaligned_tests.$(OBJEXT):  \
+	tests/$(am__dirstamp) tests/$(DEPDIR)/$(am__dirstamp)
+
+tests/try-spookyhash_hash128-misaligned$(EXEEXT): $(tests_try_spookyhash_hash128_misaligned_OBJECTS) $(tests_try_spookyhash_hash128_misaligned_DEPENDENCIES) $(EXTRA_tests_try_spookyhash_hash128_misaligned_DEPENDENCIES) tests/$(am__dirstamp)
+	@rm -f tests/try-spookyhash_hash128-misaligned$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tests_try_spookyhash_hash128_misaligned_OBJECTS) $(tests_try_spookyhash_hash128_misaligned_LDADD) $(LIBS)
 tests/try-spookyhash_hash32_tests.$(OBJEXT): tests/$(am__dirstamp) \
 	tests/$(DEPDIR)/$(am__dirstamp)
 
@@ -1105,6 +1137,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/try-spookyhash-incremental_tests.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/try-spookyhash_hash128-misaligned_tests.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/try-spookyhash_hash128_tests.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/try-spookyhash_hash32_tests.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/try-spookyhash_hash64_tests.Po@am__quote@ # am--include-marker
@@ -1476,6 +1509,13 @@ tests/test-spookyhash-incremental-for-seeds-eq-zero.sh.log: tests/test-spookyhas
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh.log: tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh
+	@p='tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh'; \
+	b='tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1732,6 +1772,7 @@ distclean: distclean-am
 	-rm -f tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po
 	-rm -f tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po
 	-rm -f tests/$(DEPDIR)/try-spookyhash-incremental_tests.Po
+	-rm -f tests/$(DEPDIR)/try-spookyhash_hash128-misaligned_tests.Po
 	-rm -f tests/$(DEPDIR)/try-spookyhash_hash128_tests.Po
 	-rm -f tests/$(DEPDIR)/try-spookyhash_hash32_tests.Po
 	-rm -f tests/$(DEPDIR)/try-spookyhash_hash64_tests.Po
@@ -1790,6 +1831,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po
 	-rm -f tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po
 	-rm -f tests/$(DEPDIR)/try-spookyhash-incremental_tests.Po
+	-rm -f tests/$(DEPDIR)/try-spookyhash_hash128-misaligned_tests.Po
 	-rm -f tests/$(DEPDIR)/try-spookyhash_hash128_tests.Po
 	-rm -f tests/$(DEPDIR)/try-spookyhash_hash32_tests.Po
 	-rm -f tests/$(DEPDIR)/try-spookyhash_hash64_tests.Po
@@ -1982,6 +2024,8 @@ tests/try-spookyhash_hash32_tests.c: tests/try-spookyhash_hash32.dats
 tests/try-spookyhash_hash32_tests.c: tests/try-spookyhash-common.hats
 tests/try-spookyhash-incremental_tests.c: tests/try-spookyhash-incremental.dats
 tests/try-spookyhash-incremental_tests.c: tests/try-spookyhash-common.hats
+tests/try-spookyhash_hash128-misaligned_tests.c: tests/try-spookyhash_hash128-misaligned.dats
+tests/try-spookyhash_hash128-misaligned_tests.c: tests/try-spookyhash-common.hats
 
 $(srcdir)/tests/reference-for-seeds-eq-zero.dat: \
 				tests/compute-reference-for-seeds-eq-zero.sh \
@@ -1999,6 +2043,8 @@ $(TESTS): tests/try-spookyhash_hash32
 $(TESTS): tests/test-spookyhash_hash32.sh
 $(TESTS): tests/try-spookyhash-incremental
 $(TESTS): tests/test-spookyhash-incremental.sh
+$(TESTS): tests/try-spookyhash_hash128-misaligned
+$(TESTS): tests/test-spookyhash_hash128-misaligned.sh
 
 tests-clean:
 	-rm -f tests/*.o

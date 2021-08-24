@@ -19261,6 +19261,10 @@ ac_config_files="$ac_config_files tests/test-spookyhash-incremental.sh"
 
 ac_config_files="$ac_config_files tests/test-spookyhash-incremental-for-seeds-eq-zero.sh"
 
+ac_config_files="$ac_config_files tests/test-spookyhash_hash128-misaligned.sh"
+
+ac_config_files="$ac_config_files tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh"
+
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -20409,6 +20413,8 @@ do
     "tests/test-spookyhash_hash32-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash32-for-seeds-eq-zero.sh" ;;
     "tests/test-spookyhash-incremental.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash-incremental.sh" ;;
     "tests/test-spookyhash-incremental-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash-incremental-for-seeds-eq-zero.sh" ;;
+    "tests/test-spookyhash_hash128-misaligned.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash128-misaligned.sh" ;;
+    "tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -21668,6 +21674,8 @@ EOF
     "tests/test-spookyhash_hash32-for-seeds-eq-zero.sh":F) chmod +x tests/test-spookyhash_hash32-for-seeds-eq-zero.sh ;;
     "tests/test-spookyhash-incremental.sh":F) chmod +x tests/test-spookyhash-incremental.sh ;;
     "tests/test-spookyhash-incremental-for-seeds-eq-zero.sh":F) chmod +x tests/test-spookyhash-incremental-for-seeds-eq-zero.sh ;;
+    "tests/test-spookyhash_hash128-misaligned.sh":F) chmod +x tests/test-spookyhash_hash128-misaligned.sh ;;
+    "tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh":F) chmod +x tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh ;;
 
   esac
 done # for ac_tag

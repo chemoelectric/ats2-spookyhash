@@ -137,6 +137,10 @@ AC_CONFIG_FILES([tests/test-spookyhash-incremental.sh],
                 [chmod +x tests/test-spookyhash-incremental.sh])
 AC_CONFIG_FILES([tests/test-spookyhash-incremental-for-seeds-eq-zero.sh],
                 [chmod +x tests/test-spookyhash-incremental-for-seeds-eq-zero.sh])
+AC_CONFIG_FILES([tests/test-spookyhash_hash128-misaligned.sh],
+                [chmod +x tests/test-spookyhash_hash128-misaligned.sh])
+AC_CONFIG_FILES([tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh],
+                [chmod +x tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh])
 
 AC_OUTPUT
 

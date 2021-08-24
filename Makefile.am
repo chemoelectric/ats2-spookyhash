@@ -261,11 +261,25 @@ tests_try_spookyhash_incremental_DEPENDENCIES += libats2-spookyhash.la
 tests_try_spookyhash_incremental_LDADD =
 tests_try_spookyhash_incremental_LDADD += libats2-spookyhash.la
 
+EXTRA_PROGRAMS += tests/try-spookyhash_hash128-misaligned
+CLEANFILES += tests/try-spookyhash_hash128-misaligned
+CLEANFILES += tests/try-spookyhash_hash128-misaligned_tests.c
+
+tests_try_spookyhash_hash128_misaligned_SOURCES =
+tests_try_spookyhash_hash128_misaligned_SOURCES += tests/try-spookyhash_hash128-misaligned_tests.c
+tests_try_spookyhash_hash128_misaligned_DEPENDENCIES =
+tests_try_spookyhash_hash128_misaligned_DEPENDENCIES += tests/try-spookyhash_hash128-misaligned.dats
+tests_try_spookyhash_hash128_misaligned_DEPENDENCIES += tests/try-spookyhash-common.hats
+tests_try_spookyhash_hash128_misaligned_DEPENDENCIES += libats2-spookyhash.la
+tests_try_spookyhash_hash128_misaligned_LDADD =
+tests_try_spookyhash_hash128_misaligned_LDADD += libats2-spookyhash.la
+
 EXTRA_DIST += tests/try-spookyhash_hash128.dats
 EXTRA_DIST += tests/try-spookyhash_hash64.dats
 EXTRA_DIST += tests/try-spookyhash_hash32.dats
 EXTRA_DIST += tests/try-spookyhash-incremental.dats
 EXTRA_DIST += tests/try-spookyhash-common.hats
+EXTRA_DIST += tests/try-spookyhash_hash128-misaligned.dats
 
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash_hash128.dats
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash-common.hats
@@ -275,6 +289,8 @@ tests/try-spookyhash_hash32_tests.c: tests/try-spookyhash_hash32.dats
 tests/try-spookyhash_hash32_tests.c: tests/try-spookyhash-common.hats
 tests/try-spookyhash-incremental_tests.c: tests/try-spookyhash-incremental.dats
 tests/try-spookyhash-incremental_tests.c: tests/try-spookyhash-common.hats
+tests/try-spookyhash_hash128-misaligned_tests.c: tests/try-spookyhash_hash128-misaligned.dats
+tests/try-spookyhash_hash128-misaligned_tests.c: tests/try-spookyhash-common.hats
 
 EXTRA_DIST += tests/compute-reference-for-seeds-eq-zero.sh
 EXTRA_DIST += $(srcdir)/tests/reference-for-seeds-eq-zero.dat
@@ -291,6 +307,7 @@ TESTS += tests/test-spookyhash_hash128-for-seeds-eq-zero.sh
 TESTS += tests/test-spookyhash_hash64-for-seeds-eq-zero.sh
 TESTS += tests/test-spookyhash_hash32-for-seeds-eq-zero.sh
 TESTS += tests/test-spookyhash-incremental-for-seeds-eq-zero.sh
+TESTS += tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh
 
 $(TESTS): $(srcdir)/tests/reference-for-seeds-eq-zero.dat
 $(TESTS): tests/try-spookyhash_hash128
@@ -301,6 +318,8 @@ $(TESTS): tests/try-spookyhash_hash32
 $(TESTS): tests/test-spookyhash_hash32.sh
 $(TESTS): tests/try-spookyhash-incremental
 $(TESTS): tests/test-spookyhash-incremental.sh
+$(TESTS): tests/try-spookyhash_hash128-misaligned
+$(TESTS): tests/test-spookyhash_hash128-misaligned.sh
 
 tests-clean:
 	-rm -f tests/*.o
