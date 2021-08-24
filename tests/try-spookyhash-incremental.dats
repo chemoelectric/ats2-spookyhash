@@ -95,7 +95,8 @@ main0 (argc, argv) =
                    pattern : int,
                    seed1   : uint64,
                    seed2   : uint64,
-                   i       : size_t i) : @(uint64, uint64) =
+                   i       : size_t i,
+                   finals  : bool) : @(uint64, uint64) =
       let
         val (pf_msg, pf_msg_mem | p_msg) = malloc_gc (length)
         val _ = fill_message (pf_msg | p_msg, length, pattern)
@@ -109,7 +110,17 @@ main0 (argc, argv) =
         prval (pf1, pf2) =
           array_v_split {byte} {..} {length} {i} pf_msg
         val () = spookyhash_update (context, !p1, i)
+        val _ =
+          if finals then
+            {
+              val _ = spookyhash_final (context)
+            }
         val () = spookyhash_update (context, !p2, length - i)
+        val _ =
+          if finals then
+            {
+              val _ = spookyhash_final (context)
+            }
         prval _ = pf_msg :=
           array_v_unsplit {byte} {..} {i, length - i} (pf1, pf2)
 
@@ -126,11 +137,45 @@ main0 (argc, argv) =
         for (i := i2sz 0; i <> succ length; i := succ i)
           let
             val (hash1, hash2) =
-              in_two_pieces (length, pattern, seed1, seed2, i)
+              in_two_pieces (length, pattern, seed1, seed2, i, false)
           in
             if (hash1 <> reference_hash1 ||
                   hash2 <> reference_hash2) then
               {
+                val _ = $extfcall (int, "printf",
+                                   "In two pieces (%zu, %zu) --\n",
+                                   i, length - i)
+                val _ = $extfcall (int, "printf", "Expected:\n")
+                val _ = $extfcall (void, "print_hash128_results",
+                                   seed1, seed2, length, pattern,
+                                   reference_hash1, reference_hash2)
+                val _ = $extfcall (int, "printf", "Got:\n")
+                val _ = $extfcall (void, "print_hash128_results",
+                                   seed1, seed2, length, pattern,
+                                   hash1, hash2)
+                val _ = $extfcall (void, "exit", 1)
+              }
+          end
+      end
+
+    val _ =
+      let
+        var i : [i : int | 0 <= i; i <= length + 1] size_t i
+      in
+        (* Test all the possible splits into two pieces,
+           and run spookyhash_final along the way. *)
+        for (i := i2sz 0; i <> succ length; i := succ i)
+          let
+            val (hash1, hash2) =
+              in_two_pieces (length, pattern, seed1, seed2, i, true)
+          in
+            if (hash1 <> reference_hash1 ||
+                  hash2 <> reference_hash2) then
+              {
+                val _ =
+                  $extfcall
+                    (int, "printf",
+                     "Running spookyhash_final along the way --\n")
                 val _ = $extfcall (int, "printf",
                                    "In two pieces (%zu, %zu) --\n",
                                    i, length - i)
@@ -156,7 +201,8 @@ main0 (argc, argv) =
                pattern : int,
                seed1   : uint64,
                seed2   : uint64,
-               size    : size_t size) : @(uint64, uint64) =
+               size    : size_t size,
+               finals  : bool) : @(uint64, uint64) =
       let
         val (pf_msg, pf_msg_mem | p_msg) = malloc_gc (length)
         val _ = fill_message (pf_msg | p_msg, length, pattern)
@@ -192,7 +238,8 @@ main0 (argc, argv) =
               context     : &spookyhash_context_t,
               chunk_count : size_t chunk_count,
               remainder   : size_t remainder,
-              i           : size_t i) : void =
+              i           : size_t i,
+              finals      : bool) : void =
           if i < chunk_count then
             {
               prval _ = prop_verify {chunk_count * size <= length} ()
@@ -214,6 +261,11 @@ main0 (argc, argv) =
                               pf23
 
               val _ = spookyhash_update (context, !p, size)
+              val _ =
+                if finals then
+                  {
+                    val _ = spookyhash_final (context)
+                  }
 
               prval _ = pf23 :=
                 array_v_unsplit {byte}
@@ -226,7 +278,8 @@ main0 (argc, argv) =
                                 (pf1, pf23)
 
               val _ = loop (pf_msg | p_msg, length, size, context,
-                                     chunk_count, remainder, succ i)
+                                     chunk_count, remainder, succ i,
+                                     finals)
             }
           else
             {
@@ -244,6 +297,11 @@ main0 (argc, argv) =
                   pf_msg
 
               val _ = spookyhash_update (context, !p, remainder)
+              val _ =
+                if finals then
+                  {
+                    val _ = spookyhash_final (context)
+                  }
 
               prval _ = pf_msg :=
                 array_v_unsplit
@@ -257,7 +315,7 @@ main0 (argc, argv) =
         val _ = loop {length, size, chunk_count, remainder}
                      (pf_msg | p_msg, length, size,
                                context, chunk_count,
-                               remainder, i2sz 0)
+                               remainder, i2sz 0, finals)
 
         val _ = mfree_gc (pf_msg, pf_msg_mem | p_msg)
       in
@@ -274,11 +332,51 @@ main0 (argc, argv) =
           for (size := i2sz 1; size <= length; size := succ size)
             let
               val (hash1, hash2) =
-                in_chunks (length, pattern, seed1, seed2, size)
+                in_chunks (length, pattern, seed1, seed2, size, false)
             in
               if (hash1 <> reference_hash1 ||
                     hash2 <> reference_hash2) then
                 {
+                  val _ =
+                    $extfcall
+                      (int, "printf",
+                       "In %zu chunk(s) of size %zu, remainder %zu --\n",
+                       g1uint_div (length, size), size,
+                       natmod (length, size))
+                  val _ = $extfcall (int, "printf", "Expected:\n")
+                  val _ = $extfcall (void, "print_hash128_results",
+                                     seed1, seed2, length, pattern,
+                                     reference_hash1, reference_hash2)
+                  val _ = $extfcall (int, "printf", "Got:\n")
+                  val _ = $extfcall (void, "print_hash128_results",
+                                     seed1, seed2, length, pattern,
+                                     hash1, hash2)
+                  val _ = $extfcall (void, "exit", 1)
+                }
+            end
+        end
+
+
+    val _ =
+      if length <> i2sz 0 then
+        let
+          var size : [size : int | 1 <= size; size <= length + 1]
+                     size_t size
+        in
+          (* Test all the possible chunk sizes, and run
+             spookyhash_final along the way. *)
+          for (size := i2sz 1; size <= length; size := succ size)
+            let
+              val (hash1, hash2) =
+                in_chunks (length, pattern, seed1, seed2, size, true)
+            in
+              if (hash1 <> reference_hash1 ||
+                    hash2 <> reference_hash2) then
+                {
+                  val _ =
+                    $extfcall
+                      (int, "printf",
+                       "Running spookyhash_final along the way --\n")
                   val _ =
                     $extfcall
                       (int, "printf",
