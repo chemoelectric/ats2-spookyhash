@@ -32,23 +32,33 @@ main0 (argc, argv) =
 
     val length = g1ofg0 length
 
+    val _ =
+      if ($UNSAFE.cast 0x100000000 <= seed1 ||
+            $UNSAFE.cast 0 < seed2) then
+        {
+          val _ = $extfcall (int, "printf",
+                             "The seed is too large.\n")
+          val _ = $extfcall (void, "exit", 2)
+        }
+    val seed : uint32 = $UNSAFE.cast (seed1)
+
     val (pf_msg, pf_msg_mem | p_msg) = malloc_gc (length)
     val _ = fill_message (pf_msg | p_msg, length, pattern)
-    val (hash1, hash2) =
-      spookyhash_hash128 (!p_msg, length, seed1, seed2)
+    val hash = spookyhash_hash32 (!p_msg, length, seed)
     val _ = mfree_gc (pf_msg, pf_msg_mem | p_msg)
 
+    val reference_hash : uint32 =
+      $UNSAFE.cast{uint32}
+        (reference_hash1 mod ($UNSAFE.cast{uint64} 0x100000000))
     val _ = 
-      if hash1 <> reference_hash1 || hash2 <> reference_hash2 then
+      if hash <> reference_hash then
         {
           val _ = $extfcall (int, "printf", "Expected:\n")
-          val _ = $extfcall (void, "print_hash128_results",
-                             seed1, seed2, length, pattern,
-                             reference_hash1, reference_hash2)
+          val _ = $extfcall (void, "print_hash32_results",
+                             seed, length, pattern, reference_hash)
           val _ = $extfcall (int, "printf", "Got:\n")
-          val _ = $extfcall (void, "print_hash128_results",
-                             seed1, seed2, length, pattern,
-                             hash1, hash2)
+          val _ = $extfcall (void, "print_hash32_results",
+                             seed, length, pattern, hash)
           val _ = $extfcall (void, "exit", 1)
         }
   }

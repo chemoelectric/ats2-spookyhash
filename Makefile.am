@@ -216,11 +216,43 @@ tests_try_spookyhash_hash128_DEPENDENCIES += libats2-spookyhash.la
 tests_try_spookyhash_hash128_LDADD =
 tests_try_spookyhash_hash128_LDADD += libats2-spookyhash.la
 
+EXTRA_PROGRAMS += tests/try-spookyhash_hash32
+CLEANFILES += tests/try-spookyhash_hash32
+CLEANFILES += tests/try-spookyhash_hash32_tests.c
+
+tests_try_spookyhash_hash32_SOURCES =
+tests_try_spookyhash_hash32_SOURCES += tests/try-spookyhash_hash32_tests.c
+tests_try_spookyhash_hash32_DEPENDENCIES =
+tests_try_spookyhash_hash32_DEPENDENCIES += tests/try-spookyhash_hash32.dats
+tests_try_spookyhash_hash32_DEPENDENCIES += tests/try-spookyhash-common.hats
+tests_try_spookyhash_hash32_DEPENDENCIES += libats2-spookyhash.la
+tests_try_spookyhash_hash32_LDADD =
+tests_try_spookyhash_hash32_LDADD += libats2-spookyhash.la
+
+EXTRA_PROGRAMS += tests/try-spookyhash_hash64
+CLEANFILES += tests/try-spookyhash_hash64
+CLEANFILES += tests/try-spookyhash_hash64_tests.c
+
+tests_try_spookyhash_hash64_SOURCES =
+tests_try_spookyhash_hash64_SOURCES += tests/try-spookyhash_hash64_tests.c
+tests_try_spookyhash_hash64_DEPENDENCIES =
+tests_try_spookyhash_hash64_DEPENDENCIES += tests/try-spookyhash_hash64.dats
+tests_try_spookyhash_hash64_DEPENDENCIES += tests/try-spookyhash-common.hats
+tests_try_spookyhash_hash64_DEPENDENCIES += libats2-spookyhash.la
+tests_try_spookyhash_hash64_LDADD =
+tests_try_spookyhash_hash64_LDADD += libats2-spookyhash.la
+
 EXTRA_DIST += tests/try-spookyhash_hash128.dats
+EXTRA_DIST += tests/try-spookyhash_hash64.dats
+EXTRA_DIST += tests/try-spookyhash_hash32.dats
 EXTRA_DIST += tests/try-spookyhash-common.hats
 
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash_hash128.dats
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash-common.hats
+tests/try-spookyhash_hash64_tests.c: tests/try-spookyhash_hash64.dats
+tests/try-spookyhash_hash64_tests.c: tests/try-spookyhash-common.hats
+tests/try-spookyhash_hash32_tests.c: tests/try-spookyhash_hash32.dats
+tests/try-spookyhash_hash32_tests.c: tests/try-spookyhash-common.hats
 
 EXTRA_DIST += tests/compute-reference-for-seeds-eq-zero.sh
 EXTRA_DIST += $(srcdir)/tests/reference-for-seeds-eq-zero.dat
@@ -234,10 +266,16 @@ $(srcdir)/tests/reference-for-seeds-eq-zero.dat: \
 
 TESTS =
 TESTS += tests/test-spookyhash_hash128-for-seeds-eq-zero.sh
+TESTS += tests/test-spookyhash_hash64-for-seeds-eq-zero.sh
+TESTS += tests/test-spookyhash_hash32-for-seeds-eq-zero.sh
 
 $(TESTS): $(srcdir)/tests/reference-for-seeds-eq-zero.dat
 $(TESTS): tests/try-spookyhash_hash128
 $(TESTS): tests/test-spookyhash_hash128.sh
+$(TESTS): tests/try-spookyhash_hash64
+$(TESTS): tests/test-spookyhash_hash64.sh
+$(TESTS): tests/try-spookyhash_hash32
+$(TESTS): tests/test-spookyhash_hash32.sh
 
 tests-clean:
 	-rm -f tests/*.o

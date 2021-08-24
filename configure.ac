@@ -125,6 +125,14 @@ AC_CONFIG_FILES([tests/test-spookyhash_hash128.sh],
                 [chmod +x tests/test-spookyhash_hash128.sh])
 AC_CONFIG_FILES([tests/test-spookyhash_hash128-for-seeds-eq-zero.sh],
                 [chmod +x tests/test-spookyhash_hash128-for-seeds-eq-zero.sh])
+AC_CONFIG_FILES([tests/test-spookyhash_hash64.sh],
+                [chmod +x tests/test-spookyhash_hash64.sh])
+AC_CONFIG_FILES([tests/test-spookyhash_hash64-for-seeds-eq-zero.sh],
+                [chmod +x tests/test-spookyhash_hash64-for-seeds-eq-zero.sh])
+AC_CONFIG_FILES([tests/test-spookyhash_hash32.sh],
+                [chmod +x tests/test-spookyhash_hash32.sh])
+AC_CONFIG_FILES([tests/test-spookyhash_hash32-for-seeds-eq-zero.sh],
+                [chmod +x tests/test-spookyhash_hash32-for-seeds-eq-zero.sh])
 
 AC_OUTPUT
 

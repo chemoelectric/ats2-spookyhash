@@ -78,16 +78,36 @@ get_reference_hash2 (int argc, char *argv[])
 }
 
 static void
-print_results (atstype_uint64 seed1,
-               atstype_uint64 seed2,
-               atstype_size length,
-               atstype_int pattern,
-               atstype_uint64 hash1,
-               atstype_uint64 hash2)
+print_hash128_results (atstype_uint64 seed1,
+                       atstype_uint64 seed2,
+                       atstype_size length,
+                       atstype_int pattern,
+                       atstype_uint64 hash1,
+                       atstype_uint64 hash2)
 {
   printf ("%016" PRIX64 " %016" PRIX64 " %zu %d "
           "%016" PRIX64 " %016" PRIX64 "\n",
           seed1, seed2, length, pattern, hash1, hash2);
+}
+
+static void
+print_hash64_results (atstype_uint64 seed,
+                      atstype_size length,
+                      atstype_int pattern,
+                      atstype_uint64 hash)
+{
+  printf ("%08" PRIX64 " %zu %d %08" PRIX64 "\n",
+          seed, length, pattern, hash);
+}
+
+static void
+print_hash32_results (atstype_uint32 seed,
+                      atstype_size length,
+                      atstype_int pattern,
+                      atstype_uint32 hash)
+{
+  printf ("%08" PRIX32 " %zu %d %08" PRIX32 "\n",
+          seed, length, pattern, hash);
 }
 
 %}
