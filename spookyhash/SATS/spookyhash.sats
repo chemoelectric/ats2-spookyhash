@@ -20,6 +20,10 @@ along with this program. If not, see
 
 (* Spookyhash version 2 *)
 
+%{#
+#include "spookyhash/CATS/spookyhash.cats"
+%}
+
 #define ATS_PACKNAME "ats2-spookyhash"
 #define ATS_EXTERN_PREFIX "ats2_spookyhash_"
 
@@ -27,7 +31,7 @@ along with this program. If not, see
 
 fun
 spookyhash_hash128 {length  : int}
-                   (message : &(@[byte][length]),
+                   (message : &RD(@[byte][length]),
                     length  : size_t length,
                     seed1   : uint64,
                     seed2   : uint64) :<!refwrt>
@@ -36,7 +40,7 @@ spookyhash_hash128 {length  : int}
 
 fun
 spookyhash_hash64 {length  : int}
-                  (message : &(@[byte][length]),
+                  (message : &RD(@[byte][length]),
                    length  : size_t length,
                    seed    : uint64) :<!refwrt>
     uint64                     (* The first 64 bits of the hash value,
@@ -44,7 +48,7 @@ spookyhash_hash64 {length  : int}
 
 fun
 spookyhash_hash32 {length  : int}
-                  (message : &(@[byte][length]),
+                  (message : &RD(@[byte][length]),
                    length  : size_t length,
                    seed    : uint32) :<!refwrt>
     uint32                     (* The first 32 bits of the hash value,
@@ -73,7 +77,7 @@ spookyhash_init (context : &spookyhash_context_t?
 fun
 spookyhash_update {length  : int}
                   (context : &spookyhash_context_t,
-                   message : &(@[byte][length]),
+                   message : &RD(@[byte][length]),
                    length  : size_t length) :<!refwrt> void
 
 (* spookyhash_final:

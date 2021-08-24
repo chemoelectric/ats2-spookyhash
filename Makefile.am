@@ -152,6 +152,9 @@ EXTRA_DIST += $(SPOOKYHASH_PARAMETERS_HATS)
 SPOOKYHASH_IMPL_CATS = spookyhash/CATS/spookyhash-implementation.cats
 EXTRA_DIST += $(SPOOKYHASH_IMPL_CATS)
 
+SPOOKYHASH_CATS = spookyhash/CATS/spookyhash.cats
+EXTRA_DIST += $(SPOOKYHASH_CATS)
+
 ARRAY_PRF_SATS = spookyhash/SATS/array_prf.sats
 ARRAY_PRF_SATS_C = spookyhash/SATS/array_prf_sats.c
 EXTRA_DIST += $(ARRAY_PRF_SATS)
@@ -180,14 +183,17 @@ nodist_libats2_spookyhash_la_SOURCES += $(SPOOKYHASH_DATS_C)
 
 $(ARRAY_PRF_SATS_C): $(ARRAY_PRF_SATS)
 $(ARRAY_PRF_DATS_C): $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS)
-$(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_IMPL_CATS) \
+$(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
+						$(SPOOKYHASH_IMPL_CATS) \
 						$(SPOOKYHASH_PARAMETERS_HATS)
-$(SPOOKYHASH_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_DATS) \
+$(SPOOKYHASH_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
+						$(SPOOKYHASH_DATS) \
 						$(SPOOKYHASH_IMPL_CATS) \
 						$(SPOOKYHASH_PARAMETERS_HATS) \
 						$(ARRAY_PRF_SATS)
 
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_SATS)
+nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_CATS)
 
 #--------------------------------------------------------------------------
 
@@ -216,19 +222,6 @@ tests_try_spookyhash_hash128_DEPENDENCIES += libats2-spookyhash.la
 tests_try_spookyhash_hash128_LDADD =
 tests_try_spookyhash_hash128_LDADD += libats2-spookyhash.la
 
-EXTRA_PROGRAMS += tests/try-spookyhash_hash32
-CLEANFILES += tests/try-spookyhash_hash32
-CLEANFILES += tests/try-spookyhash_hash32_tests.c
-
-tests_try_spookyhash_hash32_SOURCES =
-tests_try_spookyhash_hash32_SOURCES += tests/try-spookyhash_hash32_tests.c
-tests_try_spookyhash_hash32_DEPENDENCIES =
-tests_try_spookyhash_hash32_DEPENDENCIES += tests/try-spookyhash_hash32.dats
-tests_try_spookyhash_hash32_DEPENDENCIES += tests/try-spookyhash-common.hats
-tests_try_spookyhash_hash32_DEPENDENCIES += libats2-spookyhash.la
-tests_try_spookyhash_hash32_LDADD =
-tests_try_spookyhash_hash32_LDADD += libats2-spookyhash.la
-
 EXTRA_PROGRAMS += tests/try-spookyhash_hash64
 CLEANFILES += tests/try-spookyhash_hash64
 CLEANFILES += tests/try-spookyhash_hash64_tests.c
@@ -242,9 +235,36 @@ tests_try_spookyhash_hash64_DEPENDENCIES += libats2-spookyhash.la
 tests_try_spookyhash_hash64_LDADD =
 tests_try_spookyhash_hash64_LDADD += libats2-spookyhash.la
 
+EXTRA_PROGRAMS += tests/try-spookyhash_hash32
+CLEANFILES += tests/try-spookyhash_hash32
+CLEANFILES += tests/try-spookyhash_hash32_tests.c
+
+tests_try_spookyhash_hash32_SOURCES =
+tests_try_spookyhash_hash32_SOURCES += tests/try-spookyhash_hash32_tests.c
+tests_try_spookyhash_hash32_DEPENDENCIES =
+tests_try_spookyhash_hash32_DEPENDENCIES += tests/try-spookyhash_hash32.dats
+tests_try_spookyhash_hash32_DEPENDENCIES += tests/try-spookyhash-common.hats
+tests_try_spookyhash_hash32_DEPENDENCIES += libats2-spookyhash.la
+tests_try_spookyhash_hash32_LDADD =
+tests_try_spookyhash_hash32_LDADD += libats2-spookyhash.la
+
+EXTRA_PROGRAMS += tests/try-spookyhash-incremental
+CLEANFILES += tests/try-spookyhash-incremental
+CLEANFILES += tests/try-spookyhash-incremental_tests.c
+
+tests_try_spookyhash_incremental_SOURCES =
+tests_try_spookyhash_incremental_SOURCES += tests/try-spookyhash-incremental_tests.c
+tests_try_spookyhash_incremental_DEPENDENCIES =
+tests_try_spookyhash_incremental_DEPENDENCIES += tests/try-spookyhash-incremental.dats
+tests_try_spookyhash_incremental_DEPENDENCIES += tests/try-spookyhash-common.hats
+tests_try_spookyhash_incremental_DEPENDENCIES += libats2-spookyhash.la
+tests_try_spookyhash_incremental_LDADD =
+tests_try_spookyhash_incremental_LDADD += libats2-spookyhash.la
+
 EXTRA_DIST += tests/try-spookyhash_hash128.dats
 EXTRA_DIST += tests/try-spookyhash_hash64.dats
 EXTRA_DIST += tests/try-spookyhash_hash32.dats
+EXTRA_DIST += tests/try-spookyhash-incremental.dats
 EXTRA_DIST += tests/try-spookyhash-common.hats
 
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash_hash128.dats
@@ -253,6 +273,8 @@ tests/try-spookyhash_hash64_tests.c: tests/try-spookyhash_hash64.dats
 tests/try-spookyhash_hash64_tests.c: tests/try-spookyhash-common.hats
 tests/try-spookyhash_hash32_tests.c: tests/try-spookyhash_hash32.dats
 tests/try-spookyhash_hash32_tests.c: tests/try-spookyhash-common.hats
+tests/try-spookyhash-incremental_tests.c: tests/try-spookyhash-incremental.dats
+tests/try-spookyhash-incremental_tests.c: tests/try-spookyhash-common.hats
 
 EXTRA_DIST += tests/compute-reference-for-seeds-eq-zero.sh
 EXTRA_DIST += $(srcdir)/tests/reference-for-seeds-eq-zero.dat
@@ -268,6 +290,7 @@ TESTS =
 TESTS += tests/test-spookyhash_hash128-for-seeds-eq-zero.sh
 TESTS += tests/test-spookyhash_hash64-for-seeds-eq-zero.sh
 TESTS += tests/test-spookyhash_hash32-for-seeds-eq-zero.sh
+TESTS += tests/test-spookyhash-incremental-for-seeds-eq-zero.sh
 
 $(TESTS): $(srcdir)/tests/reference-for-seeds-eq-zero.dat
 $(TESTS): tests/try-spookyhash_hash128
@@ -276,6 +299,8 @@ $(TESTS): tests/try-spookyhash_hash64
 $(TESTS): tests/test-spookyhash_hash64.sh
 $(TESTS): tests/try-spookyhash_hash32
 $(TESTS): tests/test-spookyhash_hash32.sh
+$(TESTS): tests/try-spookyhash-incremental
+$(TESTS): tests/test-spookyhash-incremental.sh
 
 tests-clean:
 	-rm -f tests/*.o

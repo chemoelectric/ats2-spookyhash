@@ -18,8 +18,10 @@
 
 */
 
-#ifndef ATS2_SPOOKYHASH_IMPLEMENTATIONS_CATS_HEADER_GUARD__
-#define ATS2_SPOOKYHASH_IMPLEMENTATIONS_CATS_HEADER_GUARD__
+#ifndef ATS2_SPOOKYHASH_IMPLEMENTATION_CATS_HEADER_GUARD__
+#define ATS2_SPOOKYHASH_IMPLEMENTATION_CATS_HEADER_GUARD__
+
+#include "spookyhash/CATS/spookyhash.cats"
 
 _Static_assert (sizeof (atstype_uint32) == 4,
                 "uint32 is not 4 bytes");
@@ -74,20 +76,6 @@ _Static_assert (ats2_spookyhash_bswap32 (0xDEADBEEFU) == 0xEFBEADDEU,
 _Static_assert (ats2_spookyhash_bswap64 (0xDEADBEEFFEEDFACEU) ==
                 0xCEFAEDFEEFBEADDEU,
                 "ats2_spookyhash_bswap64 does not work correctly.");
-
-#include "spookyhash/HATS/spookyhash-parameters.hats"
-
-typedef struct
-{
-  /* Unhashed data, for partial messages. */
-  atstype_uint64 data[2 * ATS2_SPOOKYHASH_NUMVARS];
-  /* Internal state of the hash. */
-  atstype_uint64 state[ATS2_SPOOKYHASH_NUMVARS];
-  /* Total length of the input so far. */
-  atstype_size length;
-  /* Length of unhashed data stashed in m_data. */
-  atstype_uint8 remainder;
-} ats2_spookyhash_context_t;
 
 ats2_spookyhash_inline atstype_ptr
 ats2_spookyhash_m_data (atstype_ref ctx)
@@ -195,4 +183,4 @@ ats2_spookyhash_allow_direct_read_g1 (atstype_ptr p)
 #endif
 }
 
-#endif /* ATS2_SPOOKYHASH_IMPLEMENTATIONS_CATS_HEADER_GUARD__ */
+#endif /* ATS2_SPOOKYHASH_IMPLEMENTATION_CATS_HEADER_GUARD__ */

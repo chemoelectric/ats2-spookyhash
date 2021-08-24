@@ -1,0 +1,11 @@
+#!@POSIX_SH@
+
+while read reference_data ; do
+    if tests/try-spookyhash-incremental ${reference_data} ; then
+        :
+    else
+        exit 1
+    fi
+done
+
+exit 0
