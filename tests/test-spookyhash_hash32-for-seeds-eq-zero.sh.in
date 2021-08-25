@@ -1,4 +1,0 @@
-#!@POSIX_SH@
-
-tests/test-spookyhash_hash32.sh \
-    < @abs_top_srcdir@/tests/reference-for-seeds-eq-zero.dat

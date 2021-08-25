@@ -45,6 +45,14 @@ if test -z "${PKGCONFIG_PATSHOME}"; then
   AC_MSG_ERROR([Please set PKGCONFIG_PATSHOME on the configure command line.])
 fi
 
+AC_ARG_ENABLE([write-reference-data],
+  [AS_HELP_STRING([--enable-write-reference-data],
+    [enable GNUmakefile support to re-write the reference test data; do not do this on big-endian platforms])],
+  [enable_write_reference_data=yes],
+  [enable_write_reference_data=no])
+AM_CONDITIONAL([WRITE_REFERENCE_DATA],
+  [test x"${enable_write_reference_data}" = xyes])
+
 #--------------------------------------------------------------------------
 #
 # Checks for programs.
@@ -117,30 +125,10 @@ AC_CONFIG_FILES(
 #AC_CONFIG_FILES([ats2-spookyhash.pc])
 #AC_CONFIG_FILES([spookyhash.pc])
 
-AC_ARG_VAR([POSIX_SH],[The full path of a POSIX shell])
+AC_ARG_VAR([POSIX_SH],[The full absolute path of a POSIX shell])
 POSIX_SH=${POSIX_SH-`command -p -v sh`}
 AC_CONFIG_FILES([tests/compute-reference-for-seeds-eq-zero.sh],
                 [chmod +x tests/compute-reference-for-seeds-eq-zero.sh])
-AC_CONFIG_FILES([tests/test-spookyhash_hash128.sh],
-                [chmod +x tests/test-spookyhash_hash128.sh])
-AC_CONFIG_FILES([tests/test-spookyhash_hash128-for-seeds-eq-zero.sh],
-                [chmod +x tests/test-spookyhash_hash128-for-seeds-eq-zero.sh])
-AC_CONFIG_FILES([tests/test-spookyhash_hash64.sh],
-                [chmod +x tests/test-spookyhash_hash64.sh])
-AC_CONFIG_FILES([tests/test-spookyhash_hash64-for-seeds-eq-zero.sh],
-                [chmod +x tests/test-spookyhash_hash64-for-seeds-eq-zero.sh])
-AC_CONFIG_FILES([tests/test-spookyhash_hash32.sh],
-                [chmod +x tests/test-spookyhash_hash32.sh])
-AC_CONFIG_FILES([tests/test-spookyhash_hash32-for-seeds-eq-zero.sh],
-                [chmod +x tests/test-spookyhash_hash32-for-seeds-eq-zero.sh])
-AC_CONFIG_FILES([tests/test-spookyhash-incremental.sh],
-                [chmod +x tests/test-spookyhash-incremental.sh])
-AC_CONFIG_FILES([tests/test-spookyhash-incremental-for-seeds-eq-zero.sh],
-                [chmod +x tests/test-spookyhash-incremental-for-seeds-eq-zero.sh])
-AC_CONFIG_FILES([tests/test-spookyhash_hash128-misaligned.sh],
-                [chmod +x tests/test-spookyhash_hash128-misaligned.sh])
-AC_CONFIG_FILES([tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh],
-                [chmod +x tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh])
 
 AC_OUTPUT
 

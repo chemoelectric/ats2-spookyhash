@@ -686,6 +686,8 @@ CXXDEPMODE
 ac_ct_CXX
 CXXFLAGS
 CXX
+WRITE_REFERENCE_DATA_FALSE
+WRITE_REFERENCE_DATA_TRUE
 PKGCONFIG_PATSHOME
 PATSHOME
 LT_SYS_LIBRARY_PATH
@@ -821,6 +823,7 @@ with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+enable_write_reference_data
 with_gcov
 enable_code_coverage
 '
@@ -1485,6 +1488,9 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-write-reference-data
+                          enable GNUmakefile support to re-write the reference
+                          test data; do not do this on big-endian platforms
   --enable-code-coverage  Whether to enable code coverage support
 
 Optional Packages:
@@ -1523,7 +1529,7 @@ Some influential environment variables:
   PKG_CONFIG_LIBDIR
               path overriding pkg-config's built-in search path
   GNU_MAKE    GNU Make command
-  POSIX_SH    The full path of a POSIX shell
+  POSIX_SH    The full absolute path of a POSIX shell
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -13087,6 +13093,23 @@ if test -z "${PKGCONFIG_PATSHOME}"; then
   as_fn_error $? "Please set PKGCONFIG_PATSHOME on the configure command line." "$LINENO" 5
 fi
 
+# Check whether --enable-write-reference-data was given.
+if test ${enable_write_reference_data+y}
+then :
+  enableval=$enable_write_reference_data; enable_write_reference_data=yes
+else $as_nop
+  enable_write_reference_data=no
+fi
+
+ if test x"${enable_write_reference_data}" = xyes; then
+  WRITE_REFERENCE_DATA_TRUE=
+  WRITE_REFERENCE_DATA_FALSE='#'
+else
+  WRITE_REFERENCE_DATA_TRUE='#'
+  WRITE_REFERENCE_DATA_FALSE=
+fi
+
+
 #--------------------------------------------------------------------------
 #
 # Checks for programs.
@@ -19245,26 +19268,6 @@ ac_config_files="$ac_config_files tests/SpookyV2.h:reference-implementation/Spoo
 POSIX_SH=${POSIX_SH-`command -p -v sh`}
 ac_config_files="$ac_config_files tests/compute-reference-for-seeds-eq-zero.sh"
 
-ac_config_files="$ac_config_files tests/test-spookyhash_hash128.sh"
-
-ac_config_files="$ac_config_files tests/test-spookyhash_hash128-for-seeds-eq-zero.sh"
-
-ac_config_files="$ac_config_files tests/test-spookyhash_hash64.sh"
-
-ac_config_files="$ac_config_files tests/test-spookyhash_hash64-for-seeds-eq-zero.sh"
-
-ac_config_files="$ac_config_files tests/test-spookyhash_hash32.sh"
-
-ac_config_files="$ac_config_files tests/test-spookyhash_hash32-for-seeds-eq-zero.sh"
-
-ac_config_files="$ac_config_files tests/test-spookyhash-incremental.sh"
-
-ac_config_files="$ac_config_files tests/test-spookyhash-incremental-for-seeds-eq-zero.sh"
-
-ac_config_files="$ac_config_files tests/test-spookyhash_hash128-misaligned.sh"
-
-ac_config_files="$ac_config_files tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh"
-
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -19437,6 +19440,10 @@ fi
 
 if test -z "${MAINTAINER_MODE_TRUE}" && test -z "${MAINTAINER_MODE_FALSE}"; then
   as_fn_error $? "conditional \"MAINTAINER_MODE\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${WRITE_REFERENCE_DATA_TRUE}" && test -z "${WRITE_REFERENCE_DATA_FALSE}"; then
+  as_fn_error $? "conditional \"WRITE_REFERENCE_DATA\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
@@ -20405,16 +20412,6 @@ do
     "tests/SpookyV2.h") CONFIG_FILES="$CONFIG_FILES tests/SpookyV2.h:reference-implementation/SpookyV2.h" ;;
     "tests/SpookyV2.cpp") CONFIG_FILES="$CONFIG_FILES tests/SpookyV2.cpp:reference-implementation/SpookyV2.cpp" ;;
     "tests/compute-reference-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/compute-reference-for-seeds-eq-zero.sh" ;;
-    "tests/test-spookyhash_hash128.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash128.sh" ;;
-    "tests/test-spookyhash_hash128-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash128-for-seeds-eq-zero.sh" ;;
-    "tests/test-spookyhash_hash64.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash64.sh" ;;
-    "tests/test-spookyhash_hash64-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash64-for-seeds-eq-zero.sh" ;;
-    "tests/test-spookyhash_hash32.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash32.sh" ;;
-    "tests/test-spookyhash_hash32-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash32-for-seeds-eq-zero.sh" ;;
-    "tests/test-spookyhash-incremental.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash-incremental.sh" ;;
-    "tests/test-spookyhash-incremental-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash-incremental-for-seeds-eq-zero.sh" ;;
-    "tests/test-spookyhash_hash128-misaligned.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash128-misaligned.sh" ;;
-    "tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -21666,16 +21663,6 @@ EOF
       fi
     ;;
     "tests/compute-reference-for-seeds-eq-zero.sh":F) chmod +x tests/compute-reference-for-seeds-eq-zero.sh ;;
-    "tests/test-spookyhash_hash128.sh":F) chmod +x tests/test-spookyhash_hash128.sh ;;
-    "tests/test-spookyhash_hash128-for-seeds-eq-zero.sh":F) chmod +x tests/test-spookyhash_hash128-for-seeds-eq-zero.sh ;;
-    "tests/test-spookyhash_hash64.sh":F) chmod +x tests/test-spookyhash_hash64.sh ;;
-    "tests/test-spookyhash_hash64-for-seeds-eq-zero.sh":F) chmod +x tests/test-spookyhash_hash64-for-seeds-eq-zero.sh ;;
-    "tests/test-spookyhash_hash32.sh":F) chmod +x tests/test-spookyhash_hash32.sh ;;
-    "tests/test-spookyhash_hash32-for-seeds-eq-zero.sh":F) chmod +x tests/test-spookyhash_hash32-for-seeds-eq-zero.sh ;;
-    "tests/test-spookyhash-incremental.sh":F) chmod +x tests/test-spookyhash-incremental.sh ;;
-    "tests/test-spookyhash-incremental-for-seeds-eq-zero.sh":F) chmod +x tests/test-spookyhash-incremental-for-seeds-eq-zero.sh ;;
-    "tests/test-spookyhash_hash128-misaligned.sh":F) chmod +x tests/test-spookyhash_hash128-misaligned.sh ;;
-    "tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh":F) chmod +x tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero.sh ;;
 
   esac
 done # for ac_tag
