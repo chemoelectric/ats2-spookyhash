@@ -129,6 +129,8 @@ AC_ARG_VAR([POSIX_SH],[The full absolute path of a POSIX shell])
 POSIX_SH=${POSIX_SH-`command -p -v sh`}
 AC_CONFIG_FILES([tests/compute-reference-for-seeds-eq-zero.sh],
                 [chmod +x tests/compute-reference-for-seeds-eq-zero.sh])
+AC_CONFIG_FILES([tests/compute-reference-for-hash128-seed.sh],
+                [chmod +x tests/compute-reference-for-hash128-seed.sh])
 AC_CONFIG_FILES([tests/compute-reference-for-hash64-seed.sh],
                 [chmod +x tests/compute-reference-for-hash64-seed.sh])
 AC_CONFIG_FILES([tests/compute-reference-for-hash32-seed.sh],
