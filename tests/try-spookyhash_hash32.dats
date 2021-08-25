@@ -33,12 +33,18 @@ main0 (argc, argv) =
     val length = g1ofg0 length
 
     val _ =
-      if ($UNSAFE.cast 0x100000000 <= seed1 ||
-            $UNSAFE.cast 0 < seed2) then
+      if ($UNSAFE.cast 0x100000000 <= seed1) then
         {
           val _ = $extfcall (int, "printf",
                              "The seed is too large.\n")
           val _ = $extfcall (void, "exit", 2)
+        }
+    val _ =
+      if seed1 <> seed2 then
+        {
+          val _ = $extfcall (int, "printf",
+                             "The seeds are unequal.\n")
+          val _ = $extfcall (void, "exit", 3)
         }
     val seed : uint32 = $UNSAFE.cast (seed1)
 

@@ -1,0 +1,3 @@
+#!@POSIX_SH@
+
+@TEST_SH@ < @abs_top_srcdir@/tests/reference-for-hash32-seed.dat
