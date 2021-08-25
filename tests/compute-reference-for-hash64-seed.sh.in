@@ -1,0 +1,12 @@
+#!@POSIX_SH@
+
+max_length=${1-512}
+
+length=0
+while [ ${length} -le ${max_length} ] ; do
+    tests/compute-reference-result AD4BEEFDBACEBA11 AD4BEEFDBACEBA11 ${length} 0
+    length=`expr ${length} + 1`
+done
+
+tests/compute-reference-result AD4BEEFDBACEBA11 AD4BEEFDBACEBA11 1024 0
+tests/compute-reference-result AD4BEEFDBACEBA11 AD4BEEFDBACEBA11 10000 0

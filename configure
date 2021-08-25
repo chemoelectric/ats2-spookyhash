@@ -19268,6 +19268,8 @@ ac_config_files="$ac_config_files tests/SpookyV2.h:reference-implementation/Spoo
 POSIX_SH=${POSIX_SH-`command -p -v sh`}
 ac_config_files="$ac_config_files tests/compute-reference-for-seeds-eq-zero.sh"
 
+ac_config_files="$ac_config_files tests/compute-reference-for-hash64-seed.sh"
+
 ac_config_files="$ac_config_files tests/compute-reference-for-hash32-seed.sh"
 
 
@@ -20414,6 +20416,7 @@ do
     "tests/SpookyV2.h") CONFIG_FILES="$CONFIG_FILES tests/SpookyV2.h:reference-implementation/SpookyV2.h" ;;
     "tests/SpookyV2.cpp") CONFIG_FILES="$CONFIG_FILES tests/SpookyV2.cpp:reference-implementation/SpookyV2.cpp" ;;
     "tests/compute-reference-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/compute-reference-for-seeds-eq-zero.sh" ;;
+    "tests/compute-reference-for-hash64-seed.sh") CONFIG_FILES="$CONFIG_FILES tests/compute-reference-for-hash64-seed.sh" ;;
     "tests/compute-reference-for-hash32-seed.sh") CONFIG_FILES="$CONFIG_FILES tests/compute-reference-for-hash32-seed.sh" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
@@ -21666,6 +21669,7 @@ EOF
       fi
     ;;
     "tests/compute-reference-for-seeds-eq-zero.sh":F) chmod +x tests/compute-reference-for-seeds-eq-zero.sh ;;
+    "tests/compute-reference-for-hash64-seed.sh":F) chmod +x tests/compute-reference-for-hash64-seed.sh ;;
     "tests/compute-reference-for-hash32-seed.sh":F) chmod +x tests/compute-reference-for-hash32-seed.sh ;;
 
   esac
