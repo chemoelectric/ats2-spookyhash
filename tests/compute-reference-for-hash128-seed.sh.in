@@ -4,9 +4,9 @@ max_length=${1-512}
 
 length=0
 while [ ${length} -le ${max_length} ] ; do
-    tests/compute-reference-result ACEFEED5C0DEBEEF BADCODED1ED4BABE ${length} 0
+    tests/compute-reference-result ACEFEED5C0DEBEEF BADC0DED1ED4BABE ${length} 0
     length=`expr ${length} + 1`
 done
 
-tests/compute-reference-result ACEFEED5C0DEBEEF BADCODED1ED4BABE 1024 0
-tests/compute-reference-result ACEFEED5C0DEBEEF BADCODED1ED4BABE 10000 0
+tests/compute-reference-result ACEFEED5C0DEBEEF BADC0DED1ED4BABE 1024 0
+tests/compute-reference-result ACEFEED5C0DEBEEF BADC0DED1ED4BABE 10000 0
