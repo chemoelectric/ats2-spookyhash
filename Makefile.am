@@ -94,26 +94,23 @@ escape = $(subst $$,\$$,$(subst ^,\^,$(subst ],\],$(subst [,\[,$(subst .,\.,$(su
 
 #--------------------------------------------------------------------------
 
-#M4_DEPS =
-#
-#AM_M4FLAGS =
-#
-#TOTAL_M4FLAGS =
-#TOTAL_M4FLAGS += $(AM_M4FLAGS)
-#TOTAL_M4FLAGS += $(M4FLAGS)
-#TOTAL_M4FLAGS += $(XM4FLAGS)
-#
-#%: %.m4 common-macros.m4
-#	@$(MKDIR_P) $(@D)
-#	$(call v,M4)$(M4) $(TOTAL_M4FLAGS) $(<) > $(@)
-#
-#%.c: %.c.m4 common-macros.m4
-#	@$(MKDIR_P) $(@D)
-#	$(call v,M4)$(M4) $(TOTAL_M4FLAGS) $(<) > $(@)
-
 PATSOPT_DEPS =
 
+DATS_WORDS_BIGENDIAN := \
+	$(shell echo x $(DEFS) | \
+		$(EGREP) -q '[[:space:]]-DWORDS_BIGENDIAN(=1)?([[:space:]]|$$)?' && \
+				echo x'-DATS WORDS_BIGENDIAN=1' | \
+		$(SED) -e 's|^x||')
+
+DATS_HAVE_ALIGNED_ACCESS_REQUIRED := \
+	$(shell echo x $(DEFS) | \
+		$(EGREP) -q '[[:space:]]-DHAVE_ALIGNED_ACCESS_REQUIRED(=1)?([[:space:]]|$$)?' && \
+				echo x'-DATS HAVE_ALIGNED_ACCESS_REQUIRED=1' | \
+		$(SED) -e 's|^x||')
+
 AM_PATSOPTFLAGS =
+AM_PATSOPTFLAGS += $(DATS_WORDS_BIGENDIAN)
+AM_PATSOPTFLAGS += $(DATS_HAVE_ALIGNED_ACCESS_REQUIRED)
 AM_PATSOPTFLAGS += -IATS $(builddir)
 AM_PATSOPTFLAGS += -IATS $(srcdir)
 

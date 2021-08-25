@@ -167,11 +167,29 @@ overload <<@ with bitwise_lrotate
    On little-endian platforms, make no changes.
 *)
 
-extern fun
-fix_byte_order_uint32 (x : uint32) :<> uint32 = "mac#%"
+#ifdef WORDS_BIGENDIAN #then
 
-extern fun
-fix_byte_order_uint64 (x : uint64) :<> uint64 = "mac#%"
+  extern fun
+  bswap32 (x : uint32) :<> uint32 = "mac#%"
+
+  extern fun
+  bswap64 (x : uint64) :<> uint64 = "mac#%"
+
+  fn {}
+  fix_byte_order_uint32 (x : uint32) :<> uint32 = bswap32 x
+
+  fn {}
+  fix_byte_order_uint64 (x : uint64) :<> uint64 = bswap64 x
+
+#else
+
+  fn {}
+  fix_byte_order_uint32 (x : uint32) :<> uint32 = x
+
+  fn {}
+  fix_byte_order_uint64 (x : uint64) :<> uint64 = x
+
+#endif
 
 overload fix_byte_order with fix_byte_order_uint32
 overload fix_byte_order with fix_byte_order_uint64
@@ -242,15 +260,18 @@ memset {n     : int}
 
 (*------------------------------------------------------------------*)
 
-extern fn
-allow_direct_read_g1 {p : addr} (p : ptr p) :<> bool = "mac#%"
+#ifdef HAVE_ALIGNED_ACCESS_REQUIRED #then
 
-fn {}
-allow_direct_read_g0 (p : ptr) :<> bool =
-  allow_direct_read_g1 (g1ofg0 p)
+  extern fn
+  is_aligned_g0 (p : ptr) :<> bool = "mac#%"
 
-overload allow_direct_read with allow_direct_read_g0 of 0
-overload allow_direct_read with allow_direct_read_g1 of 10
+  extern fn
+  is_aligned_g1 {p : addr} (p : ptr p) :<> bool = "mac#%"
+
+  overload is_aligned with is_aligned_g0 of 0
+  overload is_aligned with is_aligned_g1 of 10
+
+#endif
 
 (********************************************************************)
 
@@ -373,7 +394,7 @@ spookyhash_mix (data : &RD(@[uint64][NUMVARS]),
   end
 
 fn {}
-spookyhash_mix_unaligned
+spookyhash_mix_bytes
         (data : &RD(@[byte][BLOCKSIZE]),
          s0   : &uint64,
          s1   : &uint64,
@@ -387,26 +408,68 @@ spookyhash_mix_unaligned
          s9   : &uint64,
          s10  : &uint64,
          s11  : &uint64) :<!refwrt> void =
-  if allow_direct_read (addr@ data) then
-    {
-      prval _ =
-        view@ data := bytes2array<uint64> {NUMVARS} (view@ data)
-      val _ = spookyhash_mix (data, s0, s1, s2, s3, s4, s5,
-                              s6, s7, s8, s9, s10, s11)
-      prval _ =
-        view@ data := array2bytes<uint64> {NUMVARS} (view@ data)
-    }
-  else
-    {
-      var buf : @[uint64][NUMVARS]
-      prval _ =
-        view@ buf := array2bytesqmark<uint64?> {NUMVARS} (view@ buf)
-      val _ = memcpy (buf, data, (i2sz NUMVARS) * sizeof<uint64>)
-      prval _ =
-        view@ buf := bytes2array<uint64> {NUMVARS} (view@ buf)
-      val _ = spookyhash_mix (buf, s0, s1, s2, s3, s4, s5,
-                              s6, s7, s8, s9, s10, s11)
-    }
+  {
+    prval _ =
+      view@ data := bytes2array<uint64> {NUMVARS} (view@ data)
+    val _ = spookyhash_mix (data, s0, s1, s2, s3, s4, s5,
+                            s6, s7, s8, s9, s10, s11)
+    prval _ =
+      view@ data := array2bytes<uint64> {NUMVARS} (view@ data)
+  }
+
+#ifdef HAVE_ALIGNED_ACCESS_REQUIRED #then
+
+  fn {}
+  spookyhash_mix_unaligned
+          (data : &RD(@[byte][BLOCKSIZE]),
+           s0   : &uint64,
+           s1   : &uint64,
+           s2   : &uint64,
+           s3   : &uint64,
+           s4   : &uint64,
+           s5   : &uint64,
+           s6   : &uint64,
+           s7   : &uint64,
+           s8   : &uint64,
+           s9   : &uint64,
+           s10  : &uint64,
+           s11  : &uint64) :<!refwrt> void =
+    if is_aligned (addr@ data) then
+      spookyhash_mix_bytes (data, s0, s1, s2, s3, s4, s5,
+                            s6, s7, s8, s9, s10, s11)
+    else
+      {
+        var buf : @[uint64][NUMVARS]
+        prval _ = view@ buf :=
+          array2bytesqmark<uint64?> {NUMVARS} (view@ buf)
+        val _ = memcpy (buf, data, (i2sz NUMVARS) * sizeof<uint64>)
+        prval _ = view@ buf :=
+          bytes2array<uint64> {NUMVARS} (view@ buf)
+        val _ = spookyhash_mix (buf, s0, s1, s2, s3, s4, s5,
+                                s6, s7, s8, s9, s10, s11)
+      }
+
+#else
+
+  fn {}
+  spookyhash_mix_unaligned
+          (data : &RD(@[byte][BLOCKSIZE]),
+           s0   : &uint64,
+           s1   : &uint64,
+           s2   : &uint64,
+           s3   : &uint64,
+           s4   : &uint64,
+           s5   : &uint64,
+           s6   : &uint64,
+           s7   : &uint64,
+           s8   : &uint64,
+           s9   : &uint64,
+           s10  : &uint64,
+           s11  : &uint64) :<!refwrt> void =
+    spookyhash_mix_bytes (data, s0, s1, s2, s3, s4, s5,
+                          s6, s7, s8, s9, s10, s11)
+
+#endif
 
 (********************************************************************)
 (*
@@ -989,42 +1052,58 @@ _short {length  : int}
     @(a, b)
   end
 
-fn {}
-spookyhash_short {length  : int | length <= BUFSIZE}
-                 (message : &(@[byte][length]),
-                  length  : size_t length,
-                  seed1   : uint64,
-                  seed2   : uint64) :<!refwrt>
-    @(uint64,         (* The first 64 bits (in native byte order). *)
-      uint64) =       (* The second 64 bits (in native byte order). *)
-  if allow_direct_read (addr@ message) then
+#ifdef HAVE_ALIGNED_ACCESS_REQUIRED #then
+
+  fn {}
+  spookyhash_short {length  : int | length <= BUFSIZE}
+                   (message : &(@[byte][length]),
+                    length  : size_t length,
+                    seed1   : uint64,
+                    seed2   : uint64) :<!refwrt>
+      @(uint64,       (* The first 64 bits (in native byte order). *)
+        uint64) =     (* The second 64 bits (in native byte order). *)
+    if is_aligned (addr@ message) then
+      _short<> (message, length, seed1, seed2)
+    else
+      let
+        prval _ = lemma_g1uint_param length
+
+        (* A buffer that obviously is aligned for uint64. *)
+        var buf : @[uint64][TWICE_NUMVARS]
+
+        prval pf_bytes =
+          array2bytesqmark<uint64?> {TWICE_NUMVARS} (view@ buf)
+        prval (pf_dest, pf_after) =
+          array_v_subdivide2 {byte?} {..} {length, BUFSIZE - length}
+                             pf_bytes
+
+        val _ = memcpy (buf, message, length)
+        val result = _short<> (buf, length, seed1, seed2)
+
+        prval pf_after = fake_initialize_array_v<byte> pf_after
+
+        prval _ = pf_bytes :=
+          array_v_join2 {byte} {..} {length, BUFSIZE - length}
+                        (pf_dest, pf_after)
+        prval _ = view@ buf :=
+          bytes2array<uint64?> {TWICE_NUMVARS} pf_bytes
+      in
+        result
+      end
+
+#else
+
+  fn {}
+  spookyhash_short {length  : int | length <= BUFSIZE}
+                   (message : &(@[byte][length]),
+                    length  : size_t length,
+                    seed1   : uint64,
+                    seed2   : uint64) :<!refwrt>
+      @(uint64,       (* The first 64 bits (in native byte order). *)
+        uint64) =     (* The second 64 bits (in native byte order). *)
     _short<> (message, length, seed1, seed2)
-  else
-    let
-      prval _ = lemma_g1uint_param length
 
-      (* A buffer that obviously is aligned for uint64. *)
-      var buf : @[uint64][TWICE_NUMVARS]
-
-      prval pf_bytes =
-        array2bytesqmark<uint64?> {TWICE_NUMVARS} (view@ buf)
-      prval (pf_dest, pf_after) =
-        array_v_subdivide2 {byte?} {..} {length, BUFSIZE - length}
-                           pf_bytes
-
-      val _ = memcpy (buf, message, length)
-      val result = _short<> (buf, length, seed1, seed2)
-
-      prval pf_after = fake_initialize_array_v<byte> pf_after
-
-      prval _ = pf_bytes :=
-        array_v_join2 {byte} {..} {length, BUFSIZE - length}
-                      (pf_dest, pf_after)
-      prval _ = view@ buf :=
-        bytes2array<uint64?> {TWICE_NUMVARS} pf_bytes
-    in
-      result
-    end
+#endif
 
 (********************************************************************)
 

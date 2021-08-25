@@ -148,39 +148,17 @@ ats2_spookyhash_bitwise_xor_uint64 (atstype_uint64 x,
   return (x ^ y);
 }
 
-/* On big endian platforms, swap the byte order. On little endian
-   platforms, do not change the value. */
-ats2_spookyhash_always_inline atstype_uint32
-ats2_spookyhash_fix_byte_order_uint32 (atstype_uint32 x)
+ats2_spookyhash_always_inline atstype_bool
+ats2_spookyhash_is_aligned_g1 (atstype_ptr p)
 {
-#if WORDS_BIGENDIAN
-  return ats2_spookyhash_bswap32 (x);
-#else
-  return x;
-#endif
-}
-
-/* On big endian platforms, swap the byte order. On little endian
-   platforms, do not change the value. */
-ats2_spookyhash_always_inline atstype_uint64
-ats2_spookyhash_fix_byte_order_uint64 (atstype_uint64 x)
-{
-#if WORDS_BIGENDIAN
-  return ats2_spookyhash_bswap64 (x);
-#else
-  return x;
-#endif
+  return ((((uintptr_t) p) % sizeof (atstype_uint64) == 0) ?
+          atsbool_true : atsbool_false);
 }
 
 ats2_spookyhash_always_inline atstype_bool
-ats2_spookyhash_allow_direct_read_g1 (atstype_ptr p)
+ats2_spookyhash_is_aligned_g0 (atstype_ptr p)
 {
-#if HAVE_ALIGNED_ACCESS_REQUIRED
-  return ((((uintptr_t) p) % sizeof (atstype_uint64) == 0) ?
-          atsbool_true : atsbool_false);
-#else
-  return atsbool_true;
-#endif
+  return ats2_spookyhash_is_aligned_g1 (p);
 }
 
 #endif /* ATS2_SPOOKYHASH_IMPLEMENTATION_CATS_HEADER_GUARD__ */

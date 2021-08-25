@@ -38,6 +38,9 @@ main0 (argc, argv) =
       spookyhash_hash128 (!p_msg, length, seed1, seed2)
     val _ = mfree_gc (pf_msg, pf_msg_mem | p_msg)
 
+#ifdef PACKAGE_STRING #then
+val _ = println! ("foo!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#endif
     val _ = 
       if hash1 <> reference_hash1 || hash2 <> reference_hash2 then
         {

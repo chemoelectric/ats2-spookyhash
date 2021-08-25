@@ -33,7 +33,7 @@
 #
 
 # aminclude_static.am generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on Tue Aug 24 19:08:26 CDT 2021
+# from AX_AM_MACROS_STATIC on Wed Aug 25 10:32:02 CDT 2021
 
 
 
@@ -809,25 +809,22 @@ space := $(empty) $(empty)
 escape = $(subst $$,\$$,$(subst ^,\^,$(subst ],\],$(subst [,\[,$(subst .,\.,$(subst \,\\,$(1)))))))
 
 #--------------------------------------------------------------------------
-
-#M4_DEPS =
-#
-#AM_M4FLAGS =
-#
-#TOTAL_M4FLAGS =
-#TOTAL_M4FLAGS += $(AM_M4FLAGS)
-#TOTAL_M4FLAGS += $(M4FLAGS)
-#TOTAL_M4FLAGS += $(XM4FLAGS)
-#
-#%: %.m4 common-macros.m4
-#	@$(MKDIR_P) $(@D)
-#	$(call v,M4)$(M4) $(TOTAL_M4FLAGS) $(<) > $(@)
-#
-#%.c: %.c.m4 common-macros.m4
-#	@$(MKDIR_P) $(@D)
-#	$(call v,M4)$(M4) $(TOTAL_M4FLAGS) $(<) > $(@)
 PATSOPT_DEPS = 
-AM_PATSOPTFLAGS = -IATS $(builddir) -IATS $(srcdir)
+DATS_WORDS_BIGENDIAN := \
+	$(shell echo x $(DEFS) | \
+		$(EGREP) -q '[[:space:]]-DWORDS_BIGENDIAN(=1)?([[:space:]]|$$)?' && \
+				echo x'-DATS WORDS_BIGENDIAN=1' | \
+		$(SED) -e 's|^x||')
+
+DATS_HAVE_ALIGNED_ACCESS_REQUIRED := \
+	$(shell echo x $(DEFS) | \
+		$(EGREP) -q '[[:space:]]-DHAVE_ALIGNED_ACCESS_REQUIRED(=1)?([[:space:]]|$$)?' && \
+				echo x'-DATS HAVE_ALIGNED_ACCESS_REQUIRED=1' | \
+		$(SED) -e 's|^x||')
+
+AM_PATSOPTFLAGS = $(DATS_WORDS_BIGENDIAN) \
+	$(DATS_HAVE_ALIGNED_ACCESS_REQUIRED) -IATS $(builddir) -IATS \
+	$(srcdir)
 TOTAL_PATSOPTFLAGS = $(AM_PATSOPTFLAGS) $(PATSOPTFLAGS) \
 	$(XPATSOPTFLAGS)
 TESTS_PATSOPTFLAGS = -IATS $(builddir)/tests -IATS $(srcdir)/tests
