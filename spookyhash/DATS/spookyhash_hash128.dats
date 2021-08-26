@@ -31,6 +31,8 @@ staload "spookyhash/SATS/spookyhash.sats"
 staload "spookyhash/SATS/spookyhash-casts.sats"
 staload "spookyhash/SATS/spookyhash-mem.sats"
 
+#include "spookyhash/DATS/include/spookyhash-byte-order.inc"
+
 #include "spookyhash/DATS/include/spookyhash-common.inc"
 
 implement

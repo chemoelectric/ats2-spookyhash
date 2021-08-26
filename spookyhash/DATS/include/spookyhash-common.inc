@@ -21,6 +21,7 @@ along with this program. If not, see
 staload "spookyhash/SATS/spookyhash-alignment.sats"
 staload "spookyhash/SATS/spookyhash-proofs.sats"
 staload "spookyhash/SATS/spookyhash-internal-types.sats"
+staload "spookyhash/SATS/spookyhash-arithmetic.sats"
 
 prval _ = integer_sizes ()
 
@@ -30,97 +31,14 @@ prval _ = integer_sizes ()
 
 #include "spookyhash/HATS/spookyhash-ats-parameters.hats"
 
-(********************************************************************)
-
-(* A natural numbers mod function. *)
-extern fn
-natmod_size {x, y : nat | y != 0}
-            (x    : size_t x,
-             y    : size_t y) :<>
-    [z : nat | z <= x; z < y; z == x mod y]
-    size_t z = "mac#%"
-
-overload natmod with natmod_size
-
-(*------------------------------------------------------------------*)
-
-extern fun
-bitwise_and_ullint (x : ullint, y : ullint) :<> ullint = "mac#%"
-
-extern fun
-bitwise_and_uint64 (x : uint64, y : uint64) :<> uint64 = "mac#%"
-
-overload bitwise_and with bitwise_and_ullint
-overload bitwise_and with bitwise_and_uint64
-
-(*------------------------------------------------------------------*)
-
-extern fun
-bitwise_xor_uint64 (x : uint64, y : uint64) :<> uint64 = "mac#%"
-
-overload bitwise_xor with bitwise_xor_uint64
-
 infixl ( + ) ^
 overload ^ with bitwise_xor
-
-(*------------------------------------------------------------------*)
-
-extern fun
-bitwise_lshift_uint64_uint {i : int | i < 64}
-                           (x : uint64,
-                            i : uint i) :<> uint64 = "mac#%"
-
-overload bitwise_lshift with bitwise_lshift_uint64_uint
 
 infix ( * ) <<
 overload << with bitwise_lshift
 
-(*------------------------------------------------------------------*)
-
-extern fun
-bitwise_lrotate_uint64_uint {i : int | i < 64}
-                            (x : uint64,
-                             i : uint i) :<> uint64 = "mac#%"
-
-overload bitwise_lrotate with bitwise_lrotate_uint64_uint
-
 infix ( * ) <<@
 overload <<@ with bitwise_lrotate
-
-(*------------------------------------------------------------------*)
-(*
-   fix_byte_order:
-
-   On big-endian platforms, reverse the byte order.
-   On little-endian platforms, make no changes.
-*)
-
-#ifdef WORDS_BIGENDIAN #then
-
-  extern fun
-  bswap32 (x : uint32) :<> uint32 = "mac#%"
-
-  extern fun
-  bswap64 (x : uint64) :<> uint64 = "mac#%"
-
-  fn {}
-  fix_byte_order_uint32 (x : uint32) :<> uint32 = bswap32 x
-
-  fn {}
-  fix_byte_order_uint64 (x : uint64) :<> uint64 = bswap64 x
-
-#else
-
-  fn {}
-  fix_byte_order_uint32 (x : uint32) :<> uint32 = x
-
-  fn {}
-  fix_byte_order_uint64 (x : uint64) :<> uint64 = x
-
-#endif
-
-overload fix_byte_order with fix_byte_order_uint32
-overload fix_byte_order with fix_byte_order_uint64
 
 (********************************************************************)
 
@@ -139,73 +57,73 @@ spookyhash_mix (data : &RD(@[uint64][NUMVARS]),
                 s10  : &uint64,
                 s11  : &uint64) :<!refwrt> void =
   begin
-    s0 := s0 + fix_byte_order data[0];
+    s0 := s0 + fix_byte_order<> data[0];
     s2 := s2 ^ s10;
     s11 := s11 ^ s0;
     s0 := s0 <<@ 11U;
     s11 := s11 + s1;
 
-    s1 := s1 + fix_byte_order data[1];
+    s1 := s1 + fix_byte_order<> data[1];
     s3 := s3 ^ s11;
     s0 := s0 ^ s1;
     s1 := s1 <<@ 32U;
     s0 := s0 + s2;
 
-    s2 := s2 + fix_byte_order data[2];
+    s2 := s2 + fix_byte_order<> data[2];
     s4 := s4 ^ s0;
     s1 := s1 ^ s2;
     s2 := s2 <<@ 43U;
     s1 := s1 + s3;
 
-    s3 := s3 + fix_byte_order data[3];
+    s3 := s3 + fix_byte_order<> data[3];
     s5 := s5 ^ s1;
     s2 := s2 ^ s3;
     s3 := s3 <<@ 31U;
     s2 := s2 + s4;
 
-    s4 := s4 + fix_byte_order data[4];
+    s4 := s4 + fix_byte_order<> data[4];
     s6 := s6 ^ s2;
     s3 := s3 ^ s4;
     s4 := s4 <<@ 17U;
     s3 := s3 + s5;
 
-    s5 := s5 + fix_byte_order data[5];
+    s5 := s5 + fix_byte_order<> data[5];
     s7 := s7 ^ s3;
     s4 := s4 ^ s5;
     s5 := s5 <<@ 28U;
     s4 := s4 + s6;
 
-    s6 := s6 + fix_byte_order data[6];
+    s6 := s6 + fix_byte_order<> data[6];
     s8 := s8 ^ s4;
     s5 := s5 ^ s6;
     s6 := s6 <<@ 39U;
     s5 := s5 + s7;
 
-    s7 := s7 + fix_byte_order data[7];
+    s7 := s7 + fix_byte_order<> data[7];
     s9 := s9 ^ s5;
     s6 := s6 ^ s7;
     s7 := s7 <<@ 57U;
     s6 := s6 + s8;
 
-    s8 := s8 + fix_byte_order data[8];
+    s8 := s8 + fix_byte_order<> data[8];
     s10 := s10 ^ s6;
     s7 := s7 ^ s8;
     s8 := s8 <<@ 55U;
     s7 := s7 + s9;
 
-    s9 := s9 + fix_byte_order data[9];
+    s9 := s9 + fix_byte_order<> data[9];
     s11 := s11 ^ s7;
     s8 := s8 ^ s9;
     s9 := s9 <<@ 54U;
     s8 := s8 + s10;
 
-    s10 := s10 + fix_byte_order data[10];
+    s10 := s10 + fix_byte_order<> data[10];
     s0 := s0 ^ s8;
     s9 := s9 ^ s10;
     s10 := s10 <<@ 22U;
     s9 := s9 + s11;
 
-    s11 := s11 + fix_byte_order data[11];
+    s11 := s11 + fix_byte_order<> data[11];
     s1 := s1 ^ s9;
     s10 := s10 ^ s11;
     s11 := s11 <<@ 46U;
@@ -389,18 +307,18 @@ spookyhash_end (data : &RD(@[uint64][NUMVARS]),
                 h10  : &uint64,
                 h11  : &uint64) :<!refwrt> void =
   begin
-    h0 := h0 + fix_byte_order data[0];
-    h1 := h1 + fix_byte_order data[1];
-    h2 := h2 + fix_byte_order data[2];
-    h3 := h3 + fix_byte_order data[3];
-    h4 := h4 + fix_byte_order data[4];
-    h5 := h5 + fix_byte_order data[5];
-    h6 := h6 + fix_byte_order data[6];
-    h7 := h7 + fix_byte_order data[7];
-    h8 := h8 + fix_byte_order data[8];
-    h9 := h9 + fix_byte_order data[9];
-    h10 := h10 + fix_byte_order data[10];
-    h11 := h11 + fix_byte_order data[11];
+    h0 := h0 + fix_byte_order<> data[0];
+    h1 := h1 + fix_byte_order<> data[1];
+    h2 := h2 + fix_byte_order<> data[2];
+    h3 := h3 + fix_byte_order<> data[3];
+    h4 := h4 + fix_byte_order<> data[4];
+    h5 := h5 + fix_byte_order<> data[5];
+    h6 := h6 + fix_byte_order<> data[6];
+    h7 := h7 + fix_byte_order<> data[7];
+    h8 := h8 + fix_byte_order<> data[8];
+    h9 := h9 + fix_byte_order<> data[9];
+    h10 := h10 + fix_byte_order<> data[10];
+    h11 := h11 + fix_byte_order<> data[11];
     spookyhash_end_partial<> (h0, h1, h2, h3, h4, h5,
                               h6, h7, h8, h9, h10, h11);
     spookyhash_end_partial<> (h0, h1, h2, h3, h4, h5,
@@ -613,11 +531,11 @@ _short {length  : int}
 
           macdef data = !p_data
 
-          val _ = c := c + fix_byte_order data[0]
-          val _ = d := d + fix_byte_order data[1]
+          val _ = c := c + fix_byte_order<> data[0]
+          val _ = d := d + fix_byte_order<> data[1]
           val _ = spookyhash_short_mix<> (a, b, c, d)
-          val _ = a := a + fix_byte_order data[2]
-          val _ = b := b + fix_byte_order data[3]
+          val _ = a := a + fix_byte_order<> data[2]
+          val _ = b := b + fix_byte_order<> data[3]
 
           prval _ = pf_data := array2bytes<uint64> {4} pf_uint64
           prval _ = view@ message :=
@@ -649,8 +567,8 @@ _short {length  : int}
 
         macdef data = !p_data
 
-        val _ = c := c + fix_byte_order data[0]
-        val _ = d := d + fix_byte_order data[1]
+        val _ = c := c + fix_byte_order<> data[0]
+        val _ = d := d + fix_byte_order<> data[1]
         val _ = spookyhash_short_mix<> (a, b, c, d)
 
         prval _ = pf_data := array2bytes<uint64> {2} pf_uint64
@@ -714,7 +632,7 @@ _short {length  : int}
                 {index * 4 + 4, num_bytes - index * 4 - 4}
                 (pf_uint32_bytes, pf_after)
           in
-            fix_byte_order result
+            fix_byte_order<> result
           end
 
         fn {}
@@ -747,7 +665,7 @@ _short {length  : int}
                 {index * 8 + 8, num_bytes - index * 8 - 8}
                 (pf_uint64_bytes, pf_after)
           in
-            fix_byte_order result
+            fix_byte_order<> result
           end
 
         macdef data = !p_data
