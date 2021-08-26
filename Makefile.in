@@ -209,6 +209,12 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+libspookyhash_la_DEPENDENCIES = libats2-spookyhash.la
+am_libspookyhash_la_OBJECTS = spookyhash/spookyhash_hash128.lo \
+	spookyhash/spookyhash_hash64.lo \
+	spookyhash/spookyhash_hash32.lo \
+	spookyhash/spookyhash-incremental.lo
+libspookyhash_la_OBJECTS = $(am_libspookyhash_la_OBJECTS)
 am_tests_compute_reference_result_OBJECTS = tests/compute_reference_result-compute-reference-result.$(OBJEXT) \
 	tests/compute_reference_result-SpookyV2.$(OBJEXT)
 tests_compute_reference_result_OBJECTS =  \
@@ -251,7 +257,11 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo \
+am__depfiles_remade = spookyhash/$(DEPDIR)/spookyhash-incremental.Plo \
+	spookyhash/$(DEPDIR)/spookyhash_hash128.Plo \
+	spookyhash/$(DEPDIR)/spookyhash_hash32.Plo \
+	spookyhash/$(DEPDIR)/spookyhash_hash64.Plo \
+	spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo \
 	spookyhash/DATS/$(DEPDIR)/spookyhash-incremental_dats.Plo \
 	spookyhash/DATS/$(DEPDIR)/spookyhash-proofs_dats.Plo \
 	spookyhash/DATS/$(DEPDIR)/spookyhash_hash128_dats.Plo \
@@ -312,13 +322,15 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(nodist_libats2_spookyhash_la_SOURCES) \
+	$(libspookyhash_la_SOURCES) \
 	$(tests_compute_reference_result_SOURCES) \
 	$(tests_try_spookyhash_incremental_SOURCES) \
 	$(tests_try_spookyhash_hash128_SOURCES) \
 	$(tests_try_spookyhash_hash128_misaligned_SOURCES) \
 	$(tests_try_spookyhash_hash32_SOURCES) \
 	$(tests_try_spookyhash_hash64_SOURCES)
-DIST_SOURCES = $(tests_compute_reference_result_SOURCES) \
+DIST_SOURCES = $(libspookyhash_la_SOURCES) \
+	$(tests_compute_reference_result_SOURCES) \
 	$(tests_try_spookyhash_incremental_SOURCES) \
 	$(tests_try_spookyhash_hash128_SOURCES) \
 	$(tests_try_spookyhash_hash128_misaligned_SOURCES) \
@@ -730,45 +742,6 @@ AUTOMAKE_OPTIONS = foreign subdir-objects -Wno-portability
 #SUBDIRS = lib
 
 # #--------------------------------------------------------------------------
-# #
-# # The C library.
-# #
-# 
-# lib_LTLIBRARIES += libspookyhash.la
-# 
-# SPOOKYHASH_C_DATS = spookyhash/DATS/spookyhash_c.dats
-# SPOOKYHASH_C_DATS_C = spookyhash/DATS/spookyhash_c_dats.c
-# EXTRA_DIST += $(SPOOKYHASH_C_DATS)
-# CLEANFILES += $(SPOOKYHASH_C_DATS_C)
-# 
-# HALFSPOOKYHASH_C_DATS = spookyhash/DATS/halfspookyhash_c.dats
-# HALFSPOOKYHASH_C_DATS_C = spookyhash/DATS/halfspookyhash_c_dats.c
-# EXTRA_DIST += $(HALFSPOOKYHASH_C_DATS)
-# CLEANFILES += $(HALFSPOOKYHASH_C_DATS_C)
-# 
-# KEY_C_DATS = spookyhash/DATS/key_c.dats
-# KEY_C_DATS_C = spookyhash/DATS/key_c_dats.c
-# EXTRA_DIST += $(KEY_C_DATS)
-# CLEANFILES += $(KEY_C_DATS_C)
-# 
-# libspookyhash_la_SOURCES =
-# libspookyhash_la_SOURCES += $(SPOOKYHASH_C_DATS_C)
-# libspookyhash_la_SOURCES += $(HALFSPOOKYHASH_C_DATS_C)
-# libspookyhash_la_SOURCES += $(KEY_C_DATS_C)
-# libspookyhash_la_SOURCES += spookyhash/spookyhash.h
-# libspookyhash_la_SOURCES += spookyhash/halfspookyhash.h
-# libspookyhash_la_SOURCES += spookyhash/key.h
-# 
-# libspookyhash_la_LIBADD =
-# libspookyhash_la_LIBADD += libats2-spookyhash.la
-# 
-# nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_C_DATS)
-# nobase_nodist_pkginclude_HEADERS += $(HALFSPOOKYHASH_C_DATS)
-# nobase_nodist_pkginclude_HEADERS += spookyhash/spookyhash.h
-# nobase_nodist_pkginclude_HEADERS += spookyhash/halfspookyhash.h
-# nobase_nodist_pkginclude_HEADERS += spookyhash/key.h
-# 
-# #--------------------------------------------------------------------------
 # 
 # nodist_pkgconfig_DATA += ats2-spookyhash.pc
 # nodist_pkgconfig_DATA += spookyhash.pc
@@ -842,9 +815,14 @@ LDADD = $(CODE_COVERAGE_LIBS)
 #
 # The ATS2 library.
 #
-lib_LTLIBRARIES = libats2-spookyhash.la
+
+#--------------------------------------------------------------------------
+#
+# The C library.
+#
+lib_LTLIBRARIES = libats2-spookyhash.la libspookyhash.la
 nobase_nodist_pkginclude_HEADERS = $(SPOOKYHASH_SATS) \
-	$(SPOOKYHASH_CATS)
+	$(SPOOKYHASH_CATS) spookyhash/spookyhash.h
 pkgconfigdir = ${libdir}/pkgconfig
 nodist_pkgconfig_DATA = 
 CODE_COVERAGE_IGNORE_PATTERN = /usr/include/* /usr/include/*/* \
@@ -931,6 +909,11 @@ nodist_libats2_spookyhash_la_SOURCES = $(ARRAY_PRF_SATS_C) \
 	$(SPOOKYHASH_SATS_C) $(SPOOKYHASH_DATS_C) \
 	$(SPOOKYHASH_HASH128_DATS_C) $(SPOOKYHASH_HASH64_DATS_C) \
 	$(SPOOKYHASH_HASH32_DATS_C) $(SPOOKYHASH_INCREMENTAL_DATS_C)
+libspookyhash_la_SOURCES = spookyhash/spookyhash.h \
+	spookyhash/spookyhash_hash128.c spookyhash/spookyhash_hash64.c \
+	spookyhash/spookyhash_hash32.c \
+	spookyhash/spookyhash-incremental.c
+libspookyhash_la_LIBADD = libats2-spookyhash.la
 tests_compute_reference_result_SOURCES =  \
 	tests/compute-reference-result.cpp tests/SpookyV2.cpp \
 	tests/SpookyV2.h
@@ -1178,6 +1161,23 @@ spookyhash/DATS/spookyhash-incremental_dats.lo:  \
 
 libats2-spookyhash.la: $(libats2_spookyhash_la_OBJECTS) $(libats2_spookyhash_la_DEPENDENCIES) $(EXTRA_libats2_spookyhash_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(LINK) -rpath $(libdir) $(libats2_spookyhash_la_OBJECTS) $(libats2_spookyhash_la_LIBADD) $(LIBS)
+spookyhash/$(am__dirstamp):
+	@$(MKDIR_P) spookyhash
+	@: > spookyhash/$(am__dirstamp)
+spookyhash/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) spookyhash/$(DEPDIR)
+	@: > spookyhash/$(DEPDIR)/$(am__dirstamp)
+spookyhash/spookyhash_hash128.lo: spookyhash/$(am__dirstamp) \
+	spookyhash/$(DEPDIR)/$(am__dirstamp)
+spookyhash/spookyhash_hash64.lo: spookyhash/$(am__dirstamp) \
+	spookyhash/$(DEPDIR)/$(am__dirstamp)
+spookyhash/spookyhash_hash32.lo: spookyhash/$(am__dirstamp) \
+	spookyhash/$(DEPDIR)/$(am__dirstamp)
+spookyhash/spookyhash-incremental.lo: spookyhash/$(am__dirstamp) \
+	spookyhash/$(DEPDIR)/$(am__dirstamp)
+
+libspookyhash.la: $(libspookyhash_la_OBJECTS) $(libspookyhash_la_DEPENDENCIES) $(EXTRA_libspookyhash_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(LINK) -rpath $(libdir) $(libspookyhash_la_OBJECTS) $(libspookyhash_la_LIBADD) $(LIBS)
 tests/$(am__dirstamp):
 	@$(MKDIR_P) tests
 	@: > tests/$(am__dirstamp)
@@ -1225,6 +1225,8 @@ tests/try-spookyhash_hash64$(EXEEXT): $(tests_try_spookyhash_hash64_OBJECTS) $(t
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f spookyhash/*.$(OBJEXT)
+	-rm -f spookyhash/*.lo
 	-rm -f spookyhash/DATS/*.$(OBJEXT)
 	-rm -f spookyhash/DATS/*.lo
 	-rm -f spookyhash/SATS/*.$(OBJEXT)
@@ -1234,6 +1236,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@spookyhash/$(DEPDIR)/spookyhash-incremental.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@spookyhash/$(DEPDIR)/spookyhash_hash128.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@spookyhash/$(DEPDIR)/spookyhash_hash32.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@spookyhash/$(DEPDIR)/spookyhash_hash64.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/spookyhash-incremental_dats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/spookyhash-proofs_dats.Plo@am__quote@ # am--include-marker
@@ -1345,6 +1351,7 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf spookyhash/.libs spookyhash/_libs
 	-rm -rf spookyhash/DATS/.libs spookyhash/DATS/_libs
 	-rm -rf spookyhash/SATS/.libs spookyhash/SATS/_libs
 	-rm -rf tests/.libs tests/_libs
@@ -1946,6 +1953,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f spookyhash/$(DEPDIR)/$(am__dirstamp)
+	-rm -f spookyhash/$(am__dirstamp)
 	-rm -f spookyhash/DATS/$(DEPDIR)/$(am__dirstamp)
 	-rm -f spookyhash/DATS/$(am__dirstamp)
 	-rm -f spookyhash/SATS/$(DEPDIR)/$(am__dirstamp)
@@ -1965,7 +1974,11 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-		-rm -f spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo
+		-rm -f spookyhash/$(DEPDIR)/spookyhash-incremental.Plo
+	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash128.Plo
+	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash32.Plo
+	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash64.Plo
+	-rm -f spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash-incremental_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash-proofs_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_hash128_dats.Plo
@@ -2036,7 +2049,11 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-		-rm -f spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo
+		-rm -f spookyhash/$(DEPDIR)/spookyhash-incremental.Plo
+	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash128.Plo
+	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash32.Plo
+	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash64.Plo
+	-rm -f spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash-incremental_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash-proofs_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_hash128_dats.Plo

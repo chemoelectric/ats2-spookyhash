@@ -64,12 +64,21 @@ main0 (argc, argv) =
 
     var context : spookyhash_context_t
 
+    val () = spookyhash_init (context, seed1, seed2)
+
     val (pf_msg, pf_msg_mem | p_msg) = malloc_gc (length)
     val _ = fill_message (pf_msg | p_msg, length, pattern)
-    val () = spookyhash_init (context, seed1, seed2)
     val () = spookyhash_update (context, !p_msg, length)
-    val (hash1, hash2) = spookyhash_final (context)
     val _ = mfree_gc (pf_msg, pf_msg_mem | p_msg)
+
+    val (hash1, hash2) = spookyhash_final (context)
+
+    var h1 : uint64
+    var h2 : uint64
+    val () = spookyhash_final_vars (context, h1, h2)
+
+    val () = assertloc (h1 = hash1)
+    val () = assertloc (h2 = hash2)
 
     val _ = 
       if hash1 <> reference_hash1 || hash2 <> reference_hash2 then

@@ -23,16 +23,19 @@
 
 #include "spookyhash/HATS/spookyhash-parameters.hats"
 
+#include <stdlib.h>
+#include <stdint.h>
+
 typedef struct
 {
   /* Unhashed data, for partial messages. */
-  atstype_uint64 data[2 * ATS2_SPOOKYHASH_NUMVARS];
+  uint64_t data[2 * ATS2_SPOOKYHASH_NUMVARS];
   /* Internal state of the hash. */
-  atstype_uint64 state[ATS2_SPOOKYHASH_NUMVARS];
+  uint64_t state[ATS2_SPOOKYHASH_NUMVARS];
   /* Total length of the input so far. */
-  atstype_size length;
+  size_t length;
   /* Length of unhashed data stashed in m_data. */
-  atstype_uint8 remainder;
+  uint8_t remainder;
 } ats2_spookyhash_context_t;
 
 #endif /* ATS2_SPOOKYHASH_CATS_HEADER_GUARD__ */

@@ -36,15 +36,17 @@ main0 (argc, argv) =
     val _ = fill_message (pf_msg | p_msg, length, pattern)
     val (hash1, hash2) =
       spookyhash_hash128 (!p_msg, length, seed1, seed2)
+    var h1 : uint64
+    var h2 : uint64
+    val () = spookyhash_hash128_vars (!p_msg, length, seed1, seed2,
+                                      h1, h2)
     val _ = mfree_gc (pf_msg, pf_msg_mem | p_msg)
 
-#ifdef PACKAGE_STRING #then
-val _ = println! ("foo!!!!!!!!!!!!!!!!!!!!!!!!!!")
-#endif
     val _ = 
       if hash1 <> reference_hash1 || hash2 <> reference_hash2 then
         {
-          val _ = $extfcall (int, "printf", "Expected:\n")
+          val _ = $extfcall (int, "printf",
+                             "For tuple return, expected:\n")
           val _ = $extfcall (void, "print_hash128_results",
                              seed1, seed2, length, pattern,
                              reference_hash1, reference_hash2)
@@ -52,6 +54,21 @@ val _ = println! ("foo!!!!!!!!!!!!!!!!!!!!!!!!!!")
           val _ = $extfcall (void, "print_hash128_results",
                              seed1, seed2, length, pattern,
                              hash1, hash2)
+          val _ = $extfcall (void, "exit", 1)
+        }
+
+    val _ =
+      if h1 <> reference_hash1 || h2 <> reference_hash2 then
+        {
+          val _ = $extfcall (int, "printf",
+                             "For vars output, expected:\n")
+          val _ = $extfcall (void, "print_hash128_results",
+                             seed1, seed2, length, pattern,
+                             reference_hash1, reference_hash2)
+          val _ = $extfcall (int, "printf", "Got:\n")
+          val _ = $extfcall (void, "print_hash128_results",
+                             seed1, seed2, length, pattern,
+                             h1, h2)
           val _ = $extfcall (void, "exit", 1)
         }
   }

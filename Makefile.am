@@ -326,6 +326,25 @@ nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_SATS)
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_CATS)
 
 #--------------------------------------------------------------------------
+#
+# The C library.
+#
+
+lib_LTLIBRARIES += libspookyhash.la
+
+libspookyhash_la_SOURCES =
+libspookyhash_la_SOURCES += spookyhash/spookyhash.h
+libspookyhash_la_SOURCES += spookyhash/spookyhash_hash128.c
+libspookyhash_la_SOURCES += spookyhash/spookyhash_hash64.c
+libspookyhash_la_SOURCES += spookyhash/spookyhash_hash32.c
+libspookyhash_la_SOURCES += spookyhash/spookyhash-incremental.c
+
+libspookyhash_la_LIBADD =
+libspookyhash_la_LIBADD += libats2-spookyhash.la
+
+nobase_nodist_pkginclude_HEADERS += spookyhash/spookyhash.h
+
+#--------------------------------------------------------------------------
 
 EXTRA_PROGRAMS += tests/compute-reference-result
 CLEANFILES += tests/compute-reference-result
@@ -634,45 +653,6 @@ tests-clean:
 	-rm -f tests/*.o
 	-rm -f tests/*.sh
 
-# #--------------------------------------------------------------------------
-# #
-# # The C library.
-# #
-# 
-# lib_LTLIBRARIES += libspookyhash.la
-# 
-# SPOOKYHASH_C_DATS = spookyhash/DATS/spookyhash_c.dats
-# SPOOKYHASH_C_DATS_C = spookyhash/DATS/spookyhash_c_dats.c
-# EXTRA_DIST += $(SPOOKYHASH_C_DATS)
-# CLEANFILES += $(SPOOKYHASH_C_DATS_C)
-# 
-# HALFSPOOKYHASH_C_DATS = spookyhash/DATS/halfspookyhash_c.dats
-# HALFSPOOKYHASH_C_DATS_C = spookyhash/DATS/halfspookyhash_c_dats.c
-# EXTRA_DIST += $(HALFSPOOKYHASH_C_DATS)
-# CLEANFILES += $(HALFSPOOKYHASH_C_DATS_C)
-# 
-# KEY_C_DATS = spookyhash/DATS/key_c.dats
-# KEY_C_DATS_C = spookyhash/DATS/key_c_dats.c
-# EXTRA_DIST += $(KEY_C_DATS)
-# CLEANFILES += $(KEY_C_DATS_C)
-# 
-# libspookyhash_la_SOURCES =
-# libspookyhash_la_SOURCES += $(SPOOKYHASH_C_DATS_C)
-# libspookyhash_la_SOURCES += $(HALFSPOOKYHASH_C_DATS_C)
-# libspookyhash_la_SOURCES += $(KEY_C_DATS_C)
-# libspookyhash_la_SOURCES += spookyhash/spookyhash.h
-# libspookyhash_la_SOURCES += spookyhash/halfspookyhash.h
-# libspookyhash_la_SOURCES += spookyhash/key.h
-# 
-# libspookyhash_la_LIBADD =
-# libspookyhash_la_LIBADD += libats2-spookyhash.la
-# 
-# nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_C_DATS)
-# nobase_nodist_pkginclude_HEADERS += $(HALFSPOOKYHASH_C_DATS)
-# nobase_nodist_pkginclude_HEADERS += spookyhash/spookyhash.h
-# nobase_nodist_pkginclude_HEADERS += spookyhash/halfspookyhash.h
-# nobase_nodist_pkginclude_HEADERS += spookyhash/key.h
-# 
 # #--------------------------------------------------------------------------
 # 
 # nodist_pkgconfig_DATA += ats2-spookyhash.pc

@@ -108,3 +108,15 @@ spookyhash_hash128 {length} (message, length, seed1, seed2) =
     in
       (h0, h1)
     end
+
+implement
+spookyhash_hash128_vars {length}
+                        (message, length, seed1, seed2,
+                         hash1, hash2) =
+  let
+    val (h1, h2) = 
+      spookyhash_hash128 {length} (message, length, seed1, seed2)
+  in
+    hash1 := h1;
+    hash2 := h2
+  end

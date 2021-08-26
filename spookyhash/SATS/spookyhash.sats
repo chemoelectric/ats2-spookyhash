@@ -38,6 +38,18 @@ spookyhash_hash128 {length  : int}
     @(uint64,         (* The first 64 bits (in native byte order). *)
       uint64)         (* The second 64 bits (in native byte order). *)
 
+(* spookyhash_hash128_vars:
+   Like spookyhash_hash128, but with output to variables rather
+   returned as a tuple. *)
+fun
+spookyhash_hash128_vars {length  : int}
+                        (message : &RD(@[byte][length]),
+                         length  : size_t length,
+                         seed1   : uint64,
+                         seed2   : uint64,
+                         hash1   : &uint64? >> uint64,
+                         hash2   : &uint64? >> uint64) :<!refwrt> void
+
 fun
 spookyhash_hash64 {length  : int}
                   (message : &RD(@[byte][length]),
@@ -90,5 +102,13 @@ fun
 spookyhash_final (context : &spookyhash_context_t) :<!refwrt>
     @(uint64,         (* The first 64 bits (in native byte order). *)
       uint64)         (* The second 64 bits (in native byte order). *)
+
+(* spookyhash_final_vars:
+   Like spookyhash_final, but with output to variables rather
+   returned as a tuple. *)
+fun
+spookyhash_final_vars (context : &spookyhash_context_t,
+                       hash1   : &uint64? >> uint64,
+                       hash2   : &uint64? >> uint64) :<!refwrt> void
 
 (********************************************************************)

@@ -297,3 +297,12 @@ spookyhash_final (context) =
         (h0, h1)
       end
   end
+
+implement
+spookyhash_final_vars (context, hash1, hash2) =
+  let
+    val (h1, h2) = spookyhash_final (context)
+  in
+    hash1 := h1;
+    hash2 := h2
+  end
