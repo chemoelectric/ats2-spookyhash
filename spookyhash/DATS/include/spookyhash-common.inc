@@ -20,6 +20,7 @@ along with this program. If not, see
 
 staload "spookyhash/SATS/spookyhash-alignment.sats"
 staload "spookyhash/SATS/spookyhash-proofs.sats"
+staload "spookyhash/SATS/spookyhash-internal-types.sats"
 
 prval _ = integer_sizes ()
 
@@ -27,15 +28,7 @@ prval _ = integer_sizes ()
 #include "spookyhash/CATS/spookyhash-implementation.cats"
 %}
 
-#include "spookyhash/HATS/spookyhash-parameters.hats"
-#define NUMVARS ATS2_SPOOKYHASH_NUMVARS
-#define TWICE_NUMVARS ATS2_SPOOKYHASH_TWICE_NUMVARS
-#define BLOCKSIZE ATS2_SPOOKYHASH_BLOCKSIZE
-#define BUFSIZE ATS2_SPOOKYHASH_BUFSIZE
-#define CONST   ATS2_SPOOKYHASH_CONST
-
-typedef remainder_t (i : int) = [i < BUFSIZE] g1uint (uint8knd, i)
-typedef remainder_t = [i : int] remainder_t i
+#include "spookyhash/HATS/spookyhash-ats-parameters.hats"
 
 (********************************************************************)
 
@@ -128,36 +121,6 @@ overload <<@ with bitwise_lrotate
 
 overload fix_byte_order with fix_byte_order_uint32
 overload fix_byte_order with fix_byte_order_uint64
-
-(********************************************************************)
-
-extern fun
-m_data (context : &spookyhash_context_t) :<!ref>
-    [p : addr]
-    (@[uint64][TWICE_NUMVARS] @ p,
-     @[uint64][TWICE_NUMVARS] @ p -<lin,prf> void |
-     ptr p) = "mac#%"
-
-extern fun
-m_state (context : &spookyhash_context_t) :<!ref>
-    [p : addr]
-    (@[uint64][NUMVARS] @ p,
-     @[uint64][NUMVARS] @ p -<lin,prf> void |
-     ptr p) = "mac#%"
-
-extern fun
-m_length (context : &spookyhash_context_t) :<!ref>
-    [p : addr]
-    (Size_t @ p,
-     Size_t @ p -<lin,prf> void |
-     ptr p) = "mac#%"
-
-extern fun
-m_remainder (context : &spookyhash_context_t) :<!ref>
-    [p : addr]
-    (remainder_t @ p,
-     remainder_t @ p -<lin,prf> void |
-     ptr p) = "mac#%"
 
 (********************************************************************)
 
