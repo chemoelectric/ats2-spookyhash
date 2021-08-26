@@ -18,20 +18,23 @@ along with this program. If not, see
 
 *)
 
-
 #define ATS_PACKNAME "ats2-spookyhash"
 #define ATS_EXTERN_PREFIX "ats2_spookyhash_"
 
-#define ATS_DYNLOADFLAG 0
+%{#
+#include "spookyhash/CATS/spookyhash-implementation.cats"
+%}
 
-staload "spookyhash/SATS/spookyhash.sats"
-staload "spookyhash/SATS/spookyhash-casts.sats"
+(* An interface to memcpy or __builtin_memcpy. *)
+fun
+memcpy {n   : int}
+       (dst : &(@[byte?][n]) >> @[byte][n],
+        src : &RD(@[byte][n]),
+        n   : size_t n) :<!refwrt> void = "mac#%"
 
-implement
-spookyhash_hash32 (message, length, seed) =
-  let
-    val seed = u32u64 seed
-    val hash = (spookyhash_hash128 (message, length, seed, seed)).0
-  in
-    u64u32 hash
-  end
+(* An interface to memset or __builtin_memset. *)
+fun
+memset {n     : int}
+       (dst   : &(@[byte?][n]) >> @[byte][n],
+        value : byte,
+        n     : size_t n) :<!refwrt> void = "mac#%"

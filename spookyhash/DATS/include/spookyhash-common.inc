@@ -18,20 +18,11 @@ along with this program. If not, see
 
 *)
 
+staload "spookyhash/SATS/spookyhash-alignment.sats"
+
 %{^
 #include "spookyhash/CATS/spookyhash-implementation.cats"
 %}
-
-#define ATS_PACKNAME "ats2-spookyhash"
-#define ATS_EXTERN_PREFIX "ats2_spookyhash_"
-
-#define ATS_DYNLOADFLAG 0
-
-#include "share/atspre_define.hats"
-#include "share/atspre_staload.hats"
-
-staload "spookyhash/SATS/array_prf.sats"
-staload "spookyhash/SATS/spookyhash.sats"
 
 #include "spookyhash/HATS/spookyhash-parameters.hats"
 #define NUMVARS ATS2_SPOOKYHASH_NUMVARS
@@ -194,99 +185,6 @@ overload <<@ with bitwise_lrotate
 overload fix_byte_order with fix_byte_order_uint32
 overload fix_byte_order with fix_byte_order_uint64
 
-(*------------------------------------------------------------------*)
-
-(*
-  The C standard specifies: "[I]f the new type is unsigned,
-  the value is converted by repeatedly adding or subtracting
-  one more than the maximum value that can be represented in
-  the new type until the value is in the range of the new
-  type." In other words, casts from larger unsigned to smaller
-  unsigned will truncate for us nicely.
-
-  Also notable is that atstype_byte is equivalent to unsigned
-  char.
-*)
-
-extern castfn
-g1ofg1_g1uint {tk : tkind}
-              {i  : int}
-              (i  : g1uint (tk, i)) :<>
-    [j : int | j == i] g1uint (tk, j)
-
-extern castfn
-g1ofg1_ptr {p : addr}
-           (p : ptr p) :<>
-    [q : addr | q == p] ptr q
-
-overload g1ofg1 with g1ofg1_g1uint
-overload g1ofg1 with g1ofg1_ptr
-
-extern castfn
-u2u8 {i : int} (i : uint i) :<> uint8 i
-
-extern castfn
-u2u64 {i : int} (i : uint i) :<> uint64 i
-
-extern castfn
-u32u64 (i : uint32) :<> uint64
-
-extern castfn
-u64u32 (i : uint64) :<> uint32
-
-extern castfn
-byte2u64 (b : byte) :<> uint64
-
-extern castfn
-u8sz {i : int} (i : uint8 i) :<> size_t i
-
-extern castfn
-sz2u8 {i : int} (i : size_t i) :<> uint8 i
-
-extern castfn
-sz2u64 {i : int} (i : size_t i) :<> uint64 i
-
-extern castfn
-sz2byte {i : int | i < 256}
-        (i : size_t i) :<> byte
-
-extern castfn
-u2byte (i : uint) :<> byte
-
-extern castfn
-ull2u64 (i : ullint) :<> uint64
-
-(*------------------------------------------------------------------*)
-
-(* An interface to memcpy or __builtin_memcpy. *)
-extern fun
-memcpy {n   : int}
-       (dst : &(@[byte?][n]) >> @[byte][n],
-        src : &RD(@[byte][n]),
-        n   : size_t n) :<!refwrt> void = "mac#%"
-
-(* An interface to memset or __builtin_memset. *)
-extern fun
-memset {n     : int}
-       (dst   : &(@[byte?][n]) >> @[byte][n],
-        value : byte,
-        n     : size_t n) :<!refwrt> void = "mac#%"
-
-(*------------------------------------------------------------------*)
-
-#ifdef HAVE_ALIGNED_ACCESS_REQUIRED #then
-
-  extern fn
-  is_aligned_g0 (p : ptr) :<> bool = "mac#%"
-
-  extern fn
-  is_aligned_g1 {p : addr} (p : ptr p) :<> bool = "mac#%"
-
-  overload is_aligned with is_aligned_g0 of 0
-  overload is_aligned with is_aligned_g1 of 10
-
-#endif
-
 (********************************************************************)
 
 extern fun
@@ -448,7 +346,7 @@ spookyhash_mix_bytes
            s9   : &uint64,
            s10  : &uint64,
            s11  : &uint64) :<!refwrt> void =
-    if is_aligned (addr@ data) then
+    if is_uint64_aligned (addr@ data) then
       spookyhash_mix_bytes (data, s0, s1, s2, s3, s4, s5,
                             s6, s7, s8, s9, s10, s11)
     else
@@ -1076,7 +974,7 @@ _short {length  : int}
                     seed2   : uint64) :<!refwrt>
       @(uint64,       (* The first 64 bits (in native byte order). *)
         uint64) =     (* The second 64 bits (in native byte order). *)
-    if is_aligned (addr@ message) then
+    if is_uint64_aligned (addr@ message) then
       _short<> (message, length, seed1, seed2)
     else
       let

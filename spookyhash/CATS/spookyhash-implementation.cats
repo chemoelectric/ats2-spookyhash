@@ -149,16 +149,16 @@ ats2_spookyhash_bitwise_xor_uint64 (atstype_uint64 x,
 }
 
 ats2_spookyhash_always_inline atstype_bool
-ats2_spookyhash_is_aligned_g1 (atstype_ptr p)
+ats2_spookyhash_is_uint64_aligned_g1 (atstype_ptr p)
 {
   return ((((uintptr_t) p) % sizeof (atstype_uint64) == 0) ?
           atsbool_true : atsbool_false);
 }
 
 ats2_spookyhash_always_inline atstype_bool
-ats2_spookyhash_is_aligned_g0 (atstype_ptr p)
+ats2_spookyhash_is_uint64_aligned_g0 (atstype_ptr p)
 {
-  return ats2_spookyhash_is_aligned_g1 (p);
+  return ats2_spookyhash_is_uint64_aligned_g1 (p);
 }
 
 #endif /* ATS2_SPOOKYHASH_IMPLEMENTATION_CATS_HEADER_GUARD__ */

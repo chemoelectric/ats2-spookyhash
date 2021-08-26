@@ -18,6 +18,19 @@ along with this program. If not, see
 
 *)
 
+#define ATS_PACKNAME "ats2-spookyhash"
+#define ATS_EXTERN_PREFIX "ats2_spookyhash_"
+
+#define ATS_DYNLOADFLAG 0
+
+#include "share/atspre_define.hats"
+#include "share/atspre_staload.hats"
+
+staload "spookyhash/SATS/array_prf.sats"
+staload "spookyhash/SATS/spookyhash.sats"
+staload "spookyhash/SATS/spookyhash-casts.sats"
+staload "spookyhash/SATS/spookyhash-mem.sats"
+
 #include "spookyhash/DATS/include/spookyhash-common.inc"
 
 implement
