@@ -27,14 +27,7 @@ along with this program. If not, see
 #include "share/atspre_define.hats"
 #include "share/atspre_staload.hats"
 
-staload "spookyhash/SATS/array_prf.sats"
-staload "spookyhash/SATS/spookyhash.sats"
-staload "spookyhash/SATS/spookyhash-casts.sats"
-staload "spookyhash/SATS/spookyhash-mem.sats"
-
-#include "spookyhash/DATS/include/spookyhash-byte-order.inc"
-
-#include "spookyhash/DATS/include/spookyhash-common.inc"
+#include "spookyhash/DATS/include/spookyhash-templates.inc"
 
 implement
 spookyhash_init (context, seed1, seed2) =
@@ -157,10 +150,10 @@ spookyhash_update {length} (context, message, length) =
             pf_message
 
         (* Handle all the full-size blocks. *)
-        val _ = mix_in_blocks (pf_blocks |
-                               p_message, block_count, i2sz 0,
-                               h0, h1, h2, h3, h4, h5,
-                               h6, h7, h8, h9, h10, h11)
+        val _ = mix_in_blocks<> (pf_blocks |
+                                 p_message, block_count,
+                                 h0, h1, h2, h3, h4, h5,
+                                 h6, h7, h8, h9, h10, h11)
 
         (* Store the remainder. *)
         val _ = !p_rem := sz2u8 remainder
