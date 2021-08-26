@@ -19,6 +19,9 @@ along with this program. If not, see
 *)
 
 staload "spookyhash/SATS/spookyhash-alignment.sats"
+staload "spookyhash/SATS/spookyhash-proofs.sats"
+
+prval _ = integer_sizes ()
 
 %{^
 #include "spookyhash/CATS/spookyhash-implementation.cats"
@@ -33,65 +36,6 @@ staload "spookyhash/SATS/spookyhash-alignment.sats"
 
 typedef remainder_t (i : int) = [i < BUFSIZE] g1uint (uint8knd, i)
 typedef remainder_t = [i : int] remainder_t i
-
-(********************************************************************)
-
-%{
-_Static_assert (sizeof (atstype_byte) == 1,
-                "atstype_byte is not 1 byte");
-
-_Static_assert (sizeof (atstype_uint32) == 4,
-                "uint32 is not 4 bytes");
-
-_Static_assert (sizeof (atstype_uint64) == 8,
-                "uint64 is not 8 bytes");
-%}
-
-prval _ = $UNSAFE.prop_assert {sizeof (byte) == 1} ()
-prval _ = $UNSAFE.prop_assert {sizeof (uint32) == 4} ()
-prval _ = $UNSAFE.prop_assert {sizeof (uint64) == 8} ()
-
-extern praxi {t : vt@ype}
-fake_initialize_array_v :
-  {n : int} {p : addr}
-  (@[t?][n] @ p) -<prf> @[t][n] @ p
-
-extern praxi {t : vt@ype}
-array2bytes :
-  {n : int}
-  {p : addr}
-  (@[t][n] @ p) -<prf> (@[byte][n * sizeof (t)] @ p)
-
-extern praxi {t : vt@ype}
-bytes2array :
-  {n : int}
-  {p : addr}
-  (@[byte][n * sizeof (t)] @ p) -<prf> (@[t][n] @ p)
-
-extern praxi {t : vt@ype}
-array2bytesqmark :
-  {n : int}
-  {p : addr}
-  (@[t][n] @ p) -<prf> (@[byte?][n * sizeof (t)] @ p)
-
-extern praxi {t : vt@ype}
-bytesqmark2array :
-  {n : int}
-  {p : addr}
-  (@[byte?][n * sizeof (t)] @ p) -<prf> (@[t][n] @ p)
-
-(********************************************************************)
-
-prfn
-lemma_mul_isfun {m1, n1 : int}
-                {m2, n2 : int | m1 == m2; n1 == n2}
-                () :<prf>
-    [m1 * n1 == m2 * n2] void =
-  {
-    prval pf1 = mul_make {m1, n1} ()
-    prval pf2 = mul_make {m2, n2} ()
-    prval _ = mul_isfun {m1, n1} {m1 * n1, m2 * n2} (pf1, pf2)
-  }
 
 (********************************************************************)
 

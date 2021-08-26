@@ -186,15 +186,18 @@ am__objects_2 = spookyhash/DATS/array_prf_dats.lo
 am__objects_3 = spookyhash/SATS/spookyhash-casts_sats.lo
 am__objects_4 = spookyhash/SATS/spookyhash-mem_sats.lo
 am__objects_5 = spookyhash/SATS/spookyhash-alignment_sats.lo
-am__objects_6 = spookyhash/SATS/spookyhash_sats.lo
-am__objects_7 = spookyhash/DATS/spookyhash_hash128_dats.lo
-am__objects_8 = spookyhash/DATS/spookyhash_hash64_dats.lo
-am__objects_9 = spookyhash/DATS/spookyhash_hash32_dats.lo
-am__objects_10 = spookyhash/DATS/spookyhash-incremental_dats.lo
+am__objects_6 = spookyhash/SATS/spookyhash-proofs_sats.lo
+am__objects_7 = spookyhash/DATS/spookyhash-proofs_dats.lo
+am__objects_8 = spookyhash/SATS/spookyhash_sats.lo
+am__objects_9 = spookyhash/DATS/spookyhash_hash128_dats.lo
+am__objects_10 = spookyhash/DATS/spookyhash_hash64_dats.lo
+am__objects_11 = spookyhash/DATS/spookyhash_hash32_dats.lo
+am__objects_12 = spookyhash/DATS/spookyhash-incremental_dats.lo
 nodist_libats2_spookyhash_la_OBJECTS = $(am__objects_1) \
 	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
 	$(am__objects_5) $(am__objects_6) $(am__objects_7) \
-	$(am__objects_8) $(am__objects_9) $(am__objects_10)
+	$(am__objects_8) $(am__objects_9) $(am__objects_10) \
+	$(am__objects_11) $(am__objects_12)
 libats2_spookyhash_la_OBJECTS =  \
 	$(nodist_libats2_spookyhash_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -245,6 +248,7 @@ depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo \
 	spookyhash/DATS/$(DEPDIR)/spookyhash-incremental_dats.Plo \
+	spookyhash/DATS/$(DEPDIR)/spookyhash-proofs_dats.Plo \
 	spookyhash/DATS/$(DEPDIR)/spookyhash_hash128_dats.Plo \
 	spookyhash/DATS/$(DEPDIR)/spookyhash_hash32_dats.Plo \
 	spookyhash/DATS/$(DEPDIR)/spookyhash_hash64_dats.Plo \
@@ -252,6 +256,7 @@ am__depfiles_remade = spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo \
 	spookyhash/SATS/$(DEPDIR)/spookyhash-alignment_sats.Plo \
 	spookyhash/SATS/$(DEPDIR)/spookyhash-casts_sats.Plo \
 	spookyhash/SATS/$(DEPDIR)/spookyhash-mem_sats.Plo \
+	spookyhash/SATS/$(DEPDIR)/spookyhash-proofs_sats.Plo \
 	spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo \
 	tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po \
 	tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po \
@@ -715,6 +720,8 @@ AUTOMAKE_OPTIONS = foreign subdir-objects -Wno-portability
 
 #SUBDIRS = lib
 
+# FIXME: TEMPORARY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 # #--------------------------------------------------------------------------
 # #
 # # The C library.
@@ -764,9 +771,11 @@ EXTRA_DIST = $(srcdir)/silent-rules.mk COPYING INSTALL README AUTHORS \
 	$(SPOOKYHASH_PARAMETERS_HATS) $(SPOOKYHASH_IMPL_CATS) \
 	$(SPOOKYHASH_CATS) $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS) \
 	$(SPOOKYHASH_CASTS_SATS) $(SPOOKYHASH_MEM_SATS) \
-	$(SPOOKYHASH_ALIGNMENT_SATS) $(SPOOKYHASH_SATS) \
+	$(SPOOKYHASH_ALIGNMENT_SATS) $(SPOOKYHASH_PROOFS_SATS) \
+	$(SPOOKYHASH_PROOFS_DATS) $(SPOOKYHASH_SATS) \
 	$(SPOOKYHASH_HASH128_DATS) $(SPOOKYHASH_HASH64_DATS) \
 	$(SPOOKYHASH_HASH32_DATS) $(SPOOKYHASH_INCREMENTAL_DATS) \
+	spookyhash/DATS/include/spookyhash-common.inc \
 	tests/try-spookyhash_hash128.dats \
 	tests/try-spookyhash_hash64.dats \
 	tests/try-spookyhash_hash32.dats \
@@ -788,7 +797,8 @@ EXTRA_DIST = $(srcdir)/silent-rules.mk COPYING INSTALL README AUTHORS \
 MOSTLYCLEANFILES = 
 CLEANFILES = $(ARRAY_PRF_SATS_C) $(ARRAY_PRF_DATS_C) \
 	$(SPOOKYHASH_CASTS_SATS_C) $(SPOOKYHASH_MEM_SATS_C) \
-	$(SPOOKYHASH_ALIGNMENT_SATS_C) $(SPOOKYHASH_SATS_C) \
+	$(SPOOKYHASH_ALIGNMENT_SATS_C) $(SPOOKYHASH_PROOFS_SATS_C) \
+	$(SPOOKYHASH_PROOFS_DATS_C) $(SPOOKYHASH_SATS_C) \
 	$(SPOOKYHASH_HASH128_DATS_C) $(SPOOKYHASH_HASH64_DATS_C) \
 	$(SPOOKYHASH_HASH32_DATS_C) $(SPOOKYHASH_INCREMENTAL_DATS_C) \
 	tests/compute-reference-result tests/try-spookyhash_hash128 \
@@ -872,6 +882,10 @@ SPOOKYHASH_MEM_SATS = spookyhash/SATS/spookyhash-mem.sats
 SPOOKYHASH_MEM_SATS_C = spookyhash/SATS/spookyhash-mem_sats.c
 SPOOKYHASH_ALIGNMENT_SATS = spookyhash/SATS/spookyhash-alignment.sats
 SPOOKYHASH_ALIGNMENT_SATS_C = spookyhash/SATS/spookyhash-alignment_sats.c
+SPOOKYHASH_PROOFS_SATS = spookyhash/SATS/spookyhash-proofs.sats
+SPOOKYHASH_PROOFS_SATS_C = spookyhash/SATS/spookyhash-proofs_sats.c
+SPOOKYHASH_PROOFS_DATS = spookyhash/DATS/spookyhash-proofs.dats
+SPOOKYHASH_PROOFS_DATS_C = spookyhash/DATS/spookyhash-proofs_dats.c
 SPOOKYHASH_SATS = spookyhash/SATS/spookyhash.sats
 SPOOKYHASH_SATS_C = spookyhash/SATS/spookyhash_sats.c
 SPOOKYHASH_HASH128_DATS = spookyhash/DATS/spookyhash_hash128.dats
@@ -885,6 +899,7 @@ SPOOKYHASH_INCREMENTAL_DATS_C = spookyhash/DATS/spookyhash-incremental_dats.c
 nodist_libats2_spookyhash_la_SOURCES = $(ARRAY_PRF_SATS_C) \
 	$(ARRAY_PRF_DATS_C) $(SPOOKYHASH_CASTS_SATS_C) \
 	$(SPOOKYHASH_MEM_SATS_C) $(SPOOKYHASH_ALIGNMENT_SATS_C) \
+	$(SPOOKYHASH_PROOFS_SATS_C) $(SPOOKYHASH_PROOFS_DATS_C) \
 	$(SPOOKYHASH_SATS_C) $(SPOOKYHASH_DATS_C) \
 	$(SPOOKYHASH_HASH128_DATS_C) $(SPOOKYHASH_HASH64_DATS_C) \
 	$(SPOOKYHASH_HASH32_DATS_C) $(SPOOKYHASH_INCREMENTAL_DATS_C)
@@ -1100,6 +1115,12 @@ spookyhash/SATS/spookyhash-mem_sats.lo:  \
 spookyhash/SATS/spookyhash-alignment_sats.lo:  \
 	spookyhash/SATS/$(am__dirstamp) \
 	spookyhash/SATS/$(DEPDIR)/$(am__dirstamp)
+spookyhash/SATS/spookyhash-proofs_sats.lo:  \
+	spookyhash/SATS/$(am__dirstamp) \
+	spookyhash/SATS/$(DEPDIR)/$(am__dirstamp)
+spookyhash/DATS/spookyhash-proofs_dats.lo:  \
+	spookyhash/DATS/$(am__dirstamp) \
+	spookyhash/DATS/$(DEPDIR)/$(am__dirstamp)
 spookyhash/SATS/spookyhash_sats.lo: spookyhash/SATS/$(am__dirstamp) \
 	spookyhash/SATS/$(DEPDIR)/$(am__dirstamp)
 spookyhash/DATS/spookyhash_hash128_dats.lo:  \
@@ -1175,6 +1196,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/spookyhash-incremental_dats.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/spookyhash-proofs_dats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/spookyhash_hash128_dats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/spookyhash_hash32_dats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/DATS/$(DEPDIR)/spookyhash_hash64_dats.Plo@am__quote@ # am--include-marker
@@ -1182,6 +1204,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/SATS/$(DEPDIR)/spookyhash-alignment_sats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/SATS/$(DEPDIR)/spookyhash-casts_sats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/SATS/$(DEPDIR)/spookyhash-mem_sats.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@spookyhash/SATS/$(DEPDIR)/spookyhash-proofs_sats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po@am__quote@ # am--include-marker
@@ -1900,6 +1923,7 @@ distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash-incremental_dats.Plo
+	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash-proofs_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_hash128_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_hash32_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_hash64_dats.Plo
@@ -1907,6 +1931,7 @@ distclean: distclean-am
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash-alignment_sats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash-casts_sats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash-mem_sats.Plo
+	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash-proofs_sats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo
 	-rm -f tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po
 	-rm -f tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po
@@ -1965,6 +1990,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f spookyhash/DATS/$(DEPDIR)/array_prf_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash-incremental_dats.Plo
+	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash-proofs_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_hash128_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_hash32_dats.Plo
 	-rm -f spookyhash/DATS/$(DEPDIR)/spookyhash_hash64_dats.Plo
@@ -1972,6 +1998,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash-alignment_sats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash-casts_sats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash-mem_sats.Plo
+	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash-proofs_sats.Plo
 	-rm -f spookyhash/SATS/$(DEPDIR)/spookyhash_sats.Plo
 	-rm -f tests/$(DEPDIR)/compute_reference_result-SpookyV2.Po
 	-rm -f tests/$(DEPDIR)/compute_reference_result-compute-reference-result.Po
@@ -2155,6 +2182,8 @@ $(ARRAY_PRF_DATS_C): $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS)
 $(SPOOKYHASH_CASTS_SATS_C): $(SPOOKYHASH_CASTS_SATS)
 $(SPOOKYHASH_MEM_SATS_C): $(SPOOKYHASH_MEM_SATS)
 $(SPOOKYHASH_ALIGNMENT_SATS_C): $(SPOOKYHASH_ALIGNMENT_SATS)
+$(SPOOKYHASH_PROOFS_SATS_C): $(SPOOKYHASH_PROOFS_SATS)
+$(SPOOKYHASH_PROOFS_DATS_C): $(SPOOKYHASH_PROOFS_SATS) $(SPOOKYHASH_PROOFS_DATS)
 $(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
 						$(SPOOKYHASH_IMPL_CATS) \
 						$(SPOOKYHASH_PARAMETERS_HATS)
@@ -2165,7 +2194,8 @@ $(SPOOKYHASH_HASH128_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
 						$(ARRAY_PRF_SATS) \
 						$(SPOOKYHASH_CASTS_SATS) \
 						$(SPOOKYHASH_MEM_SATS) \
-						$(SPOOKYHASH_ALIGNMENT_SATS)
+						$(SPOOKYHASH_ALIGNMENT_SATS) \
+						$(SPOOKYHASH_PROOFS_SATS)
 $(SPOOKYHASH_HASH64_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
 						$(SPOOKYHASH_HASH64_DATS)
 $(SPOOKYHASH_HASH32_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
@@ -2178,7 +2208,8 @@ $(SPOOKYHASH_INCREMENTAL_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
 						$(ARRAY_PRF_SATS) \
 						$(SPOOKYHASH_CASTS_SATS) \
 						$(SPOOKYHASH_MEM_SATS) \
-						$(SPOOKYHASH_ALIGNMENT_SATS)
+						$(SPOOKYHASH_ALIGNMENT_SATS) \
+						$(SPOOKYHASH_PROOFS_SATS)
 
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash_hash128.dats
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash-common.hats
