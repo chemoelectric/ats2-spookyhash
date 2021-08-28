@@ -19264,6 +19264,9 @@ ac_config_files="$ac_config_files tests/SpookyV2.h:reference-implementation/Spoo
 #AC_CONFIG_FILES([ats2-spookyhash.pc])
 #AC_CONFIG_FILES([spookyhash.pc])
 
+ac_config_files="$ac_config_files make-ats-depends.dats"
+
+
 
 POSIX_SH=${POSIX_SH-`command -p -v sh`}
 ac_config_files="$ac_config_files tests/compute-reference-for-seeds-eq-zero.sh"
@@ -20417,6 +20420,7 @@ do
     "GNUmakefile") CONFIG_FILES="$CONFIG_FILES GNUmakefile:Makefile.in" ;;
     "tests/SpookyV2.h") CONFIG_FILES="$CONFIG_FILES tests/SpookyV2.h:reference-implementation/SpookyV2.h" ;;
     "tests/SpookyV2.cpp") CONFIG_FILES="$CONFIG_FILES tests/SpookyV2.cpp:reference-implementation/SpookyV2.cpp" ;;
+    "make-ats-depends.dats") CONFIG_FILES="$CONFIG_FILES make-ats-depends.dats" ;;
     "tests/compute-reference-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/compute-reference-for-seeds-eq-zero.sh" ;;
     "tests/compute-reference-for-hash128-seed.sh") CONFIG_FILES="$CONFIG_FILES tests/compute-reference-for-hash128-seed.sh" ;;
     "tests/compute-reference-for-hash64-seed.sh") CONFIG_FILES="$CONFIG_FILES tests/compute-reference-for-hash64-seed.sh" ;;

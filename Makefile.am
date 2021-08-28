@@ -64,8 +64,6 @@ AM_CPPFLAGS += -I$(builddir)
 AM_CPPFLAGS += -I$(srcdir)
 AM_CPPFLAGS += -I$(PATSHOME)
 AM_CPPFLAGS += -I$(PATSHOME)/ccomp/runtime/
-AM_CPPFLAGS += -I$(builddir)/lib
-AM_CPPFLAGS += -I$(srcdir)/lib
 
 LDADD += $(CODE_COVERAGE_LIBS)
 
@@ -650,8 +648,29 @@ EXTRA_DIST += tests/test-spookyhash-for-hash64-seed.sh.in
 EXTRA_DIST += tests/test-spookyhash-for-hash32-seed.sh.in
 
 tests-clean:
-	-rm -f tests/*.o
+	-rm -f tests/*.$(OBJEXT)
 	-rm -f tests/*.sh
+
+#--------------------------------------------------------------------------
+#
+# Computation of dependencies.
+#
+
+EXTRA_PROGRAMS += make-ats-depends
+EXTRA_DIST += make-ats-depends.dats
+CLEANFILES += make-ats-depends
+CLEANFILES += make-ats-depends_dats.c
+
+make_ats_depends_SOURCES =
+make_ats_depends_SOURCES += make-ats-depends_dats.c
+make_ats_depends_CPPFLAGS =
+make_ats_depends_CPPFLAGS += $(AM_CPPFLAGS)
+make_ats_depends_CPPFLAGS += -DATS_MEMALLOC_LIBC
+make_ats_depends_DEPENDENCIES =
+make_ats_depends_DEPENDENCIES += make-ats-depends.dats
+make_ats_depends_LDADD =
+make_ats_depends_LDADD += -L'$(PATSHOME)/ccomp/atslib/lib'
+make_ats_depends_LDADD += -latslib
 
 # #--------------------------------------------------------------------------
 # 
