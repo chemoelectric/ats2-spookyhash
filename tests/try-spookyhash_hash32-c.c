@@ -30,21 +30,33 @@ main (int argc, char *argv[])
   uint64_t reference_hash1 = get_reference_hash1 (argc, argv);
   uint64_t reference_hash2 = get_reference_hash2 (argc, argv);
 
-  uint64_t hash1;
-  uint64_t hash2;
+  if (0x100000000 <= seed1)
+    {
+      printf ("The seed is too large.\n");
+      exit (2);
+    }
+
+  if (seed1 != seed2)
+    {
+      printf ("The seeds are unequal.\n");
+      exit (3);
+    }
+
+  uint32_t seed = seed1 & 0xFFFFFFFF;
+  uint32_t reference_hash = reference_hash1 & 0xFFFFFFFF;
+
   uint8_t *message = malloc (length);
   fill_message (message, length, pattern);
-  spookyhash_hash128 (message, length, seed1, seed2, &hash1, &hash2);
+  uint64_t hash = spookyhash_hash32 (message, length, seed);
   free (message);
 
-  if (hash1 != reference_hash1 || hash2 != reference_hash2)
+  if (hash != reference_hash)
     {
       printf ("Expected:\n");
-      print_hash128_results (seed1, seed2, length, pattern,
-                             reference_hash1, reference_hash2);
+      print_hash32_results (seed, length, pattern,
+                            reference_hash);
       printf ("Got:\n");
-      print_hash128_results (seed1, seed2, length, pattern,
-                             hash1, hash2);
+      print_hash32_results (seed, length, pattern, hash);
       exit (1);
     }
 

@@ -69,7 +69,8 @@ spookyhash_hash32 {length  : int}
 (********************************************************************)
 (* Calculation of a hash by incrementally updating.                 *)
 
-typedef spookyhash_context_t = $extype"ats2_spookyhash_context_t"
+typedef spookyhash_context_t =
+  $extype"struct ats2_spookyhash_context_t__"
 
 (* spookyhash_init:
 

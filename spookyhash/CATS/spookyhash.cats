@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-typedef struct
+struct ats2_spookyhash_context_t__
 {
   /* Unhashed data, for partial messages. */
   uint64_t data[2 * ATS2_SPOOKYHASH_NUMVARS];
@@ -36,6 +36,6 @@ typedef struct
   size_t length;
   /* Length of unhashed data stashed in m_data. */
   uint8_t remainder;
-} ats2_spookyhash_context_t;
+};
 
 #endif /* ATS2_SPOOKYHASH_CATS_HEADER_GUARD__ */

@@ -80,25 +80,25 @@ _Static_assert (ats2_spookyhash_bswap64 (0xDEADBEEFFEEDFACEU) ==
 ats2_spookyhash_inline atstype_ptr
 ats2_spookyhash_m_data (atstype_ref ctx)
 {
-  return ((ats2_spookyhash_context_t *) ctx)->data;
+  return ((struct ats2_spookyhash_context_t__ *) ctx)->data;
 }
 
 ats2_spookyhash_inline atstype_ptr
 ats2_spookyhash_m_state (atstype_ref ctx)
 {
-  return ((ats2_spookyhash_context_t *) ctx)->state;
+  return ((struct ats2_spookyhash_context_t__ *) ctx)->state;
 }
 
 ats2_spookyhash_inline atstype_ptr
 ats2_spookyhash_m_length (atstype_ref ctx)
 {
-  return &((ats2_spookyhash_context_t *) ctx)->length;
+  return &((struct ats2_spookyhash_context_t__ *) ctx)->length;
 }
 
 ats2_spookyhash_inline atstype_ptr
 ats2_spookyhash_m_remainder (atstype_ref ctx)
 {
-  return &((ats2_spookyhash_context_t *) ctx)->remainder;
+  return &((struct ats2_spookyhash_context_t__ *) ctx)->remainder;
 }
 
 /* A natural numbers mod function. */

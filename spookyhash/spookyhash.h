@@ -28,7 +28,7 @@ along with this program. If not, see
 #include <stdint.h>
 #include <spookyhash/CATS/spookyhash.cats>
 
-typedef struct ats2_spookyhash_context_t spookyhash_context_t;
+typedef struct ats2_spookyhash_context_t__ spookyhash_context_t;
 
 inline void
 spookyhash_hash128 (const void *message,
