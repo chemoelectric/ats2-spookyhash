@@ -318,21 +318,6 @@ extern fn
 find_depends_fileref (f : FILEref) : List0_vt (Strnptr1)
 
 fn
-xxxfind_depends_filename (filename : string) : List0_vt (Strnptr1) =
-  let
-    val f_opt = fileref_open_opt (filename, file_mode_r)
-  in
-    case+ f_opt of
-    | ~ None_vt () =>
-      begin
-        fprintln! (stderr_ref, filename, " not found. Quitting.");
-        exit (1);
-        NIL
-      end
-    | ~ Some_vt f => find_depends_fileref (f)
-  end
-
-fn
 find_depends_filename (filename : string) : List0_vt (Strnptr1) =
   case+ open_source_file (filename) of
   | ~ Some_vt @(fullpath, f) => fullpath :: find_depends_fileref (f)
