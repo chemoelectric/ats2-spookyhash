@@ -47,52 +47,6 @@ overload replace with replace_strnptr
 (********************************************************************)
 
 fn
-file_is_readable (filename : string) : bool =
-  let
-    val f_opt = fileref_open_opt (filename, file_mode_r)
-  in
-    case+ f_opt of
-    | ~ None_vt () => false
-    | ~ Some_vt f =>
-      begin
-        fileref_close (f);
-        true
-      end
-  end
-
-fn
-find_file (filename : string) : Option_vt Strnptr1 =
-  let
-    val fullpath = string_append (BUILDDIR, filename)
-  in
-    if file_is_readable ($UNSAFE.castvwtp1 fullpath) then
-      let
-        val s = strptr2strnptr fullpath
-        val _ = assertloc (i2ssz 0 <= length s)
-      in
-        Some_vt s
-      end
-    else
-      let
-        val _ = free fullpath
-        val fullpath = string_append (SRCDIR, filename)
-      in
-        if file_is_readable ($UNSAFE.castvwtp1 fullpath) then
-          let
-            val s = strptr2strnptr fullpath
-            val _ = assertloc (i2ssz 0 <= length s)
-          in
-            Some_vt s
-          end
-        else
-          begin
-            free fullpath;
-            None_vt ()
-          end
-      end
-  end
-
-fn
 strcmp (s1 : string,
         s2 : string) : int =
   $extfcall (int, "strcmp", s1, s2)
@@ -102,6 +56,48 @@ strncmp (s1 : string,
          s2 : string,
          n  : size_t) : int =
   $extfcall (int, "strncmp", s1, s2, n)
+
+fn
+open_source_file (filename : string) :
+    Option_vt @(Strnptr1, FILEref) =
+  if strncmp (filename, "/", i2sz 1) = 0 then
+    begin
+      case+ fileref_open_opt (filename, file_mode_r) of
+      | ~ Some_vt f =>
+        let
+          val fullpath = string1_copy (g1ofg0 filename)
+          val _ = assertloc (i2ssz 0 <= length fullpath)
+        in
+          Some_vt @(fullpath, f)
+        end
+      | ~ None_vt () => None_vt ()
+    end
+  else
+    let
+      val fullpath = string_append (BUILDDIR, filename)
+      val fullpath = strptr2strnptr fullpath
+      val _ = assertloc (i2ssz 0 <= length fullpath)
+    in
+      case+ fileref_open_opt ($UNSAFE.castvwtp1 fullpath,
+                              file_mode_r) of
+      | ~ Some_vt f => Some_vt @(fullpath, f)
+      | ~ None_vt () =>
+        let
+          val _ = free fullpath
+          val fullpath = string_append (SRCDIR, filename)
+          val fullpath = strptr2strnptr fullpath
+          val _ = assertloc (i2ssz 0 <= length fullpath)
+        in
+          case+ fileref_open_opt ($UNSAFE.castvwtp1 fullpath,
+                                  file_mode_r) of
+          | ~ Some_vt f => Some_vt @(fullpath, f)
+          | ~ None_vt () =>
+            begin
+              free fullpath;
+              None_vt ()
+            end
+        end
+    end
 
 fn
 exists_in_strnptr_list (s   : !Strnptr1 >> _,
@@ -311,7 +307,7 @@ extern fn
 find_depends_fileref (f : FILEref) : List0_vt (Strnptr1)
 
 fn
-find_depends_filename (filename : string) : List0_vt (Strnptr1) =
+xxxfind_depends_filename (filename : string) : List0_vt (Strnptr1) =
   let
     val f_opt = fileref_open_opt (filename, file_mode_r)
   in
@@ -324,6 +320,12 @@ find_depends_filename (filename : string) : List0_vt (Strnptr1) =
       end
     | ~ Some_vt f => find_depends_fileref (f)
   end
+
+fn
+find_depends_filename (filename : string) : List0_vt (Strnptr1) =
+  case+ open_source_file (filename) of
+  | ~ Some_vt @(fullpath, f) => fullpath :: find_depends_fileref (f)
+  | ~ None_vt () => NIL
 
 implement
 find_depends_fileref (f) =
@@ -358,23 +360,12 @@ find_depends_fileref (f) =
                   val s = replace (s, trim_past_quote (s))
                   val s = replace (s, take_until_quote (s))
                   val _ = assertloc (i2ssz 0 <= length s)
+                  val deps =
+                    find_depends_filename ($UNSAFE.castvwtp1 s)
+                  val _ = free s
+                  val lst = list_vt_append (lst, deps)
                 in
-                  case+ find_file ($UNSAFE.castvwtp1 s) of
-                  | ~ None_vt () =>
-                    begin
-                      free s;
-                      find_lines (f, lst)
-                    end
-                  | ~ Some_vt filename =>
-                    let
-                      val _ = free s
-                      val deps =
-                        find_depends_filename
-                          ($UNSAFE.castvwtp1 filename)
-                      val lst = list_vt_append (lst, filename :: deps)
-                    in
-                      find_lines (f, lst)
-                    end
+                  find_lines (f, lst)
                 end
               else
                 begin
