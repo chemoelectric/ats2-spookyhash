@@ -258,10 +258,8 @@ trim_past_start {p : addr} {n : nat}
     val _ = assertloc (i <= n)
     val t =
       string_make_substring ($UNSAFE.castvwtp1{string n} s, i, n - i)
-    val u = trim_leading_space (t)
-    val _ = free t
   in
-    u
+    replace (t, trim_leading_space (t))
   end
 
 fn
