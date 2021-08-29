@@ -125,7 +125,7 @@ AC_CONFIG_FILES(
 #AC_CONFIG_FILES([ats2-spookyhash.pc])
 #AC_CONFIG_FILES([spookyhash.pc])
 
-AC_CONFIG_FILES([make-ats-depends.dats])
+AC_CONFIG_FILES([list-ats-dependencies.dats])
 
 AC_ARG_VAR([POSIX_SH],[The full absolute path of a POSIX shell])
 POSIX_SH=${POSIX_SH-`command -p -v sh`}

@@ -656,21 +656,21 @@ tests-clean:
 # Computation of dependencies.
 #
 
-EXTRA_PROGRAMS += make-ats-depends
-EXTRA_DIST += make-ats-depends.dats
-CLEANFILES += make-ats-depends
-CLEANFILES += make-ats-depends_dats.c
+EXTRA_PROGRAMS += list-ats-dependencies
+EXTRA_DIST += list-ats-dependencies.dats
+CLEANFILES += list-ats-dependencies
+CLEANFILES += list-ats-dependencies_dats.c
 
-make_ats_depends_SOURCES =
-make_ats_depends_SOURCES += make-ats-depends_dats.c
-make_ats_depends_CPPFLAGS =
-make_ats_depends_CPPFLAGS += $(AM_CPPFLAGS)
-make_ats_depends_CPPFLAGS += -DATS_MEMALLOC_LIBC
-make_ats_depends_DEPENDENCIES =
-make_ats_depends_DEPENDENCIES += make-ats-depends.dats
-make_ats_depends_LDADD =
-make_ats_depends_LDADD += -L'$(PATSHOME)/ccomp/atslib/lib'
-make_ats_depends_LDADD += -latslib
+list_ats_dependencies_SOURCES =
+list_ats_dependencies_SOURCES += list-ats-dependencies_dats.c
+list_ats_dependencies_CPPFLAGS =
+list_ats_dependencies_CPPFLAGS += $(AM_CPPFLAGS)
+list_ats_dependencies_CPPFLAGS += -DATS_MEMALLOC_LIBC
+list_ats_dependencies_DEPENDENCIES =
+list_ats_dependencies_DEPENDENCIES += list-ats-dependencies.dats
+list_ats_dependencies_LDADD =
+list_ats_dependencies_LDADD += -L'$(PATSHOME)/ccomp/atslib/lib'
+list_ats_dependencies_LDADD += -latslib
 
 # #--------------------------------------------------------------------------
 # 

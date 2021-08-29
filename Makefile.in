@@ -33,7 +33,7 @@
 #
 
 # aminclude_static.am generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on Sat Aug 28 14:37:40 CDT 2021
+# from AX_AM_MACROS_STATIC on Sun Aug 29 09:18:46 CDT 2021
 
 
 
@@ -119,7 +119,7 @@ EXTRA_PROGRAMS = tests/compute-reference-result$(EXEEXT) \
 	tests/try-spookyhash_hash32$(EXEEXT) \
 	tests/try-spookyhash-incremental$(EXEEXT) \
 	tests/try-spookyhash_hash128-misaligned$(EXEEXT) \
-	make-ats-depends$(EXEEXT)
+	list-ats-dependencies$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_ac_append_to_file.m4 \
@@ -144,7 +144,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES = tests/SpookyV2.h tests/SpookyV2.cpp \
-	make-ats-depends.dats \
+	list-ats-dependencies.dats \
 	tests/compute-reference-for-seeds-eq-zero.sh \
 	tests/compute-reference-for-hash128-seed.sh \
 	tests/compute-reference-for-hash64-seed.sh \
@@ -217,9 +217,9 @@ am_libspookyhash_la_OBJECTS = spookyhash/spookyhash_hash128.lo \
 	spookyhash/spookyhash_hash32.lo \
 	spookyhash/spookyhash-incremental.lo
 libspookyhash_la_OBJECTS = $(am_libspookyhash_la_OBJECTS)
-am_make_ats_depends_OBJECTS =  \
-	make_ats_depends-make-ats-depends_dats.$(OBJEXT)
-make_ats_depends_OBJECTS = $(am_make_ats_depends_OBJECTS)
+am_list_ats_dependencies_OBJECTS =  \
+	list_ats_dependencies-list-ats-dependencies_dats.$(OBJEXT)
+list_ats_dependencies_OBJECTS = $(am_list_ats_dependencies_OBJECTS)
 am_tests_compute_reference_result_OBJECTS = tests/compute_reference_result-compute-reference-result.$(OBJEXT) \
 	tests/compute_reference_result-SpookyV2.$(OBJEXT)
 tests_compute_reference_result_OBJECTS =  \
@@ -262,8 +262,7 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade =  \
-	./$(DEPDIR)/make_ats_depends-make-ats-depends_dats.Po \
+am__depfiles_remade = ./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po \
 	spookyhash/$(DEPDIR)/spookyhash-incremental.Plo \
 	spookyhash/$(DEPDIR)/spookyhash_hash128.Plo \
 	spookyhash/$(DEPDIR)/spookyhash_hash32.Plo \
@@ -329,14 +328,15 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(nodist_libats2_spookyhash_la_SOURCES) \
-	$(libspookyhash_la_SOURCES) $(make_ats_depends_SOURCES) \
+	$(libspookyhash_la_SOURCES) $(list_ats_dependencies_SOURCES) \
 	$(tests_compute_reference_result_SOURCES) \
 	$(tests_try_spookyhash_incremental_SOURCES) \
 	$(tests_try_spookyhash_hash128_SOURCES) \
 	$(tests_try_spookyhash_hash128_misaligned_SOURCES) \
 	$(tests_try_spookyhash_hash32_SOURCES) \
 	$(tests_try_spookyhash_hash64_SOURCES)
-DIST_SOURCES = $(libspookyhash_la_SOURCES) $(make_ats_depends_SOURCES) \
+DIST_SOURCES = $(libspookyhash_la_SOURCES) \
+	$(list_ats_dependencies_SOURCES) \
 	$(tests_compute_reference_result_SOURCES) \
 	$(tests_try_spookyhash_incremental_SOURCES) \
 	$(tests_try_spookyhash_hash128_SOURCES) \
@@ -546,7 +546,7 @@ TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/build-aux/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
 am__DIST_COMMON = $(srcdir)/Makefile.in \
-	$(srcdir)/make-ats-depends.dats.in \
+	$(srcdir)/list-ats-dependencies.dats.in \
 	$(top_srcdir)/aminclude_static.am \
 	$(top_srcdir)/build-aux/compile \
 	$(top_srcdir)/build-aux/config.guess \
@@ -783,7 +783,8 @@ EXTRA_DIST = $(srcdir)/silent-rules.mk COPYING INSTALL README AUTHORS \
 	tests/test-spookyhash-for-hash128-seed.sh.in \
 	tests/test-spookyhash-for-hash64-seed.sh.in \
 	tests/test-spookyhash-for-hash32-seed.sh.in \
-	make-ats-depends.dats reference-implementation/SpookyV2.cpp \
+	list-ats-dependencies.dats \
+	reference-implementation/SpookyV2.cpp \
 	reference-implementation/SpookyV2.h \
 	reference-implementation/TestSpookyV2.cpp
 MOSTLYCLEANFILES = 
@@ -806,7 +807,7 @@ CLEANFILES = $(SPOOKYHASH_BYTE_ORDER_SATS_C) \
 	tests/try-spookyhash-incremental_tests.c \
 	tests/try-spookyhash_hash128-misaligned \
 	tests/try-spookyhash_hash128-misaligned_tests.c \
-	make-ats-depends make-ats-depends_dats.c
+	list-ats-dependencies list-ats-dependencies_dats.c
 DISTCLEANFILES = Makefile GNUmakefile
 BUILT_SOURCES = 
 #DISTCLEANFILES += lib/Makefile
@@ -974,10 +975,11 @@ TESTS = tests/test-spookyhash_hash128-for-seeds-eq-zero.sh \
 	tests/test-spookyhash_hash32-for-hash32-seed.sh \
 	tests/test-spookyhash-incremental-for-hash32-seed.sh \
 	tests/test-spookyhash_hash128-misaligned-for-hash32-seed.sh
-make_ats_depends_SOURCES = make-ats-depends_dats.c
-make_ats_depends_CPPFLAGS = $(AM_CPPFLAGS) -DATS_MEMALLOC_LIBC
-make_ats_depends_DEPENDENCIES = make-ats-depends.dats
-make_ats_depends_LDADD = -L'$(PATSHOME)/ccomp/atslib/lib' -latslib
+list_ats_dependencies_SOURCES = list-ats-dependencies_dats.c
+list_ats_dependencies_CPPFLAGS = $(AM_CPPFLAGS) -DATS_MEMALLOC_LIBC
+list_ats_dependencies_DEPENDENCIES = list-ats-dependencies.dats
+list_ats_dependencies_LDADD = -L'$(PATSHOME)/ccomp/atslib/lib' \
+	-latslib
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -1021,7 +1023,7 @@ tests/SpookyV2.h: $(top_builddir)/config.status $(top_srcdir)/reference-implemen
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 tests/SpookyV2.cpp: $(top_builddir)/config.status $(top_srcdir)/reference-implementation/SpookyV2.cpp
 	cd $(top_builddir) && $(SHELL) ./config.status $@
-make-ats-depends.dats: $(top_builddir)/config.status $(srcdir)/make-ats-depends.dats.in
+list-ats-dependencies.dats: $(top_builddir)/config.status $(srcdir)/list-ats-dependencies.dats.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 tests/compute-reference-for-seeds-eq-zero.sh: $(top_builddir)/config.status $(top_srcdir)/tests/compute-reference-for-seeds-eq-zero.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
@@ -1193,9 +1195,9 @@ spookyhash/spookyhash-incremental.lo: spookyhash/$(am__dirstamp) \
 libspookyhash.la: $(libspookyhash_la_OBJECTS) $(libspookyhash_la_DEPENDENCIES) $(EXTRA_libspookyhash_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(LINK) -rpath $(libdir) $(libspookyhash_la_OBJECTS) $(libspookyhash_la_LIBADD) $(LIBS)
 
-make-ats-depends$(EXEEXT): $(make_ats_depends_OBJECTS) $(make_ats_depends_DEPENDENCIES) $(EXTRA_make_ats_depends_DEPENDENCIES) 
-	@rm -f make-ats-depends$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(make_ats_depends_OBJECTS) $(make_ats_depends_LDADD) $(LIBS)
+list-ats-dependencies$(EXEEXT): $(list_ats_dependencies_OBJECTS) $(list_ats_dependencies_DEPENDENCIES) $(EXTRA_list_ats_dependencies_DEPENDENCIES) 
+	@rm -f list-ats-dependencies$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(list_ats_dependencies_OBJECTS) $(list_ats_dependencies_LDADD) $(LIBS)
 tests/$(am__dirstamp):
 	@$(MKDIR_P) tests
 	@: > tests/$(am__dirstamp)
@@ -1254,7 +1256,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/make_ats_depends-make-ats-depends_dats.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/$(DEPDIR)/spookyhash-incremental.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/$(DEPDIR)/spookyhash_hash128.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/$(DEPDIR)/spookyhash_hash32.Plo@am__quote@ # am--include-marker
@@ -1313,19 +1315,19 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-make_ats_depends-make-ats-depends_dats.o: make-ats-depends_dats.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(make_ats_depends_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT make_ats_depends-make-ats-depends_dats.o -MD -MP -MF $(DEPDIR)/make_ats_depends-make-ats-depends_dats.Tpo -c -o make_ats_depends-make-ats-depends_dats.o `test -f 'make-ats-depends_dats.c' || echo '$(srcdir)/'`make-ats-depends_dats.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/make_ats_depends-make-ats-depends_dats.Tpo $(DEPDIR)/make_ats_depends-make-ats-depends_dats.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='make-ats-depends_dats.c' object='make_ats_depends-make-ats-depends_dats.o' libtool=no @AMDEPBACKSLASH@
+list_ats_dependencies-list-ats-dependencies_dats.o: list-ats-dependencies_dats.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT list_ats_dependencies-list-ats-dependencies_dats.o -MD -MP -MF $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Tpo -c -o list_ats_dependencies-list-ats-dependencies_dats.o `test -f 'list-ats-dependencies_dats.c' || echo '$(srcdir)/'`list-ats-dependencies_dats.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Tpo $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='list-ats-dependencies_dats.c' object='list_ats_dependencies-list-ats-dependencies_dats.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(make_ats_depends_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o make_ats_depends-make-ats-depends_dats.o `test -f 'make-ats-depends_dats.c' || echo '$(srcdir)/'`make-ats-depends_dats.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o list_ats_dependencies-list-ats-dependencies_dats.o `test -f 'list-ats-dependencies_dats.c' || echo '$(srcdir)/'`list-ats-dependencies_dats.c
 
-make_ats_depends-make-ats-depends_dats.obj: make-ats-depends_dats.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(make_ats_depends_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT make_ats_depends-make-ats-depends_dats.obj -MD -MP -MF $(DEPDIR)/make_ats_depends-make-ats-depends_dats.Tpo -c -o make_ats_depends-make-ats-depends_dats.obj `if test -f 'make-ats-depends_dats.c'; then $(CYGPATH_W) 'make-ats-depends_dats.c'; else $(CYGPATH_W) '$(srcdir)/make-ats-depends_dats.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/make_ats_depends-make-ats-depends_dats.Tpo $(DEPDIR)/make_ats_depends-make-ats-depends_dats.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='make-ats-depends_dats.c' object='make_ats_depends-make-ats-depends_dats.obj' libtool=no @AMDEPBACKSLASH@
+list_ats_dependencies-list-ats-dependencies_dats.obj: list-ats-dependencies_dats.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT list_ats_dependencies-list-ats-dependencies_dats.obj -MD -MP -MF $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Tpo -c -o list_ats_dependencies-list-ats-dependencies_dats.obj `if test -f 'list-ats-dependencies_dats.c'; then $(CYGPATH_W) 'list-ats-dependencies_dats.c'; else $(CYGPATH_W) '$(srcdir)/list-ats-dependencies_dats.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Tpo $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='list-ats-dependencies_dats.c' object='list_ats_dependencies-list-ats-dependencies_dats.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(make_ats_depends_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o make_ats_depends-make-ats-depends_dats.obj `if test -f 'make-ats-depends_dats.c'; then $(CYGPATH_W) 'make-ats-depends_dats.c'; else $(CYGPATH_W) '$(srcdir)/make-ats-depends_dats.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o list_ats_dependencies-list-ats-dependencies_dats.obj `if test -f 'list-ats-dependencies_dats.c'; then $(CYGPATH_W) 'list-ats-dependencies_dats.c'; else $(CYGPATH_W) '$(srcdir)/list-ats-dependencies_dats.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -2007,7 +2009,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-		-rm -f ./$(DEPDIR)/make_ats_depends-make-ats-depends_dats.Po
+		-rm -f ./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po
 	-rm -f spookyhash/$(DEPDIR)/spookyhash-incremental.Plo
 	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash128.Plo
 	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash32.Plo
@@ -2083,7 +2085,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-		-rm -f ./$(DEPDIR)/make_ats_depends-make-ats-depends_dats.Po
+		-rm -f ./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po
 	-rm -f spookyhash/$(DEPDIR)/spookyhash-incremental.Plo
 	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash128.Plo
 	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash32.Plo
