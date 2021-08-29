@@ -33,7 +33,7 @@
 #
 
 # aminclude_static.am generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on Sun Aug 29 09:18:46 CDT 2021
+# from AX_AM_MACROS_STATIC on Sun Aug 29 12:20:12 CDT 2021
 
 
 
@@ -217,8 +217,7 @@ am_libspookyhash_la_OBJECTS = spookyhash/spookyhash_hash128.lo \
 	spookyhash/spookyhash_hash32.lo \
 	spookyhash/spookyhash-incremental.lo
 libspookyhash_la_OBJECTS = $(am_libspookyhash_la_OBJECTS)
-am_list_ats_dependencies_OBJECTS =  \
-	list_ats_dependencies-list-ats-dependencies_dats.$(OBJEXT)
+am_list_ats_dependencies_OBJECTS = list_ats_dependencies-list-ats-dependencies_depsprog.$(OBJEXT)
 list_ats_dependencies_OBJECTS = $(am_list_ats_dependencies_OBJECTS)
 am_tests_compute_reference_result_OBJECTS = tests/compute_reference_result-compute-reference-result.$(OBJEXT) \
 	tests/compute_reference_result-SpookyV2.$(OBJEXT)
@@ -262,7 +261,7 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po \
+am__depfiles_remade = ./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_depsprog.Po \
 	spookyhash/$(DEPDIR)/spookyhash-incremental.Plo \
 	spookyhash/$(DEPDIR)/spookyhash_hash128.Plo \
 	spookyhash/$(DEPDIR)/spookyhash_hash32.Plo \
@@ -747,8 +746,6 @@ AUTOMAKE_OPTIONS = foreign subdir-objects -Wno-portability
 @CODE_COVERAGE_ENABLED_TRUE@code_coverage_sanitize = $(subst -,_,$(subst .,_,$(1)))
 @CODE_COVERAGE_ENABLED_TRUE@AM_DISTCHECK_CONFIGURE_FLAGS := $(AM_DISTCHECK_CONFIGURE_FLAGS) --disable-code-coverage
 
-#SUBDIRS = lib
-
 # #--------------------------------------------------------------------------
 # 
 # nodist_pkgconfig_DATA += ats2-spookyhash.pc
@@ -807,11 +804,9 @@ CLEANFILES = $(SPOOKYHASH_BYTE_ORDER_SATS_C) \
 	tests/try-spookyhash-incremental_tests.c \
 	tests/try-spookyhash_hash128-misaligned \
 	tests/try-spookyhash_hash128-misaligned_tests.c \
-	list-ats-dependencies list-ats-dependencies_dats.c
+	list-ats-dependencies list-ats-dependencies_depsprog.c
 DISTCLEANFILES = Makefile GNUmakefile
 BUILT_SOURCES = 
-#DISTCLEANFILES += lib/Makefile
-#DISTCLEANFILES += lib/GNUmakefile
 
 # We will not be using exceptions.
 AM_CPPFLAGS = -D_ATS_CCOMP_EXCEPTION_NONE -I$(builddir) -I$(srcdir) \
@@ -836,8 +831,6 @@ pkgconfigdir = ${libdir}/pkgconfig
 nodist_pkgconfig_DATA = 
 CODE_COVERAGE_IGNORE_PATTERN = /usr/include/* /usr/include/*/* \
 	$(PATSHOME)/ccomp/runtime/* $(PATSHOME)/prelude/CATS/*
-
-#EXTRA_DIST += m4/gnulib-cache.m4
 
 #---------------------------------------------------------------------
 #
@@ -975,7 +968,7 @@ TESTS = tests/test-spookyhash_hash128-for-seeds-eq-zero.sh \
 	tests/test-spookyhash_hash32-for-hash32-seed.sh \
 	tests/test-spookyhash-incremental-for-hash32-seed.sh \
 	tests/test-spookyhash_hash128-misaligned-for-hash32-seed.sh
-list_ats_dependencies_SOURCES = list-ats-dependencies_dats.c
+list_ats_dependencies_SOURCES = list-ats-dependencies_depsprog.c
 list_ats_dependencies_CPPFLAGS = $(AM_CPPFLAGS) -DATS_MEMALLOC_LIBC
 list_ats_dependencies_DEPENDENCIES = list-ats-dependencies.dats
 list_ats_dependencies_LDADD = -L'$(PATSHOME)/ccomp/atslib/lib' \
@@ -1256,7 +1249,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_depsprog.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/$(DEPDIR)/spookyhash-incremental.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/$(DEPDIR)/spookyhash_hash128.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spookyhash/$(DEPDIR)/spookyhash_hash32.Plo@am__quote@ # am--include-marker
@@ -1315,19 +1308,19 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-list_ats_dependencies-list-ats-dependencies_dats.o: list-ats-dependencies_dats.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT list_ats_dependencies-list-ats-dependencies_dats.o -MD -MP -MF $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Tpo -c -o list_ats_dependencies-list-ats-dependencies_dats.o `test -f 'list-ats-dependencies_dats.c' || echo '$(srcdir)/'`list-ats-dependencies_dats.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Tpo $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='list-ats-dependencies_dats.c' object='list_ats_dependencies-list-ats-dependencies_dats.o' libtool=no @AMDEPBACKSLASH@
+list_ats_dependencies-list-ats-dependencies_depsprog.o: list-ats-dependencies_depsprog.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT list_ats_dependencies-list-ats-dependencies_depsprog.o -MD -MP -MF $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_depsprog.Tpo -c -o list_ats_dependencies-list-ats-dependencies_depsprog.o `test -f 'list-ats-dependencies_depsprog.c' || echo '$(srcdir)/'`list-ats-dependencies_depsprog.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_depsprog.Tpo $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_depsprog.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='list-ats-dependencies_depsprog.c' object='list_ats_dependencies-list-ats-dependencies_depsprog.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o list_ats_dependencies-list-ats-dependencies_dats.o `test -f 'list-ats-dependencies_dats.c' || echo '$(srcdir)/'`list-ats-dependencies_dats.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o list_ats_dependencies-list-ats-dependencies_depsprog.o `test -f 'list-ats-dependencies_depsprog.c' || echo '$(srcdir)/'`list-ats-dependencies_depsprog.c
 
-list_ats_dependencies-list-ats-dependencies_dats.obj: list-ats-dependencies_dats.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT list_ats_dependencies-list-ats-dependencies_dats.obj -MD -MP -MF $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Tpo -c -o list_ats_dependencies-list-ats-dependencies_dats.obj `if test -f 'list-ats-dependencies_dats.c'; then $(CYGPATH_W) 'list-ats-dependencies_dats.c'; else $(CYGPATH_W) '$(srcdir)/list-ats-dependencies_dats.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Tpo $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='list-ats-dependencies_dats.c' object='list_ats_dependencies-list-ats-dependencies_dats.obj' libtool=no @AMDEPBACKSLASH@
+list_ats_dependencies-list-ats-dependencies_depsprog.obj: list-ats-dependencies_depsprog.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT list_ats_dependencies-list-ats-dependencies_depsprog.obj -MD -MP -MF $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_depsprog.Tpo -c -o list_ats_dependencies-list-ats-dependencies_depsprog.obj `if test -f 'list-ats-dependencies_depsprog.c'; then $(CYGPATH_W) 'list-ats-dependencies_depsprog.c'; else $(CYGPATH_W) '$(srcdir)/list-ats-dependencies_depsprog.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_depsprog.Tpo $(DEPDIR)/list_ats_dependencies-list-ats-dependencies_depsprog.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='list-ats-dependencies_depsprog.c' object='list_ats_dependencies-list-ats-dependencies_depsprog.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o list_ats_dependencies-list-ats-dependencies_dats.obj `if test -f 'list-ats-dependencies_dats.c'; then $(CYGPATH_W) 'list-ats-dependencies_dats.c'; else $(CYGPATH_W) '$(srcdir)/list-ats-dependencies_dats.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(list_ats_dependencies_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o list_ats_dependencies-list-ats-dependencies_depsprog.obj `if test -f 'list-ats-dependencies_depsprog.c'; then $(CYGPATH_W) 'list-ats-dependencies_depsprog.c'; else $(CYGPATH_W) '$(srcdir)/list-ats-dependencies_depsprog.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -2009,7 +2002,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-		-rm -f ./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po
+		-rm -f ./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_depsprog.Po
 	-rm -f spookyhash/$(DEPDIR)/spookyhash-incremental.Plo
 	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash128.Plo
 	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash32.Plo
@@ -2085,7 +2078,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-		-rm -f ./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_dats.Po
+		-rm -f ./$(DEPDIR)/list_ats_dependencies-list-ats-dependencies_depsprog.Po
 	-rm -f spookyhash/$(DEPDIR)/spookyhash-incremental.Plo
 	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash128.Plo
 	-rm -f spookyhash/$(DEPDIR)/spookyhash_hash32.Plo
@@ -2265,85 +2258,41 @@ code-coverage-capture-hook:
 
 .PHONY: check-code-coverage code-coverage-capture code-coverage-dist-clean code-coverage-clean code-coverage-capture-hook
 
-@GNU@ include $(srcdir)/silent-rules.mk
+@GNU@ include $(top_srcdir)/silent-rules.mk
+@GNU@ -include ats-dependencies/*.mk
 
 clean-local: code-coverage-clean tests-clean
-distclean-local: code-coverage-dist-clean
+distclean-local: code-coverage-dist-clean ats-includes-distclean
 
-%_sats.c: %.sats $(PATSOPT_DEPS)
+@GNU@ define write-dependencies-file =
+@GNU@	$(MKDIR_P) ats-dependencies && \
+@GNU@		echo $(1): $(shell ./list-ats-dependencies $(2)) \
+@GNU@			> ats-dependencies/`echo $(@) | $(SED) 's|/|_057_|g'`.mk
+@GNU@ endef
+
+.PHONY: ats-includes-distclean
+ats-includes-distclean:
+	-rm -f -R ats-dependencies
+
+%_sats.c: %.sats $(PATSOPT_DEPS) list-ats-dependencies
+	@$(call write-dependencies-file,$(@),$(<))
 	@$(MKDIR_P) $(@D)
 	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -s $(<)
 
-%_dats.c: %.dats $(PATSOPT_DEPS)
+%_dats.c: %.dats $(PATSOPT_DEPS) list-ats-dependencies
+	@$(call write-dependencies-file,$(@),$(<))
 	@$(MKDIR_P) $(@D)
 	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -d $(<)
 
-%_tests.c: %.dats $(PATSOPT_DEPS)
+%_tests.c: %.dats $(PATSOPT_DEPS) list-ats-dependencies
+	@$(call write-dependencies-file,$(@),$(<))
 	@$(MKDIR_P) $(@D)
 	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) \
 			$(TESTS_PATSOPTFLAGS) -d $(<)
 
-$(ARRAY_PRF_SATS_C): $(ARRAY_PRF_SATS)
-$(ARRAY_PRF_DATS_C): $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS)
-$(SPOOKYHASH_BYTE_ORDER_SATS_C): $(SPOOKYHASH_BYTE_ORDER_SATS)
-$(SPOOKYHASH_BYTE_ORDER_DATS_C): $(SPOOKYHASH_BYTE_ORDER_SATS) \
-						$(SPOOKYHASH_BYTE_ORDER_DATS)
-$(SPOOKYHASH_TEMPLATES_SATS_C): $(SPOOKYHASH_TEMPLATES_SATS)
-$(SPOOKYHASH_TEMPLATES_DATS_C): $(SPOOKYHASH_TEMPLATES_SATS) \
-						$(SPOOKYHASH_TEMPLATES_DATS)
-$(SPOOKYHASH_CASTS_SATS_C): $(SPOOKYHASH_CASTS_SATS)
-$(SPOOKYHASH_MEM_SATS_C): $(SPOOKYHASH_MEM_SATS)
-$(SPOOKYHASH_ALIGNMENT_SATS_C): $(SPOOKYHASH_ALIGNMENT_SATS)
-$(SPOOKYHASH_INTERNAL_TYPES_SATS_C): $(SPOOKYHASH_INTERNAL_TYPES_SATS) \
-						$(SPOOKYHASH_SATS) \
-						$(SPOOKYHASH_ATS_PARAMETERS_HATS)
-$(SPOOKYHASH_PROOFS_SATS_C): $(SPOOKYHASH_PROOFS_SATS)
-$(SPOOKYHASH_PROOFS_DATS_C): $(SPOOKYHASH_PROOFS_SATS) \
-						$(SPOOKYHASH_PROOFS_DATS)
-$(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_IMPL_CATS) \
-						$(SPOOKYHASH_PARAMETERS_HATS)
-$(SPOOKYHASH_INCREMENTAL_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_INCREMENTAL_DATS) \
-						$(SPOOKYHASH_IMPL_CATS) \
-						$(SPOOKYHASH_PARAMETERS_HATS) \
-						$(ARRAY_PRF_SATS) \
-						$(SPOOKYHASH_CASTS_SATS) \
-						$(SPOOKYHASH_MEM_SATS) \
-						$(SPOOKYHASH_ALIGNMENT_SATS) \
-						$(SPOOKYHASH_PROOFS_SATS) \
-						$(SPOOKYHASH_INTERNAL_TYPES_SATS) \
-						$(SPOOKYHASH_ARITHMETIC_SATS) \
-						$(SPOOKYHASH_ATS_PARAMETERS_HATS) \
-						$(SPOOKYHASH_PROOFS_SATS) \
-						$(SPOOKYHASH_PROOFS_DATS) \
-						$(SPOOKYHASH_BYTE_ORDER_SATS) \
-						$(SPOOKYHASH_BYTE_ORDER_INC) \
-						$(SPOOKYHASH_TEMPLATES_SATS) \
-						$(SPOOKYHASH_TEMPLATES_INC)
-$(SPOOKYHASH_HASH128_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_HASH128_DATS) \
-						$(SPOOKYHASH_IMPL_CATS) \
-						$(SPOOKYHASH_PARAMETERS_HATS) \
-						$(ARRAY_PRF_SATS) \
-						$(SPOOKYHASH_CASTS_SATS) \
-						$(SPOOKYHASH_MEM_SATS) \
-						$(SPOOKYHASH_ALIGNMENT_SATS) \
-						$(SPOOKYHASH_PROOFS_SATS) \
-						$(SPOOKYHASH_INTERNAL_TYPES_SATS) \
-						$(SPOOKYHASH_ARITHMETIC_SATS) \
-						$(SPOOKYHASH_ATS_PARAMETERS_HATS) \
-						$(SPOOKYHASH_PROOFS_SATS) \
-						$(SPOOKYHASH_PROOFS_DATS) \
-						$(SPOOKYHASH_BYTE_ORDER_SATS) \
-						$(SPOOKYHASH_BYTE_ORDER_INC) \
-						$(SPOOKYHASH_TEMPLATES_SATS) \
-						$(SPOOKYHASH_TEMPLATES_INC)
-$(SPOOKYHASH_HASH64_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_HASH64_DATS)
-$(SPOOKYHASH_HASH32_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_HASH32_DATS) \
-						$(SPOOKYHASH_CASTS_SATS)
+%_depsprog.c: %.dats $(PATSOPT_DEPS)
+	@$(MKDIR_P) $(@D)
+	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -d $(<)
 
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash_hash128.dats
 tests/try-spookyhash_hash128_tests.c: tests/try-spookyhash-common.hats

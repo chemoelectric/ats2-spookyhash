@@ -25,9 +25,8 @@ AUTOMAKE_OPTIONS += subdir-objects
 AUTOMAKE_OPTIONS += -Wno-portability
 
 include $(top_srcdir)/aminclude_static.am
-@GNU@ include $(srcdir)/silent-rules.mk
-
-#SUBDIRS = lib
+@GNU@ include $(top_srcdir)/silent-rules.mk
+@GNU@ -include ats-dependencies/*.mk
 
 EXTRA_DIST =
 MOSTLYCLEANFILES =
@@ -54,8 +53,6 @@ EXTRA_DIST += AUTHORS
 
 DISTCLEANFILES += Makefile
 DISTCLEANFILES += GNUmakefile
-#DISTCLEANFILES += lib/Makefile
-#DISTCLEANFILES += lib/GNUmakefile
 
 # We will not be using exceptions.
 AM_CPPFLAGS += -D_ATS_CCOMP_EXCEPTION_NONE
@@ -74,9 +71,7 @@ CODE_COVERAGE_IGNORE_PATTERN += $(PATSHOME)/ccomp/runtime/*
 CODE_COVERAGE_IGNORE_PATTERN += $(PATSHOME)/prelude/CATS/*
 
 clean-local: code-coverage-clean tests-clean
-distclean-local: code-coverage-dist-clean
-
-#EXTRA_DIST += m4/gnulib-cache.m4
+distclean-local: code-coverage-dist-clean ats-includes-distclean
 
 #---------------------------------------------------------------------
 #
@@ -121,18 +116,35 @@ TESTS_PATSOPTFLAGS =
 TESTS_PATSOPTFLAGS += -IATS $(builddir)/tests
 TESTS_PATSOPTFLAGS += -IATS $(srcdir)/tests
 
-%_sats.c: %.sats $(PATSOPT_DEPS)
+@GNU@ define write-dependencies-file =
+@GNU@	$(MKDIR_P) ats-dependencies && \
+@GNU@		echo $(1): $(shell ./list-ats-dependencies $(2)) \
+@GNU@			> ats-dependencies/`echo $(@) | $(SED) 's|/|_057_|g'`.mk
+@GNU@ endef
+
+.PHONY: ats-includes-distclean
+ats-includes-distclean:
+	-rm -f -R ats-dependencies
+
+%_sats.c: %.sats $(PATSOPT_DEPS) list-ats-dependencies
+	@$(call write-dependencies-file,$(@),$(<))
 	@$(MKDIR_P) $(@D)
 	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -s $(<)
 
-%_dats.c: %.dats $(PATSOPT_DEPS)
+%_dats.c: %.dats $(PATSOPT_DEPS) list-ats-dependencies
+	@$(call write-dependencies-file,$(@),$(<))
 	@$(MKDIR_P) $(@D)
 	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -d $(<)
 
-%_tests.c: %.dats $(PATSOPT_DEPS)
+%_tests.c: %.dats $(PATSOPT_DEPS) list-ats-dependencies
+	@$(call write-dependencies-file,$(@),$(<))
 	@$(MKDIR_P) $(@D)
 	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) \
 			$(TESTS_PATSOPTFLAGS) -d $(<)
+
+%_depsprog.c: %.dats $(PATSOPT_DEPS)
+	@$(MKDIR_P) $(@D)
+	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -d $(<)
 
 #--------------------------------------------------------------------------
 #
@@ -257,68 +269,6 @@ nodist_libats2_spookyhash_la_SOURCES += $(SPOOKYHASH_HASH128_DATS_C)
 nodist_libats2_spookyhash_la_SOURCES += $(SPOOKYHASH_HASH64_DATS_C)
 nodist_libats2_spookyhash_la_SOURCES += $(SPOOKYHASH_HASH32_DATS_C)
 nodist_libats2_spookyhash_la_SOURCES += $(SPOOKYHASH_INCREMENTAL_DATS_C)
-
-$(ARRAY_PRF_SATS_C): $(ARRAY_PRF_SATS)
-$(ARRAY_PRF_DATS_C): $(ARRAY_PRF_SATS) $(ARRAY_PRF_DATS)
-$(SPOOKYHASH_BYTE_ORDER_SATS_C): $(SPOOKYHASH_BYTE_ORDER_SATS)
-$(SPOOKYHASH_BYTE_ORDER_DATS_C): $(SPOOKYHASH_BYTE_ORDER_SATS) \
-						$(SPOOKYHASH_BYTE_ORDER_DATS)
-$(SPOOKYHASH_TEMPLATES_SATS_C): $(SPOOKYHASH_TEMPLATES_SATS)
-$(SPOOKYHASH_TEMPLATES_DATS_C): $(SPOOKYHASH_TEMPLATES_SATS) \
-						$(SPOOKYHASH_TEMPLATES_DATS)
-$(SPOOKYHASH_CASTS_SATS_C): $(SPOOKYHASH_CASTS_SATS)
-$(SPOOKYHASH_MEM_SATS_C): $(SPOOKYHASH_MEM_SATS)
-$(SPOOKYHASH_ALIGNMENT_SATS_C): $(SPOOKYHASH_ALIGNMENT_SATS)
-$(SPOOKYHASH_INTERNAL_TYPES_SATS_C): $(SPOOKYHASH_INTERNAL_TYPES_SATS) \
-						$(SPOOKYHASH_SATS) \
-						$(SPOOKYHASH_ATS_PARAMETERS_HATS)
-$(SPOOKYHASH_PROOFS_SATS_C): $(SPOOKYHASH_PROOFS_SATS)
-$(SPOOKYHASH_PROOFS_DATS_C): $(SPOOKYHASH_PROOFS_SATS) \
-						$(SPOOKYHASH_PROOFS_DATS)
-$(SPOOKYHASH_SATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_IMPL_CATS) \
-						$(SPOOKYHASH_PARAMETERS_HATS)
-$(SPOOKYHASH_INCREMENTAL_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_INCREMENTAL_DATS) \
-						$(SPOOKYHASH_IMPL_CATS) \
-						$(SPOOKYHASH_PARAMETERS_HATS) \
-						$(ARRAY_PRF_SATS) \
-						$(SPOOKYHASH_CASTS_SATS) \
-						$(SPOOKYHASH_MEM_SATS) \
-						$(SPOOKYHASH_ALIGNMENT_SATS) \
-						$(SPOOKYHASH_PROOFS_SATS) \
-						$(SPOOKYHASH_INTERNAL_TYPES_SATS) \
-						$(SPOOKYHASH_ARITHMETIC_SATS) \
-						$(SPOOKYHASH_ATS_PARAMETERS_HATS) \
-						$(SPOOKYHASH_PROOFS_SATS) \
-						$(SPOOKYHASH_PROOFS_DATS) \
-						$(SPOOKYHASH_BYTE_ORDER_SATS) \
-						$(SPOOKYHASH_BYTE_ORDER_INC) \
-						$(SPOOKYHASH_TEMPLATES_SATS) \
-						$(SPOOKYHASH_TEMPLATES_INC)
-$(SPOOKYHASH_HASH128_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_HASH128_DATS) \
-						$(SPOOKYHASH_IMPL_CATS) \
-						$(SPOOKYHASH_PARAMETERS_HATS) \
-						$(ARRAY_PRF_SATS) \
-						$(SPOOKYHASH_CASTS_SATS) \
-						$(SPOOKYHASH_MEM_SATS) \
-						$(SPOOKYHASH_ALIGNMENT_SATS) \
-						$(SPOOKYHASH_PROOFS_SATS) \
-						$(SPOOKYHASH_INTERNAL_TYPES_SATS) \
-						$(SPOOKYHASH_ARITHMETIC_SATS) \
-						$(SPOOKYHASH_ATS_PARAMETERS_HATS) \
-						$(SPOOKYHASH_PROOFS_SATS) \
-						$(SPOOKYHASH_PROOFS_DATS) \
-						$(SPOOKYHASH_BYTE_ORDER_SATS) \
-						$(SPOOKYHASH_BYTE_ORDER_INC) \
-						$(SPOOKYHASH_TEMPLATES_SATS) \
-						$(SPOOKYHASH_TEMPLATES_INC)
-$(SPOOKYHASH_HASH64_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_HASH64_DATS)
-$(SPOOKYHASH_HASH32_DATS_C): $(SPOOKYHASH_SATS) $(SPOOKYHASH_CATS) \
-						$(SPOOKYHASH_HASH32_DATS) \
-						$(SPOOKYHASH_CASTS_SATS)
 
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_SATS)
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_CATS)
@@ -659,10 +609,10 @@ tests-clean:
 EXTRA_PROGRAMS += list-ats-dependencies
 EXTRA_DIST += list-ats-dependencies.dats
 CLEANFILES += list-ats-dependencies
-CLEANFILES += list-ats-dependencies_dats.c
+CLEANFILES += list-ats-dependencies_depsprog.c
 
 list_ats_dependencies_SOURCES =
-list_ats_dependencies_SOURCES += list-ats-dependencies_dats.c
+list_ats_dependencies_SOURCES += list-ats-dependencies_depsprog.c
 list_ats_dependencies_CPPFLAGS =
 list_ats_dependencies_CPPFLAGS += $(AM_CPPFLAGS)
 list_ats_dependencies_CPPFLAGS += -DATS_MEMALLOC_LIBC
