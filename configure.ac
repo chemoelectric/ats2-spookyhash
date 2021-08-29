@@ -53,12 +53,14 @@ AC_ARG_ENABLE([write-reference-data],
 AM_CONDITIONAL([WRITE_REFERENCE_DATA],
   [test x"${enable_write_reference_data}" = xyes])
 
+AM_CONDITIONAL([DEPENDENCY_TRACKING],
+  [test x"${enable_dependency_tracking}" != xno])
+
 #--------------------------------------------------------------------------
 #
 # Checks for programs.
 
 AC_PROG_CC
-#gl_EARLY
 AC_PROG_CC_C_O
 AC_PROG_CXX
 AC_PROG_CXX_C_O
@@ -71,9 +73,6 @@ AC_PROG_AWK
 AC_PROG_SED
 AC_PROG_FGREP
 AC_PROG_EGREP
-#AC_CHECK_PROGS([M4],[m4])
-
-#gl_INIT
 
 PKG_PROG_PKG_CONFIG
 PKG_CONFIG="${PKG_CONFIG} --define-variable=PATSHOME=\"${PATSHOME}\""
@@ -114,13 +113,10 @@ AC_SUBST([GNU],[])
 
 StM_REQUIRE_GNU_MAKE_IN_PATH
 StM_CONFIG_MAKEFILES
-#StM_CONFIG_MAKEFILES([lib/Makefile],[lib/GNUmakefile])
 
 AC_CONFIG_FILES(
   [tests/SpookyV2.h:reference-implementation/SpookyV2.h
    tests/SpookyV2.cpp:reference-implementation/SpookyV2.cpp])
-
-#AC_CONFIG_FILES([common-macros.m4])
 
 #AC_CONFIG_FILES([ats2-spookyhash.pc])
 #AC_CONFIG_FILES([spookyhash.pc])

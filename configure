@@ -686,6 +686,8 @@ CXXDEPMODE
 ac_ct_CXX
 CXXFLAGS
 CXX
+DEPENDENCY_TRACKING_FALSE
+DEPENDENCY_TRACKING_TRUE
 WRITE_REFERENCE_DATA_FALSE
 WRITE_REFERENCE_DATA_TRUE
 PKGCONFIG_PATSHOME
@@ -13110,6 +13112,15 @@ else
 fi
 
 
+ if test x"${enable_dependency_tracking}" != xno; then
+  DEPENDENCY_TRACKING_TRUE=
+  DEPENDENCY_TRACKING_FALSE='#'
+else
+  DEPENDENCY_TRACKING_TRUE='#'
+  DEPENDENCY_TRACKING_FALSE=
+fi
+
+
 #--------------------------------------------------------------------------
 #
 # Checks for programs.
@@ -13906,7 +13917,6 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-#gl_EARLY
 if test "x$CC" != xcc; then
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether $CC and cc understand -c and -o together" >&5
 printf %s "checking whether $CC and cc understand -c and -o together... " >&6; }
@@ -18288,9 +18298,6 @@ printf "%s\n" "$ac_cv_path_EGREP" >&6; }
  EGREP="$ac_cv_path_EGREP"
 
 
-#AC_CHECK_PROGS([M4],[m4])
-
-#gl_INIT
 
 
 
@@ -19254,12 +19261,9 @@ printf "%s\n" "$as_me: WARNING: Please consider installing and using GNU Make:
    ac_config_files="$ac_config_files GNUmakefile:Makefile.in"
 
 }
-#StM_CONFIG_MAKEFILES([lib/Makefile],[lib/GNUmakefile])
 
 ac_config_files="$ac_config_files tests/SpookyV2.h:reference-implementation/SpookyV2.h tests/SpookyV2.cpp:reference-implementation/SpookyV2.cpp"
 
-
-#AC_CONFIG_FILES([common-macros.m4])
 
 #AC_CONFIG_FILES([ats2-spookyhash.pc])
 #AC_CONFIG_FILES([spookyhash.pc])
@@ -19453,6 +19457,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${WRITE_REFERENCE_DATA_TRUE}" && test -z "${WRITE_REFERENCE_DATA_FALSE}"; then
   as_fn_error $? "conditional \"WRITE_REFERENCE_DATA\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${DEPENDENCY_TRACKING_TRUE}" && test -z "${DEPENDENCY_TRACKING_FALSE}"; then
+  as_fn_error $? "conditional \"DEPENDENCY_TRACKING\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then

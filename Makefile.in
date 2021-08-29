@@ -33,7 +33,7 @@
 #
 
 # aminclude_static.am generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on Sun Aug 29 12:20:12 CDT 2021
+# from AX_AM_MACROS_STATIC on Sun Aug 29 13:34:16 CDT 2021
 
 
 
@@ -2274,21 +2274,34 @@ distclean-local: code-coverage-dist-clean ats-includes-distclean
 ats-includes-distclean:
 	-rm -f -R ats-dependencies
 
-%_sats.c: %.sats $(PATSOPT_DEPS) list-ats-dependencies
-	@$(call write-dependencies-file,$(@),$(<))
-	@$(MKDIR_P) $(@D)
-	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -s $(<)
+@DEPENDENCY_TRACKING_TRUE@%_sats.c: %.sats $(PATSOPT_DEPS) list-ats-dependencies
+@DEPENDENCY_TRACKING_TRUE@	@$(call write-dependencies-file,$(@),$(<))
+@DEPENDENCY_TRACKING_TRUE@	@$(MKDIR_P) $(@D)
+@DEPENDENCY_TRACKING_TRUE@	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -s $(<)
 
-%_dats.c: %.dats $(PATSOPT_DEPS) list-ats-dependencies
-	@$(call write-dependencies-file,$(@),$(<))
-	@$(MKDIR_P) $(@D)
-	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -d $(<)
+@DEPENDENCY_TRACKING_TRUE@%_dats.c: %.dats $(PATSOPT_DEPS) list-ats-dependencies
+@DEPENDENCY_TRACKING_TRUE@	@$(call write-dependencies-file,$(@),$(<))
+@DEPENDENCY_TRACKING_TRUE@	@$(MKDIR_P) $(@D)
+@DEPENDENCY_TRACKING_TRUE@	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -d $(<)
 
-%_tests.c: %.dats $(PATSOPT_DEPS) list-ats-dependencies
-	@$(call write-dependencies-file,$(@),$(<))
-	@$(MKDIR_P) $(@D)
-	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) \
-			$(TESTS_PATSOPTFLAGS) -d $(<)
+@DEPENDENCY_TRACKING_TRUE@%_tests.c: %.dats $(PATSOPT_DEPS) list-ats-dependencies
+@DEPENDENCY_TRACKING_TRUE@	@$(call write-dependencies-file,$(@),$(<))
+@DEPENDENCY_TRACKING_TRUE@	@$(MKDIR_P) $(@D)
+@DEPENDENCY_TRACKING_TRUE@	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) \
+@DEPENDENCY_TRACKING_TRUE@			$(TESTS_PATSOPTFLAGS) -d $(<)
+
+@DEPENDENCY_TRACKING_FALSE@%_sats.c: %.sats $(PATSOPT_DEPS)
+@DEPENDENCY_TRACKING_FALSE@	@$(MKDIR_P) $(@D)
+@DEPENDENCY_TRACKING_FALSE@	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -s $(<)
+
+@DEPENDENCY_TRACKING_FALSE@%_dats.c: %.dats $(PATSOPT_DEPS)
+@DEPENDENCY_TRACKING_FALSE@	@$(MKDIR_P) $(@D)
+@DEPENDENCY_TRACKING_FALSE@	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -d $(<)
+
+@DEPENDENCY_TRACKING_FALSE@%_tests.c: %.dats $(PATSOPT_DEPS)
+@DEPENDENCY_TRACKING_FALSE@	@$(MKDIR_P) $(@D)
+@DEPENDENCY_TRACKING_FALSE@	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) \
+@DEPENDENCY_TRACKING_FALSE@			$(TESTS_PATSOPTFLAGS) -d $(<)
 
 %_depsprog.c: %.dats $(PATSOPT_DEPS)
 	@$(MKDIR_P) $(@D)

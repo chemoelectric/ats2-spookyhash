@@ -126,6 +126,8 @@ TESTS_PATSOPTFLAGS += -IATS $(srcdir)/tests
 ats-includes-distclean:
 	-rm -f -R ats-dependencies
 
+if DEPENDENCY_TRACKING
+
 %_sats.c: %.sats $(PATSOPT_DEPS) list-ats-dependencies
 	@$(call write-dependencies-file,$(@),$(<))
 	@$(MKDIR_P) $(@D)
@@ -141,6 +143,23 @@ ats-includes-distclean:
 	@$(MKDIR_P) $(@D)
 	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) \
 			$(TESTS_PATSOPTFLAGS) -d $(<)
+
+else !DEPENDENCY_TRACKING
+
+%_sats.c: %.sats $(PATSOPT_DEPS)
+	@$(MKDIR_P) $(@D)
+	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -s $(<)
+
+%_dats.c: %.dats $(PATSOPT_DEPS)
+	@$(MKDIR_P) $(@D)
+	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) -d $(<)
+
+%_tests.c: %.dats $(PATSOPT_DEPS)
+	@$(MKDIR_P) $(@D)
+	$(call v,PATSOPT)$(PATSOPT) -o $(@) $(TOTAL_PATSOPTFLAGS) \
+			$(TESTS_PATSOPTFLAGS) -d $(<)
+
+endif !DEPENDENCY_TRACKING
 
 %_depsprog.c: %.dats $(PATSOPT_DEPS)
 	@$(MKDIR_P) $(@D)
