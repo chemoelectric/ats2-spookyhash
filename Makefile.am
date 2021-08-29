@@ -446,6 +446,16 @@ tests_try_spookyhash_incremental_c_DEPENDENCIES += libats2-spookyhash.la
 tests_try_spookyhash_incremental_c_LDADD =
 tests_try_spookyhash_incremental_c_LDADD += libats2-spookyhash.la
 
+EXTRA_PROGRAMS += tests/try-spookyhash_hash128-c-misaligned
+CLEANFILES += tests/try-spookyhash_hash128-c-misaligned
+tests_try_spookyhash_hash128_c_misaligned_SOURCES =
+tests_try_spookyhash_hash128_c_misaligned_SOURCES += tests/try-spookyhash_hash128-c-misaligned.c
+tests_try_spookyhash_hash128_c_misaligned_SOURCES += tests/try-spookyhash-common-c.h
+tests_try_spookyhash_hash128_c_misaligned_DEPENDENCIES =
+tests_try_spookyhash_hash128_c_misaligned_DEPENDENCIES += libats2-spookyhash.la
+tests_try_spookyhash_hash128_c_misaligned_LDADD =
+tests_try_spookyhash_hash128_c_misaligned_LDADD += libats2-spookyhash.la
+
 if WRITE_REFERENCE_DATA
 
 $(srcdir)/tests/reference-for-seeds-eq-zero.dat: \
@@ -505,22 +515,22 @@ TESTS += tests/test-spookyhash_hash128-c-for-seeds-eq-zero.sh
 TESTS += tests/test-spookyhash_hash64-c-for-seeds-eq-zero.sh
 TESTS += tests/test-spookyhash_hash32-c-for-seeds-eq-zero.sh
 TESTS += tests/test-spookyhash-incremental-c-for-seeds-eq-zero.sh
-#TESTS += tests/test-spookyhash_hash128-misaligned-for-seeds-eq-zero-c.sh
+TESTS += tests/test-spookyhash_hash128-c-misaligned-for-seeds-eq-zero.sh
 
 TESTS += tests/test-spookyhash_hash128-c-for-hash128-seed.sh
-#TESTS += tests/test-spookyhash-incremental-for-hash128-seed-c.sh
-#TESTS += tests/test-spookyhash_hash128-misaligned-for-hash128-seed-c.sh
+TESTS += tests/test-spookyhash-incremental-c-for-hash128-seed.sh
+TESTS += tests/test-spookyhash_hash128-c-misaligned-for-hash128-seed.sh
 
 TESTS += tests/test-spookyhash_hash128-c-for-hash64-seed.sh
 TESTS += tests/test-spookyhash_hash64-c-for-hash64-seed.sh
 TESTS += tests/test-spookyhash-incremental-c-for-hash64-seed.sh
-#TESTS += tests/test-spookyhash_hash128-misaligned-for-hash64-seed-c.sh
+TESTS += tests/test-spookyhash_hash128-c-misaligned-for-hash64-seed.sh
 
 TESTS += tests/test-spookyhash_hash128-c-for-hash32-seed.sh
 TESTS += tests/test-spookyhash_hash64-c-for-hash32-seed.sh
 TESTS += tests/test-spookyhash_hash32-c-for-hash32-seed.sh
 TESTS += tests/test-spookyhash-incremental-c-for-hash32-seed.sh
-#TESTS += tests/test-spookyhash_hash128-misaligned-for-hash32-seed-c.sh
+TESTS += tests/test-spookyhash_hash128-c-misaligned-for-hash32-seed.sh
 
 $(TESTS): $(srcdir)/tests/reference-for-seeds-eq-zero.dat
 $(TESTS): $(srcdir)/tests/reference-for-hash128-seed.dat
@@ -544,8 +554,8 @@ $(TESTS): tests/try-spookyhash_hash32-c
 $(TESTS): tests/test-spookyhash_hash32-c.sh
 $(TESTS): tests/try-spookyhash-incremental-c
 $(TESTS): tests/test-spookyhash-incremental-c.sh
-#$(TESTS): tests/try-spookyhash_hash128-c-misaligned
-#$(TESTS): tests/test-spookyhash_hash128-c-misaligned.sh
+$(TESTS): tests/try-spookyhash_hash128-c-misaligned
+$(TESTS): tests/test-spookyhash_hash128-c-misaligned.sh
 
 tests/test-spookyhash_hash128.sh: tests/test-spookyhash.sh.in GNUmakefile
 	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
@@ -592,10 +602,10 @@ tests/test-spookyhash-incremental-c.sh: tests/test-spookyhash.sh.in GNUmakefile
 			-e 's|@TRY@|tests/try-spookyhash-incremental-c|g' \
 			$(<) > $(@) && chmod +x $(@)
 
-#tests/test-spookyhash_hash128-misaligned-c.sh: tests/test-spookyhash.sh.in GNUmakefile
-#	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
-#			-e 's|@TRY@|tests/try-spookyhash_hash128-misaligned-c|g' \
-#			$(<) > $(@) && chmod +x $(@)
+tests/test-spookyhash_hash128-c-misaligned.sh: tests/test-spookyhash.sh.in GNUmakefile
+	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
+			-e 's|@TRY@|tests/try-spookyhash_hash128-c-misaligned|g' \
+			$(<) > $(@) && chmod +x $(@)
 
 tests/test-spookyhash_hash128-for-seeds-eq-zero.sh: tests/test-spookyhash-for-seeds-eq-zero.sh.in GNUmakefile
 	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
@@ -723,11 +733,11 @@ tests/test-spookyhash-incremental-c-for-seeds-eq-zero.sh: tests/test-spookyhash-
 			-e 's|@TEST_SH@|tests/test-spookyhash-incremental-c.sh|g' \
 			$(<) > $(@) && chmod +x $(@)
 
-#tests/test-spookyhash_hash128-c-misaligned-for-seeds-eq-zero.sh: tests/test-spookyhash-for-seeds-eq-zero.sh.in GNUmakefile
-#	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
-#			-e 's|@''abs_top_srcdir@|$(abs_top_srcdir)|g' \
-#			-e 's|@TEST_SH@|tests/test-spookyhash_hash128-c-misaligned.sh|g' \
-#			$(<) > $(@) && chmod +x $(@)
+tests/test-spookyhash_hash128-c-misaligned-for-seeds-eq-zero.sh: tests/test-spookyhash-for-seeds-eq-zero.sh.in GNUmakefile
+	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
+			-e 's|@''abs_top_srcdir@|$(abs_top_srcdir)|g' \
+			-e 's|@TEST_SH@|tests/test-spookyhash_hash128-c-misaligned.sh|g' \
+			$(<) > $(@) && chmod +x $(@)
 
 tests/test-spookyhash_hash128-c-for-hash32-seed.sh: tests/test-spookyhash-for-hash32-seed.sh.in GNUmakefile
 	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
@@ -753,11 +763,11 @@ tests/test-spookyhash-incremental-c-for-hash32-seed.sh: tests/test-spookyhash-fo
 			-e 's|@TEST_SH@|tests/test-spookyhash-incremental-c.sh|g' \
 			$(<) > $(@) && chmod +x $(@)
 
-#tests/test-spookyhash_hash128-c-misaligned-for-hash32-seed.sh: tests/test-spookyhash-for-hash32-seed.sh.in GNUmakefile
-#	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
-#			-e 's|@''abs_top_srcdir@|$(abs_top_srcdir)|g' \
-#			-e 's|@TEST_SH@|tests/test-spookyhash_hash128-c-misaligned.sh|g' \
-#			$(<) > $(@) && chmod +x $(@)
+tests/test-spookyhash_hash128-c-misaligned-for-hash32-seed.sh: tests/test-spookyhash-for-hash32-seed.sh.in GNUmakefile
+	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
+			-e 's|@''abs_top_srcdir@|$(abs_top_srcdir)|g' \
+			-e 's|@TEST_SH@|tests/test-spookyhash_hash128-c-misaligned.sh|g' \
+			$(<) > $(@) && chmod +x $(@)
 
 tests/test-spookyhash_hash128-c-for-hash64-seed.sh: tests/test-spookyhash-for-hash64-seed.sh.in GNUmakefile
 	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
@@ -777,11 +787,11 @@ tests/test-spookyhash-incremental-c-for-hash64-seed.sh: tests/test-spookyhash-fo
 			-e 's|@TEST_SH@|tests/test-spookyhash-incremental-c.sh|g' \
 			$(<) > $(@) && chmod +x $(@)
 
-#tests/test-spookyhash_hash128-c-misaligned-for-hash64-seed.sh: tests/test-spookyhash-for-hash64-seed.sh.in GNUmakefile
-#	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
-#			-e 's|@''abs_top_srcdir@|$(abs_top_srcdir)|g' \
-#			-e 's|@TEST_SH@|tests/test-spookyhash_hash128-c-misaligned.sh|g' \
-#			$(<) > $(@) && chmod +x $(@)
+tests/test-spookyhash_hash128-c-misaligned-for-hash64-seed.sh: tests/test-spookyhash-for-hash64-seed.sh.in GNUmakefile
+	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
+			-e 's|@''abs_top_srcdir@|$(abs_top_srcdir)|g' \
+			-e 's|@TEST_SH@|tests/test-spookyhash_hash128-c-misaligned.sh|g' \
+			$(<) > $(@) && chmod +x $(@)
 
 tests/test-spookyhash_hash128-c-for-hash128-seed.sh: tests/test-spookyhash-for-hash128-seed.sh.in GNUmakefile
 	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
@@ -795,11 +805,11 @@ tests/test-spookyhash-incremental-c-for-hash128-seed.sh: tests/test-spookyhash-f
 			-e 's|@TEST_SH@|tests/test-spookyhash-incremental-c.sh|g' \
 			$(<) > $(@) && chmod +x $(@)
 
-#tests/test-spookyhash_hash128-c-misaligned-for-hash128-seed.sh: tests/test-spookyhash-for-hash128-seed.sh.in GNUmakefile
-#	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
-#			-e 's|@''abs_top_srcdir@|$(abs_top_srcdir)|g' \
-#			-e 's|@TEST_SH@|tests/test-spookyhash_hash128-c-misaligned.sh|g' \
-#			$(<) > $(@) && chmod +x $(@)
+tests/test-spookyhash_hash128-c-misaligned-for-hash128-seed.sh: tests/test-spookyhash-for-hash128-seed.sh.in GNUmakefile
+	$(call v,GEN)$(SED) -e 's|@''POSIX_SH@|$(POSIX_SH)|g' \
+			-e 's|@''abs_top_srcdir@|$(abs_top_srcdir)|g' \
+			-e 's|@TEST_SH@|tests/test-spookyhash_hash128-c-misaligned.sh|g' \
+			$(<) > $(@) && chmod +x $(@)
 
 EXTRA_DIST += tests/test-spookyhash.sh.in
 EXTRA_DIST += tests/test-spookyhash-for-seeds-eq-zero.sh.in
