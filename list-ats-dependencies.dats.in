@@ -29,6 +29,9 @@ along with this program. If not, see
   A trailing newline IS NOT included in the output, but a leading
   space character IS.
 
+  #include lines within C code are handled the same as within
+  ATS code.
+
  ********************************************************************)
 
 #include "share/atspre_define.hats"
@@ -266,7 +269,7 @@ fn
 trim_past_quote {p : addr} {n : nat}
                 (s : !strnptr (p, n) >> _) :
     Strnptr1 =
-  (* For simplicity, pretend we accept #include <..> *)
+  (* For simplicity, accept #include "..> and #include <.." *)
   if strncmp ($UNSAFE.castvwtp1 s, "\"", i2sz 1) <> 0 &&
      strncmp ($UNSAFE.castvwtp1 s, "<", i2sz 1) <> 0 then
     begin
@@ -302,10 +305,9 @@ take_until_quote {p : addr} {n : nat}
           exit (1);
           i
         end
-      else if strnptr_get_at (s, i) = '"' then
-        i
-      else if strnptr_get_at (s, i) = '>' then
-        (* For simplicity, pretend we accept #include <..> *)
+      (* For simplicity, accept #include "..> and #include <.." *)
+      else if (strnptr_get_at (s, i) = '"' ||
+               strnptr_get_at (s, i) = '>') then
         i
       else
         find_quote (s, succ i)
