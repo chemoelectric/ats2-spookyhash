@@ -19265,8 +19265,10 @@ printf "%s\n" "$as_me: WARNING: Please consider installing and using GNU Make:
 ac_config_files="$ac_config_files tests/SpookyV2.h:reference-implementation/SpookyV2.h tests/SpookyV2.cpp:reference-implementation/SpookyV2.cpp"
 
 
-#AC_CONFIG_FILES([ats2-spookyhash.pc])
-#AC_CONFIG_FILES([spookyhash.pc])
+ac_config_files="$ac_config_files ats2-spookyhash.pc"
+
+ac_config_files="$ac_config_files spookyhash.pc"
+
 
 ac_config_files="$ac_config_files list-ats-dependencies.dats"
 
@@ -20428,6 +20430,8 @@ do
     "GNUmakefile") CONFIG_FILES="$CONFIG_FILES GNUmakefile:Makefile.in" ;;
     "tests/SpookyV2.h") CONFIG_FILES="$CONFIG_FILES tests/SpookyV2.h:reference-implementation/SpookyV2.h" ;;
     "tests/SpookyV2.cpp") CONFIG_FILES="$CONFIG_FILES tests/SpookyV2.cpp:reference-implementation/SpookyV2.cpp" ;;
+    "ats2-spookyhash.pc") CONFIG_FILES="$CONFIG_FILES ats2-spookyhash.pc" ;;
+    "spookyhash.pc") CONFIG_FILES="$CONFIG_FILES spookyhash.pc" ;;
     "list-ats-dependencies.dats") CONFIG_FILES="$CONFIG_FILES list-ats-dependencies.dats" ;;
     "tests/compute-reference-for-seeds-eq-zero.sh") CONFIG_FILES="$CONFIG_FILES tests/compute-reference-for-seeds-eq-zero.sh" ;;
     "tests/compute-reference-for-hash128-seed.sh") CONFIG_FILES="$CONFIG_FILES tests/compute-reference-for-hash128-seed.sh" ;;

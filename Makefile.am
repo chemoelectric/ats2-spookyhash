@@ -842,12 +842,12 @@ list_ats_dependencies_LDADD =
 list_ats_dependencies_LDADD += -L'$(PATSHOME)/ccomp/atslib/lib'
 list_ats_dependencies_LDADD += -latslib
 
-# #--------------------------------------------------------------------------
-# 
-# nodist_pkgconfig_DATA += ats2-spookyhash.pc
-# nodist_pkgconfig_DATA += spookyhash.pc
-# 
-# #--------------------------------------------------------------------------
+#--------------------------------------------------------------------------
+
+nodist_pkgconfig_DATA += ats2-spookyhash.pc
+nodist_pkgconfig_DATA += spookyhash.pc
+
+#--------------------------------------------------------------------------
 
 EXTRA_DIST += reference-implementation/SpookyV2.cpp
 EXTRA_DIST += reference-implementation/SpookyV2.h

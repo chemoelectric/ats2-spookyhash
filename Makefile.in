@@ -33,7 +33,7 @@
 #
 
 # aminclude_static.am generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on Sun Aug 29 13:34:16 CDT 2021
+# from AX_AM_MACROS_STATIC on Mon Aug 30 06:58:00 CDT 2021
 
 
 
@@ -149,7 +149,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES = tests/SpookyV2.h tests/SpookyV2.cpp \
-	list-ats-dependencies.dats \
+	ats2-spookyhash.pc spookyhash.pc list-ats-dependencies.dats \
 	tests/compute-reference-for-seeds-eq-zero.sh \
 	tests/compute-reference-for-hash128-seed.sh \
 	tests/compute-reference-for-hash64-seed.sh \
@@ -585,8 +585,9 @@ TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/build-aux/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
 am__DIST_COMMON = $(srcdir)/Makefile.in \
+	$(srcdir)/ats2-spookyhash.pc.in \
 	$(srcdir)/list-ats-dependencies.dats.in \
-	$(top_srcdir)/aminclude_static.am \
+	$(srcdir)/spookyhash.pc.in $(top_srcdir)/aminclude_static.am \
 	$(top_srcdir)/build-aux/compile \
 	$(top_srcdir)/build-aux/config.guess \
 	$(top_srcdir)/build-aux/config.sub \
@@ -786,12 +787,7 @@ AUTOMAKE_OPTIONS = foreign subdir-objects -Wno-portability
 @CODE_COVERAGE_ENABLED_TRUE@code_coverage_sanitize = $(subst -,_,$(subst .,_,$(1)))
 @CODE_COVERAGE_ENABLED_TRUE@AM_DISTCHECK_CONFIGURE_FLAGS := $(AM_DISTCHECK_CONFIGURE_FLAGS) --disable-code-coverage
 
-# #--------------------------------------------------------------------------
-# 
-# nodist_pkgconfig_DATA += ats2-spookyhash.pc
-# nodist_pkgconfig_DATA += spookyhash.pc
-# 
-# #--------------------------------------------------------------------------
+#--------------------------------------------------------------------------
 EXTRA_DIST = $(srcdir)/silent-rules.mk COPYING INSTALL README AUTHORS \
 	$(SPOOKYHASH_PARAMETERS_HATS) \
 	$(SPOOKYHASH_ATS_PARAMETERS_HATS) $(SPOOKYHASH_IMPL_CATS) \
@@ -872,7 +868,9 @@ lib_LTLIBRARIES = libats2-spookyhash.la libspookyhash.la
 nobase_nodist_pkginclude_HEADERS = $(SPOOKYHASH_SATS) \
 	$(SPOOKYHASH_CATS) spookyhash/spookyhash.h
 pkgconfigdir = ${libdir}/pkgconfig
-nodist_pkgconfig_DATA = 
+
+#--------------------------------------------------------------------------
+nodist_pkgconfig_DATA = ats2-spookyhash.pc spookyhash.pc
 CODE_COVERAGE_IGNORE_PATTERN = /usr/include/* /usr/include/*/* \
 	$(PATSHOME)/ccomp/runtime/* $(PATSHOME)/prelude/CATS/*
 
@@ -1104,6 +1102,10 @@ $(am__aclocal_m4_deps):
 tests/SpookyV2.h: $(top_builddir)/config.status $(top_srcdir)/reference-implementation/SpookyV2.h
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 tests/SpookyV2.cpp: $(top_builddir)/config.status $(top_srcdir)/reference-implementation/SpookyV2.cpp
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+ats2-spookyhash.pc: $(top_builddir)/config.status $(srcdir)/ats2-spookyhash.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+spookyhash.pc: $(top_builddir)/config.status $(srcdir)/spookyhash.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 list-ats-dependencies.dats: $(top_builddir)/config.status $(srcdir)/list-ats-dependencies.dats.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@

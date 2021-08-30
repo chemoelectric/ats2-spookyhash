@@ -118,8 +118,8 @@ AC_CONFIG_FILES(
   [tests/SpookyV2.h:reference-implementation/SpookyV2.h
    tests/SpookyV2.cpp:reference-implementation/SpookyV2.cpp])
 
-#AC_CONFIG_FILES([ats2-spookyhash.pc])
-#AC_CONFIG_FILES([spookyhash.pc])
+AC_CONFIG_FILES([ats2-spookyhash.pc])
+AC_CONFIG_FILES([spookyhash.pc])
 
 AC_CONFIG_FILES([list-ats-dependencies.dats])
 

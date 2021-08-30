@@ -1,5 +1,24 @@
 SpookyHash version 2 for ATS2/Postiats
 --------------------------------------
 
-FIXME: Say more.
+No garbage collector is required, and exceptions are not used.
+
+There is also a C interface that has no other dependencies and
+requires no garbage collector.
+
+FIXME: Platforms requiring alignment to 64-bit boundaries should work,
+as should big-endian platforms, but the package has not yet been
+tested on such platforms.
+
+FIXME FIXME FIXME: TEST ON SUCH PLATFORMS AND FIX ANY BUGS THAT ARE
+                   REVEALED.
+
+Mac OS/X universal binaries currently are not supported.
+
+License: GPL version 3 or higher
+
+References:
+ * https://burtleburtle.net/bob/hash/spooky.html
+ * https://en.wikipedia.org/w/index.php?title=Jenkins_hash_function&oldid=967026719
+
 

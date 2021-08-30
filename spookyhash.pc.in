@@ -1,0 +1,17 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+host=@host@
+package=@PACKAGE@
+version=@VERSION@
+pkgincludedir="${includedir}/${package}"
+
+CPPFLAGS="-I${pkgincludedir}"
+
+Name: ${package}
+Description: C interface to "SpookyHash version 2 for ATS2"
+Version: ${version}
+Libs.private: -L${libdir} -lats2-spookyhash
+Libs: -L${libdir} -lspookyhash
+Cflags: ${CPPFLAGS}
