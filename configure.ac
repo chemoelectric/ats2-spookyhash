@@ -74,9 +74,6 @@ AC_PROG_SED
 AC_PROG_FGREP
 AC_PROG_EGREP
 
-PKG_PROG_PKG_CONFIG
-PKG_CONFIG="${PKG_CONFIG} --define-variable=PATSHOME=\"${PATSHOME}\""
-
 # Enable optional code coverage analysis.
 AX_CODE_COVERAGE
 
