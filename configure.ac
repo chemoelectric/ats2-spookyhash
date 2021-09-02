@@ -48,7 +48,7 @@ fi
 AC_ARG_ENABLE([write-reference-data],
   [AS_HELP_STRING([--enable-write-reference-data],
     [enable GNUmakefile support to re-write the reference test data; do not do this on big-endian platforms])],
-  [enable_write_reference_data=yes],
+  [enable_write_reference_data="${enableval}"],
   [enable_write_reference_data=no])
 AM_CONDITIONAL([WRITE_REFERENCE_DATA],
   [test x"${enable_write_reference_data}" = xyes])

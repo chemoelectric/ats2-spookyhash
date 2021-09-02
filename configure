@@ -13087,7 +13087,7 @@ fi
 # Check whether --enable-write-reference-data was given.
 if test ${enable_write_reference_data+y}
 then :
-  enableval=$enable_write_reference_data; enable_write_reference_data=yes
+  enableval=$enable_write_reference_data; enable_write_reference_data="${enableval}"
 else $as_nop
   enable_write_reference_data=no
 fi
