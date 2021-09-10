@@ -44,30 +44,30 @@ integer_sizes () :<prf>
   void
 
 praxi {t : vt@ype}
-fake_initialize_array_v :<prf>
+fake_initialize_array_v :
   {n : int} {p : addr}
   (@[t?][n] @ p) -<prf> @[t][n] @ p
 
 praxi {t : vt@ype}
-array2bytes :<prf>
+array2bytes :
   {n : int}
   {p : addr}
   (@[t][n] @ p) -<prf> (@[byte][n * sizeof (t)] @ p)
 
 praxi {t : vt@ype}
-bytes2array :<prf>
+bytes2array :
   {n : int}
   {p : addr}
   (@[byte][n * sizeof (t)] @ p) -<prf> (@[t][n] @ p)
 
 praxi {t : vt@ype}
-array2bytesqmark :<prf>
+array2bytesqmark :
   {n : int}
   {p : addr}
   (@[t][n] @ p) -<prf> (@[byte?][n * sizeof (t)] @ p)
 
 praxi {t : vt@ype}
-bytesqmark2array :<prf>
+bytesqmark2array :
   {n : int}
   {p : addr}
   (@[byte?][n * sizeof (t)] @ p) -<prf> (@[t][n] @ p)
