@@ -41,8 +41,6 @@ bin_PROGRAMS =
 lib_LTLIBRARIES =
 EXTRA_PROGRAMS =
 nobase_nodist_pkginclude_HEADERS =
-
-pkgconfigdir = ${libdir}/pkgconfig
 nodist_pkgconfig_DATA =
 
 EXTRA_DIST += $(srcdir)/silent-rules.mk
