@@ -289,6 +289,7 @@ nodist_libats2_spookyhash_la_SOURCES += $(SPOOKYHASH_INCREMENTAL_DATS_C)
 
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_SATS)
 nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_CATS)
+nobase_nodist_pkginclude_HEADERS += $(SPOOKYHASH_PARAMETERS_HATS)
 
 #--------------------------------------------------------------------------
 #

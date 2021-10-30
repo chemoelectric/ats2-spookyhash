@@ -867,7 +867,8 @@ LDADD = $(CODE_COVERAGE_LIBS)
 #
 lib_LTLIBRARIES = libats2-spookyhash.la libspookyhash.la
 nobase_nodist_pkginclude_HEADERS = $(SPOOKYHASH_SATS) \
-	$(SPOOKYHASH_CATS) spookyhash/spookyhash.h
+	$(SPOOKYHASH_CATS) $(SPOOKYHASH_PARAMETERS_HATS) \
+	spookyhash/spookyhash.h
 
 #--------------------------------------------------------------------------
 nodist_pkgconfig_DATA = ats2-spookyhash.pc spookyhash.pc
