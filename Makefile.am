@@ -52,9 +52,6 @@ EXTRA_DIST += AUTHORS
 DISTCLEANFILES += Makefile
 DISTCLEANFILES += GNUmakefile
 
-# We will not be using exceptions.
-AM_CPPFLAGS += -D_ATS_CCOMP_EXCEPTION_NONE
-
 AM_CPPFLAGS += -I$(builddir)
 AM_CPPFLAGS += -I$(srcdir)
 AM_CPPFLAGS += -I$(PATSHOME)

@@ -848,10 +848,8 @@ CLEANFILES = $(SPOOKYHASH_BYTE_ORDER_SATS_C) \
 	list-ats-dependencies list-ats-dependencies_depsprog.c
 DISTCLEANFILES = Makefile GNUmakefile
 BUILT_SOURCES = 
-
-# We will not be using exceptions.
-AM_CPPFLAGS = -D_ATS_CCOMP_EXCEPTION_NONE -I$(builddir) -I$(srcdir) \
-	-I$(PATSHOME) -I$(PATSHOME)/ccomp/runtime/
+AM_CPPFLAGS = -I$(builddir) -I$(srcdir) -I$(PATSHOME) \
+	-I$(PATSHOME)/ccomp/runtime/
 AM_CFLAGS = 
 AM_LDFLAGS = 
 LDADD = $(CODE_COVERAGE_LIBS)
