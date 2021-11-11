@@ -222,8 +222,9 @@ am_libspookyhash_la_OBJECTS = spookyhash/spookyhash_hash128.lo \
 	spookyhash/spookyhash_hash32.lo \
 	spookyhash/spookyhash-incremental.lo
 libspookyhash_la_OBJECTS = $(am_libspookyhash_la_OBJECTS)
-am_list_ats_dependencies_OBJECTS = list_ats_dependencies-list-ats-dependencies_depsprog.$(OBJEXT)
-list_ats_dependencies_OBJECTS = $(am_list_ats_dependencies_OBJECTS)
+nodist_list_ats_dependencies_OBJECTS = list_ats_dependencies-list-ats-dependencies_depsprog.$(OBJEXT)
+list_ats_dependencies_OBJECTS =  \
+	$(nodist_list_ats_dependencies_OBJECTS)
 am_tests_compute_reference_result_OBJECTS = tests/compute_reference_result-compute-reference-result.$(OBJEXT) \
 	tests/compute_reference_result-SpookyV2.$(OBJEXT)
 tests_compute_reference_result_OBJECTS =  \
@@ -357,7 +358,8 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(nodist_libats2_spookyhash_la_SOURCES) \
-	$(libspookyhash_la_SOURCES) $(list_ats_dependencies_SOURCES) \
+	$(libspookyhash_la_SOURCES) \
+	$(nodist_list_ats_dependencies_SOURCES) \
 	$(tests_compute_reference_result_SOURCES) \
 	$(tests_try_spookyhash_incremental_SOURCES) \
 	$(tests_try_spookyhash_incremental_c_SOURCES) \
@@ -370,7 +372,6 @@ SOURCES = $(nodist_libats2_spookyhash_la_SOURCES) \
 	$(tests_try_spookyhash_hash64_SOURCES) \
 	$(tests_try_spookyhash_hash64_c_SOURCES)
 DIST_SOURCES = $(libspookyhash_la_SOURCES) \
-	$(list_ats_dependencies_SOURCES) \
 	$(tests_compute_reference_result_SOURCES) \
 	$(tests_try_spookyhash_incremental_SOURCES) \
 	$(tests_try_spookyhash_incremental_c_SOURCES) \
@@ -1054,7 +1055,8 @@ TESTS = tests/test-spookyhash_hash128-for-seeds-eq-zero.sh \
 	tests/test-spookyhash_hash32-c-for-hash32-seed.sh \
 	tests/test-spookyhash-incremental-c-for-hash32-seed.sh \
 	tests/test-spookyhash_hash128-c-misaligned-for-hash32-seed.sh
-list_ats_dependencies_SOURCES = list-ats-dependencies_depsprog.c
+nodist_list_ats_dependencies_SOURCES =  \
+	list-ats-dependencies_depsprog.c
 list_ats_dependencies_CPPFLAGS = $(AM_CPPFLAGS) -DATS_MEMALLOC_LIBC
 list_ats_dependencies_DEPENDENCIES = list-ats-dependencies.dats
 list_ats_dependencies_LDADD = -L'$(PATSHOME)/ccomp/atslib/lib' \

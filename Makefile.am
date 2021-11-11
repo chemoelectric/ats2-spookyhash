@@ -827,8 +827,8 @@ EXTRA_DIST += list-ats-dependencies.dats
 CLEANFILES += list-ats-dependencies
 CLEANFILES += list-ats-dependencies_depsprog.c
 
-list_ats_dependencies_SOURCES =
-list_ats_dependencies_SOURCES += list-ats-dependencies_depsprog.c
+nodist_list_ats_dependencies_SOURCES =
+nodist_list_ats_dependencies_SOURCES += list-ats-dependencies_depsprog.c
 list_ats_dependencies_CPPFLAGS =
 list_ats_dependencies_CPPFLAGS += $(AM_CPPFLAGS)
 list_ats_dependencies_CPPFLAGS += -DATS_MEMALLOC_LIBC
