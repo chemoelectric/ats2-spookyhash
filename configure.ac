@@ -54,20 +54,11 @@ fi
 
 # Unless this feature is disabled, set compiler flags for aggressive
 # optimization.
-CHEM_GNU_C_FLAGS([__aggressive_optimization_flags],[
-    -O3
-    -funroll-loops
-    -floop-nest-optimize
-    -fgcse-sm -fgcse-las
-    ])
 AC_ARG_ENABLE([aggressive-optimizations],
   [AS_HELP_STRING([--disable-aggressive-optimizations],
       [disable aggressive optimizations that are enabled by default])],
   [],
   [enable_aggressive_optimizations=yes])
-if test x"${enable_aggressive_optimizations}" = xyes; then
-   CFLAGS="${CFLAGS}${CFLAGS+ }${__aggressive_optimization_flags}"
-fi
 
 AC_ARG_ENABLE([write-reference-data],
   [AS_HELP_STRING([--enable-write-reference-data],
@@ -104,6 +95,16 @@ AX_CODE_COVERAGE
 PKG_PROG_PKG_CONFIG
 PKG_CONFIG="${PKG_CONFIG} --define-variable=PATSHOME=\"${PATSHOME}\""
 PKG_INSTALLDIR
+
+CHEM_GNU_C_FLAGS([__aggressive_optimization_flags],[
+    -O3
+    -funroll-loops
+    -floop-nest-optimize
+    -fgcse-sm -fgcse-las
+    ])
+if test x"${enable_aggressive_optimizations}" = xyes; then
+   CFLAGS="${CFLAGS}${CFLAGS+ }${__aggressive_optimization_flags}"
+fi
 
 #--------------------------------------------------------------------------
 #
