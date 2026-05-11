@@ -472,7 +472,7 @@ _short {length  : int}
           array_v_subdivide2 {byte} {..} {offset, length - offset}
                              (view@ message)
 
-        val _ = d := d + ((sz2u64 length) <<@ 56U)
+        val _ = d := d + ((sz2u64 length) << 56U)
 
         fn {}
         get_uint32 {index   : int | 0 <= index;
